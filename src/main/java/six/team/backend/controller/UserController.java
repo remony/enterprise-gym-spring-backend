@@ -1,14 +1,7 @@
 package six.team.backend.controller;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,9 +10,7 @@ import six.team.backend.model.User;
 import six.team.backend.store.PageStore;
 import six.team.backend.store.UserStore;
 
-import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 
 @Controller
