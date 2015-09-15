@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="EnterpriseGymSpringBackend:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="EnterpriseGymSpringBackend.war">
+      <element id="artifact" artifact-name="EnterpriseGymSpringBackend:war exploded" />
+    </root>
+  </artifact>
+</component>
