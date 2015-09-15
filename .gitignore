@@ -7,7 +7,6 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 
-
 *.class
 
 # Mobile Tools for Java (J2ME)
