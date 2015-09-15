@@ -6,6 +6,7 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
+<<<<<<< HEAD
 
 # Eclipse
 .classpath
@@ -29,3 +30,5 @@ buildNumber.properties
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+=======
+>>>>>>> b417dda3d0082b3ed7ac9952729cf20f802ee8ea
