@@ -15,9 +15,9 @@ public class User {
         return userDAO.list();
     }
 
-    public static void addUser(UserStore user){
+    public static String verifyLogin(String username, String password){
         UserDAO userDAO = new UserDAO();
-        userDAO.addUser(user);
+        return userDAO.verifyUser(username,password);
 
     }
 }

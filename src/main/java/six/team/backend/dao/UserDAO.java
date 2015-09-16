@@ -4,8 +4,11 @@ package six.team.backend.dao;
 import six.team.backend.store.UserStore;
 
 
+import java.security.SecureRandom;
 import java.sql.*;
 import java.util.LinkedList;
+import java.util.Random;
+import java.util.UUID;
 
 
 public class UserDAO {
@@ -104,18 +107,27 @@ public class UserDAO {
         return connection;
     }
 
-    public void addUser(UserStore user){
+    public String verifyUser(String username, String password){
         Connection connection = null;
 
         try {
             connection = getDBConnection();
-            int id = user.getId();
-            String username = user.getUsername();
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (id,username) VALUES(?,?)");
-            ps.setInt(1,id);
-            ps.setString(2,username);
-            int result = ps.executeUpdate();
-            System.out.println(result);
+            PreparedStatement ps = connection.prepareStatement("SELECT* FROM USERS WHERE username=?");
+            ps.setString(1,username);
+            ResultSet rs = ps.executeQuery();
+            if(rs != null) {
+                String passwordUser = rs.getString("password");
+                if (password.equals(passwordUser)) {
+                    String randomToken = UUID.randomUUID().toString();
+                    randomToken = randomToken.replaceAll("-","");
+                    PreparedStatement ps1 = connection.prepareStatement("UPDATE USERS SET token=? WHERE username=?" );
+                    ps1.setString(1, randomToken);
+                    ps1.setString(2,username);
+                    int rs1 = ps1.executeUpdate();
+                    System.out.println(rs1);
+                    return randomToken;
+                }
+            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         } finally {
@@ -128,5 +140,6 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
+        return null;
     }
 }

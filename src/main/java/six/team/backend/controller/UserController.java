@@ -31,22 +31,13 @@ public class UserController {
         return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
 
     }
-
+    //this may be moved to a different controller depending on the request being made
         @RequestMapping(method = RequestMethod.POST)
-            public @ResponseBody PageStore loginUsers(HttpServletRequest request,HttpServletResponse res) {
-        String username=request.getHeader("username");
-        String id=request.getHeader("id");
-            System.out.println("Name: " + username);
-            System.out.println("ID: " + id);
-            UserStore user = new UserStore();
-            user.setId(Integer.parseInt(id));
-            user.setUsername(username);
-            User.addUser(user);
-            LinkedList<UserStore> users = User.getAll();
-            PageJsonGen pageJsonGen = new PageJsonGen();
-            //Send values to the page json generator, this will return the full json which is sent to the client
-            //Information about the page may be needed to be collected from the db, this is for discussion
-            return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
-    }
-
+            public @ResponseBody String loginUsers(HttpServletRequest request,HttpServletResponse res) {
+            //this could change to request.getParamter dependent on how data is being sent
+            String username=request.getHeader("username");
+            String password= request.getHeader("password");
+            String token = User.verifyLogin(username,password);
+            return token;
+        }
 }
