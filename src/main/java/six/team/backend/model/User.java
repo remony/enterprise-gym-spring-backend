@@ -10,11 +10,14 @@ import java.util.LinkedList;
  */
 public class User {
 
-
-
-
     public static LinkedList<UserStore> getAll() {
         UserDAO userDAO = new UserDAO();
         return userDAO.list();
+    }
+
+    public static void addUser(UserStore user){
+        UserDAO userDAO = new UserDAO();
+        userDAO.addUser(user);
+
     }
 }

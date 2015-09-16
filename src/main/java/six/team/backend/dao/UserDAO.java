@@ -103,4 +103,30 @@ public class UserDAO {
 
         return connection;
     }
+
+    public void addUser(UserStore user){
+        Connection connection = null;
+
+        try {
+            connection = getDBConnection();
+            int id = user.getId();
+            String username = user.getUsername();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (id,username) VALUES(?,?)");
+            ps.setInt(1,id);
+            ps.setString(2,username);
+            int result = ps.executeUpdate();
+            System.out.println(result);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+    }
 }
