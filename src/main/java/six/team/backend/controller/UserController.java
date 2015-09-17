@@ -38,9 +38,10 @@ public class UserController {
     @RequestMapping(value ="/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
-        String username=request.getHeader("username");
+        String username= request.getHeader("username");
         String password= request.getHeader("password");
         String token = User.verifyLogin(username, password);
+
         if(token.equals("LoginFailed")) {
             JSONObject details = new JSONObject();
             details.put("message", "Login Failed");
