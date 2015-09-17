@@ -28,11 +28,11 @@ public class UserDAO {
         try {
             connection = getDBConnection();
 
-            PreparedStatement ps = connection.prepareStatement("select id, username from Users where id = ?");
+            PreparedStatement ps = connection.prepareStatement("select userid, username from Users where id = ?");
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                userStore.setId(rs.getInt("id"));
+                userStore.setId(rs.getInt("userid"));
                 userStore.setUsername(rs.getString("username"));
             }
         } catch (SQLException e) {
@@ -60,12 +60,12 @@ public class UserDAO {
         try {
             connection = getDBConnection();
 
-            PreparedStatement ps = connection.prepareStatement("select id, username from users");
+            PreparedStatement ps = connection.prepareStatement("select userid, username from users");
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UserStore user = new UserStore();
-                user.setId(rs.getInt("id"));
+                user.setId(rs.getInt("userid"));
                 user.setUsername(rs.getString("username"));
                 users.add(user);
             }
@@ -93,12 +93,12 @@ public class UserDAO {
 
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select id, username, usergroup from users where usergroup = ?");
+            PreparedStatement ps = connection.prepareStatement("select userid, username, usergroup from users where usergroup = ?");
             ps.setString(1, "unauthorised");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UserStore user = new UserStore();
-                user.setId(rs.getInt("id"));
+                user.setId(rs.getInt("userid"));
                 user.setUsername(rs.getString("username"));
                 //user.setUsergroup(rs.getString("usergroup"));
                 users.add(user);
@@ -143,7 +143,7 @@ public class UserDAO {
 
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT* FROM USERS WHERE username=?");
+            PreparedStatement ps = connection.prepareStatement("SELECT* FROM Users WHERE username=?");
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if(rs != null) {
@@ -151,7 +151,7 @@ public class UserDAO {
                 if (password.equals(passwordUser)) {
                     String randomToken = UUID.randomUUID().toString();
                     randomToken = randomToken.replaceAll("-","");
-                    PreparedStatement ps1 = connection.prepareStatement("UPDATE USERS SET token=? WHERE username=?" );
+                    PreparedStatement ps1 = connection.prepareStatement("UPDATE Users SET token=? WHERE username=?" );
                     ps1.setString(1, randomToken);
                     ps1.setString(2,username);
                     int rs1 = ps1.executeUpdate();
@@ -179,9 +179,9 @@ public class UserDAO {
         connection = getDBConnection();
 
         try {
-                PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where id = ?");
+                PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where userid = ?");
                 ps.setString(1, user_group);
-            ps.setInt(2,user_id);
+                ps.setInt(2,user_id);
                 ps.executeUpdate();
 
         }
@@ -208,7 +208,7 @@ public class UserDAO {
         connection = getDBConnection();
         try {
 
-                PreparedStatement ps = connection.prepareStatement("delete from Users where id = ?");
+                PreparedStatement ps = connection.prepareStatement("delete from Users where userid = ?");
                 ps.setInt(1, user_id);
                 ps.executeUpdate();
 
