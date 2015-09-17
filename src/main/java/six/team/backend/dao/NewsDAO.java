@@ -1,10 +1,9 @@
 package six.team.backend.dao;
 
-
 import six.team.backend.store.CommentStore;
+
 import six.team.backend.store.NewsStore;
 import six.team.backend.store.UserStore;
-
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -95,7 +94,9 @@ public class NewsDAO {
         return true;
     }
 
+
     public NewsStore get(String slug) {
+
         NewsStore newsStore = new NewsStore();
         Connection connection = null;
 
@@ -113,6 +114,13 @@ public class NewsDAO {
                 newsStore.setLastedited(rs.getDate("lastupdated"));
                 newsStore.setDateCreated(rs.getDate("datecreated"));
                 newsStore.setComments(getAllComments(slug));
+
+            PreparedStatement ps = connection.prepareStatement("select id, username from Users where id = ?");
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                //newsStore.setId(rs.getInt("id"));
+               // newsStore.setUsername(rs.getString("username"));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -127,7 +135,6 @@ public class NewsDAO {
             }
 
         }
-
         return newsStore;
     }
 
@@ -151,6 +158,17 @@ public class NewsDAO {
                 news.setLastedited(rs.getDate("lastupdated"));
                 news.setDateCreated(rs.getDate("datecreated"));
                 news.setComments(getAllComments(rs.getString("slug")));
+                allnews.add(news);
+            }
+
+
+            PreparedStatement ps = connection.prepareStatement("select id, username from users");
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                NewsStore news = new NewsStore();
+               // news.setId(rs.getInt("id"));
+               // news.setUsername(rs.getString("username"));
                 allnews.add(news);
             }
 
@@ -187,6 +205,8 @@ public class NewsDAO {
 
         return connection;
     }
+
+
    public boolean titleExists(String title){
        Connection connection = null;
        boolean exists=false;
