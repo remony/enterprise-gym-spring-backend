@@ -15,6 +15,11 @@ public class User {
         return userDAO.list();
     }
 
+    public static LinkedList<UserStore> getAllUnauthorised() {
+        UserDAO userDAO = new UserDAO();
+        return userDAO.unauthorisedList();
+    }
+
     public static String verifyLogin(String username, String password){
         UserDAO userDAO = new UserDAO();
         return userDAO.verifyUser(username,password);
