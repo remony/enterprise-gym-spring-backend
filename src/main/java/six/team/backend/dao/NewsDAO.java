@@ -1,5 +1,6 @@
 package six.team.backend.dao;
 
+
 import six.team.backend.store.CommentStore;
 import six.team.backend.store.NewsStore;
 import six.team.backend.store.UserStore;
@@ -8,10 +9,8 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.UUID;
 
-/**
- * Created by Anna on 17/09/2015.
- */
 public class NewsDAO {
+
 
     public boolean save(NewsStore newsStore) {
         Connection connection = null;

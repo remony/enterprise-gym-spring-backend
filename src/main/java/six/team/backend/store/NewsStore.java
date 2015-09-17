@@ -3,9 +3,7 @@ package six.team.backend.store;
 import java.util.Date;
 import java.util.LinkedList;
 
-/**
- * Created by Anna on 17/09/2015.
- */
+
 public class NewsStore {
     private int id;
     private String title;
@@ -15,6 +13,9 @@ public class NewsStore {
     private Date lastedited;
     private LinkedList<CommentStore> comments;
     private String permission;
+    private String date;
+    private String time;
+    private String lock;
 
 
 
@@ -63,4 +64,9 @@ public class NewsStore {
     public Date getLastedited() {return lastedited;}
 
     public void setLastedited(Date lastedited) {this.lastedited = lastedited;}
+
+
+
+    
+
 }
