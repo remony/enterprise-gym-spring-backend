@@ -1,6 +1,7 @@
 package six.team.backend.dao;
 
 
+import six.team.backend.model.User;
 import six.team.backend.store.UserStore;
 
 
@@ -181,7 +182,7 @@ public class UserDAO {
         try {
                 PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where userid = ?");
                 ps.setString(1, user_group);
-                ps.setInt(2,user_id);
+                ps.setInt(2, user_id);
                 ps.executeUpdate();
 
         }
@@ -202,7 +203,7 @@ public class UserDAO {
     }
 
 
-    public void delete(int user_id)
+    public void deleteUser(int user_id)
     {
         Connection connection;
         connection = getDBConnection();

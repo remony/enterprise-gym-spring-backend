@@ -32,14 +32,15 @@ public class AdminController {
     }
     @RequestMapping(method=RequestMethod.POST, value={"/users"})
     public @ResponseBody boolean approveUser(HttpServletRequest request,HttpServletResponse res) {
-    UserDAO userdao =new UserDAO();
         String approved_id = request.getHeader("approvedId");
         String approved_group = request.getHeader("approvedGroup");
         String approved_status= request.getHeader("approvedStatus");
+        User user = new User();
         if(approved_status.equals("approved")){
-            userdao.approveUser(Integer.parseInt(approved_id),approved_group);
-        }  else
-            userdao.delete(Integer.parseInt(approved_id));
+            user.approve(Integer.parseInt(approved_id),approved_group);
+        }  else{
+
+            user.delete(Integer.parseInt(approved_id));}
         //Send values to the page json generator, this will return the full json which is sent to the client
         //Information about the page may be needed to be collected from the db, this is for discussion
         return true;
