@@ -93,10 +93,9 @@ public class UserDAO {
     private static Connection getDBConnection() {
         Connection connection = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String db = "jdbc:sqlite::resource:database.db";
-            connection = DriverManager.getConnection(db);
-
+            Class.forName("com.mysql.jdbc.Driver");
+            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
+            connection = DriverManager.getConnection(db,"admin","admin");
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -112,22 +111,29 @@ public class UserDAO {
 
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT* FROM USERS WHERE username=?");
-            ps.setString(1,username);
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Users WHERE username = ? limit 1");
+            ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            if(rs != null) {
-                String passwordUser = rs.getString("password");
-                if (password.equals(passwordUser)) {
-                    String randomToken = UUID.randomUUID().toString();
-                    randomToken = randomToken.replaceAll("-","");
-                    PreparedStatement ps1 = connection.prepareStatement("UPDATE USERS SET token=? WHERE username=?" );
-                    ps1.setString(1, randomToken);
-                    ps1.setString(2,username);
-                    int rs1 = ps1.executeUpdate();
-                    System.out.println(rs1);
-                    return randomToken;
+            while (rs.next()) {
+                System.out.println(rs.getString("username"));
+                if(rs != null) {
+                    String passwordUser = rs.getString("password");
+                    if (password.equals(passwordUser)) {
+                        String randomToken = UUID.randomUUID().toString();
+                        randomToken = randomToken.replaceAll("-","");
+                        PreparedStatement ps1 = connection.prepareStatement("UPDATE Users SET token=? WHERE username=?" );
+                        ps1.setString(1, randomToken);
+                        ps1.setString(2,username);
+                        int rs1 = ps1.executeUpdate();
+                        System.out.println(rs1);
+                        return randomToken;
+                    }
                 }
             }
+
+
+
+
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         } finally {
@@ -140,6 +146,6 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
-        return null;
+        return "LoginFailed";
     }
 }

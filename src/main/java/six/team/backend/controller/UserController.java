@@ -1,6 +1,10 @@
 package six.team.backend.controller;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,13 +35,30 @@ public class UserController {
         return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
 
     }
-    //this may be moved to a different controller depending on the request being made
-        @RequestMapping(method = RequestMethod.POST)
-            public @ResponseBody String loginUsers(HttpServletRequest request,HttpServletResponse res) {
-            //this could change to request.getParamter dependent on how data is being sent
-            String username=request.getHeader("username");
-            String password= request.getHeader("password");
-            String token = User.verifyLogin(username,password);
-            return token;
+    @RequestMapping(value ="/login", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
+        String username= request.getHeader("username");
+        String password= request.getHeader("password");
+        String token = User.verifyLogin(username, password);
+
+        if(token.equals("LoginFailed")) {
+            JSONObject details = new JSONObject();
+            details.put("message", "Login Failed");
+            JSONArray array = new JSONArray();
+            array.put(details);
+            JSONObject object = new JSONObject();
+            object.put("user_auth", array);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        }else{
+            JSONObject details = new JSONObject();
+            details.put("username", username);
+            details.put("token:" , token);
+            JSONArray array = new JSONArray();
+            array.put(details);
+            JSONObject object = new JSONObject();
+            object.put("user_auth", array);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         }
+    }
 }
