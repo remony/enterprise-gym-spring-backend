@@ -100,7 +100,7 @@ public class UserDAO {
                 UserStore user = new UserStore();
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
-                user.setUsergroup(rs.getString("usergroup"));
+                //user.setUsergroup(rs.getString("usergroup"));
                 users.add(user);
             }
 
@@ -124,9 +124,9 @@ public class UserDAO {
     private static Connection getDBConnection() {
         Connection connection = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            String db = "jdbc:sqlite::resource:database.db";
-            connection = DriverManager.getConnection(db);
+            Class.forName("com.mysql.jdbc.Driver");
+            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
+            connection = DriverManager.getConnection(db,"admin", "admin");
 
 
         } catch (SQLException e) {
@@ -181,7 +181,7 @@ public class UserDAO {
         try {
                 PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where id = ?");
                 ps.setString(1, user_group);
-                ps.setInt(2,user_id);
+            ps.setInt(2,user_id);
                 ps.executeUpdate();
 
         }
