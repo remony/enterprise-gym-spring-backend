@@ -140,6 +140,6 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
-        return null;
+        return "LoginFailed";
     }
 }
