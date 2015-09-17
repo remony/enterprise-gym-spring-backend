@@ -7,16 +7,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import six.team.backend.PageJsonGen;
 import six.team.backend.model.News;
-import six.team.backend.model.User;
 import six.team.backend.store.CommentStore;
 import six.team.backend.store.NewsStore;
 import six.team.backend.store.PageStore;
-import six.team.backend.store.UserStore;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +29,7 @@ import java.util.LinkedList;
 @RequestMapping("/news")
 public class NewsController {
 
+
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public
     @ResponseBody
@@ -38,8 +39,6 @@ public class NewsController {
         JSONObject object = new JSONObject();
         object.put("allnews", news);
         return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
-
-
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
@@ -127,11 +126,30 @@ public class NewsController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comment/{commentid}", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    ResponseEntity editComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
+    public @ResponseBody ResponseEntity editComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
         boolean success = News.editComment(Integer.parseInt(commentid), request.getHeader("text"));
         return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
     }
 
+
+
+
+    @RequestMapping(method = RequestMethod.POST)
+    public @ResponseBody void addNews() {
+        LinkedList<NewsStore> news = News.getAll();
+        PageJsonGen pageJsonGen = new PageJsonGen();
+        //Send values to the page json generator, this will return the full json which is sent to the client
+        //Information about the page may be needed to be collected from the db, this is for discussion
+        //return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+
+    }
+
+    @RequestMapping(value ="/{id}",method = RequestMethod.POST)
+    public @ResponseBody PageStore printUsers() {
+        PageJsonGen pageJsonGen = new PageJsonGen();
+        //Send values to the page json generator, this will return the full json which is sent to the client
+        //Information about the page may be needed to be collected from the db, this is for discussion
+        //  return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+    }
 }
+
