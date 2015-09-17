@@ -35,9 +35,9 @@ public class UserController {
         return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
 
     }
-    @RequestMapping(value ="/add", method = RequestMethod.POST)
+    @RequestMapping(value ="/login", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> getUsers(HttpServletRequest request,HttpServletResponse res) {
+    ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
         String username=request.getHeader("username");
         String password= request.getHeader("password");
         String token = User.verifyLogin(username, password);
