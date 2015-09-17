@@ -93,7 +93,7 @@ public class UserDAO {
 
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select userid, username, usergroup from users where usergroup = ?");
+            PreparedStatement ps = connection.prepareStatement("select userid, username, usergroup from Users where usergroup = ?");
             ps.setString(1, "unauthorised");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
