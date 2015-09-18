@@ -56,6 +56,7 @@ public class NewsDAO {
 
     }
 
+
     public boolean update(NewsStore newsStore, String slug) {
         Connection connection = null;
         try {
@@ -88,53 +89,17 @@ public class NewsDAO {
     }
 
 
-    public boolean update(NewsStore newsStore) {
-        Connection connection = null;
-        try {
-            connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("update News set title=?,slug=?, text=?, lastupdated=?,permission=? where newsid=?");
-            ps.setString(1, newsStore.getTitle());
-            ps.setString(2, newsStore.getSlug());
-            ps.setString(3, newsStore.getText());
-            java.sql.Date sqlDate = new java.sql.Date(newsStore.getLastedited().getTime());
-            ps.setDate(4, sqlDate);
-            ps.setString(5, newsStore.getPermission());
-            ps.setInt(6, newsStore.getId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            return false;
-        }
-        finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-            }
-        }
 
-        return true;
-    }
-
-    public boolean delete(int newsId) {
+    public boolean delete(String slug) {
 
         Connection connection = null;
 
         try {
             connection = getDBConnection();
-
             PreparedStatement ps = connection.prepareStatement("delete from News where slug=?");
             ps.setString(1, slug);
             ps.executeUpdate();
             deleteComments(slug);
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-
-            PreparedStatement ps = connection.prepareStatement("delete from News where newsid=?");
-            ps.setInt(1, newsId);
-            ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             return false;
@@ -151,14 +116,14 @@ public class NewsDAO {
     }
 
 
-    public NewsStore get(String slug) {
 
+
+    public NewsStore get(String slug) {
         NewsStore newsStore = new NewsStore();
         Connection connection = null;
 
         try {
             connection = getDBConnection();
-
             PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News where slug=?");
             ps.setString(1, slug);
             ResultSet rs = ps.executeQuery();
@@ -244,6 +209,35 @@ public class NewsDAO {
 
         return connection;
     }
+   public boolean titleExists(String title){
+       Connection connection = null;
+       boolean exists=false;
+       try {
+           connection = getDBConnection();
+
+           PreparedStatement ps = connection.prepareStatement("select newsid from News where title=?");
+           ps.setString(1, title);
+           ResultSet rs = ps.executeQuery();
+           if (rs != null)
+              exists=true;
+           else
+               exists=false;
+
+       } catch (SQLException e) {
+           System.err.println(e.getMessage());
+       } finally {
+           try {
+               if (connection != null) {
+                   connection.close();
+               }
+           } catch (SQLException e) {
+               //failed to close connection
+               System.err.println(e.getMessage());
+           }
+
+       }
+       return exists;
+   }
 
 
    public boolean titleExists(String title){

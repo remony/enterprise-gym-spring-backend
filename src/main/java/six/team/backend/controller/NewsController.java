@@ -54,12 +54,12 @@ public class NewsController {
     }
 
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    ResponseEntity<String> getNews(@PathVariable(value = "slug") String slug) {
+    @
+
+    @RequestMapping(value = "/{slug}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> getNews(@PathVariable(value="slug") String slug) {
         NewsStore news = News.get(slug);
-        if (news == null) {
+        if(news==null){
             return new ResponseEntity<String>("There is no news with that id", HttpStatus.NOT_FOUND);
         }
         JSONObject object = new JSONObject();
@@ -70,12 +70,13 @@ public class NewsController {
     }
 
 
+
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}", method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity<String> updateUser(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "slug") String slug) {
         boolean success = News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
-        if (success)
+        if(success)
             return new ResponseEntity<String>("The news was edited succesfully", HttpStatus.OK);
         else
             return new ResponseEntity<String>("News Cant be edited", HttpStatus.valueOf(501));
@@ -86,7 +87,7 @@ public class NewsController {
     @ResponseBody
     ResponseEntity deleteUser(@PathVariable(value = "slug") String slug) {
         boolean success = News.delete(slug);
-        if (success)
+        if(success)
             return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
         else
             return new ResponseEntity<String>("News Cant be deleted", HttpStatus.valueOf(501));
@@ -142,15 +143,4 @@ public class NewsController {
 
     }
 
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public
-    @ResponseBody
-    void updateUser(@PathVariable(value = "id") String id) {
-        News.delete(Integer.parseInt(id));
-        PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-        //Information about the page may be needed to be collected from the db, this is for discussion
-
-    }
 }
