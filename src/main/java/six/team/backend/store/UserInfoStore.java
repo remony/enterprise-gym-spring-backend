@@ -1,10 +1,13 @@
 package six.team.backend.store;
+import java.sql.Date;
 
 /**
  * Created by Christopher on 17/09/2015.
  */
 public class UserInfoStore {
-    private int id, yearOfStudy;
+    private int id;
+    private int yearOfStudy;
+    private int mobile;
     private String username;
     private String gender;
     private String contactNo;
@@ -17,7 +20,24 @@ public class UserInfoStore {
     private String status;
     private String degreeSubject;
     private String userGroup;
-    private boolean young_e_s;
+    private Date regDate;
+    private int young_e_s;
+
+    public int getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(int mobile) {
+        this.mobile = mobile;
+    }
+
+    public Date getRegDate() {
+        return regDate;
+    }
+
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
+    }
 
     public String getGender() {
         return gender;
@@ -27,11 +47,11 @@ public class UserInfoStore {
         this.gender = gender;
     }
 
-    public boolean isYoung_e_s() {
+    public int isYoung_e_s() {
         return young_e_s;
     }
 
-    public void setYoung_e_s(boolean young_e_s) {
+    public void setYoung_e_s(int young_e_s) {
         this.young_e_s = young_e_s;
     }
 

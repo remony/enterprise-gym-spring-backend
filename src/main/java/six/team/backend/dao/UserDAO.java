@@ -1,6 +1,7 @@
 package six.team.backend.dao;
 
 
+
 import six.team.backend.model.User;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
@@ -109,7 +110,7 @@ public class UserDAO {
 
 
 
-    public UserStore get(int userId) {
+    /*public UserStore get(int userId) {
         UserStore userStore = new UserStore();
         Connection connection = null;
 
@@ -138,18 +139,19 @@ public class UserDAO {
         }
 
         return userStore;
-    }
+    }*/
 
-    public UserInfoStore getUserInfo(int userId) {
+    /*public UserInfoStore getUserInfo (String userName) {
         UserInfoStore userInfoStore = new UserInfoStore();
         Connection connection = null;
 
         try {
             connection = getDBConnection();
 
-            PreparedStatement ps = connection.prepareStatement("select userid, username, firstname, lastname, gender, email, contactnumber, country, university, " +
-                    "status, subject, year, matricnumber, usergroup from Users where id = ?");
-            ps.setInt(1, userId);
+            PreparedStatement ps = connection.prepareStatement("select userid, firstname, lastname, gender, email, contactnumber, country, university," +
+                    " status, subject, year, matricnumber, usergroup, young_es, activated, registration_date from Users where username = ?");
+
+            ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 userInfoStore.setId(rs.getInt("userid"));
@@ -165,6 +167,10 @@ public class UserDAO {
                 userInfoStore.setMmtricNo(rs.getString("matricNo"));
                 userInfoStore.setUserGroup(rs.getString("userGroup"));
                 userInfoStore.setGender(rs.getString("gender"));
+                userInfoStore.setMobile(rs.getInt("mobile"));
+                userInfoStore.setRegDate(rs.getDate("registration_date"));
+                userInfoStore.setActivated(rs.getInt(Integer.parseInt("activated")));
+                userInfoStore.setYoung_e_s(rs.getInt(Integer.parseInt("young_es")));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -181,10 +187,10 @@ public class UserDAO {
         }
 
         return userInfoStore;
-    }
+    }*/
 
 
-    public LinkedList<UserStore> list(){
+    /*public LinkedList<UserStore> list(){
         LinkedList<UserStore> users = new LinkedList<UserStore>();
         Connection connection = null;
 
@@ -199,6 +205,55 @@ public class UserDAO {
                 user.setId(rs.getInt("userid"));
                 user.setUsername(rs.getString("username"));
                 users.add(user);
+            }
+
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+
+        }
+        return users;
+    }*/
+
+    public LinkedList<UserInfoStore> list(){
+        LinkedList<UserInfoStore> users = new LinkedList<UserInfoStore>();
+        Connection connection = null;
+
+        try {
+            connection = getDBConnection();
+
+            PreparedStatement ps = connection.prepareStatement("select userid, username, firstname, lastname, gender, email, contactnumber, country, university," +
+                    " status, subject, year, matricnumber, usergroup, young_es, mobile, registration_date from Users");
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                UserInfoStore userInfoStore = new UserInfoStore();
+                userInfoStore.setId(rs.getInt("userid"));
+                userInfoStore.setUsername(rs.getString("username"));
+                userInfoStore.setFirstName(rs.getString("firstname"));
+                userInfoStore.setLastName(rs.getString("lastname"));
+                userInfoStore.setEmail(rs.getString("email"));
+                userInfoStore.setCountry(rs.getString("country"));
+                userInfoStore.setUniversity(rs.getString("university"));
+                userInfoStore.setStatus(rs.getString("status"));
+                userInfoStore.setDegreeSubject(rs.getString("subject"));
+                userInfoStore.setYearOfStudy(rs.getInt("year"));
+                userInfoStore.setMmtricNo(rs.getString("matricnumber"));
+                userInfoStore.setUserGroup(rs.getString("usergroup"));
+                userInfoStore.setGender(rs.getString("gender"));
+                userInfoStore.setMobile(rs.getInt("mobile"));
+                userInfoStore.setRegDate(rs.getDate("registration_date"));
+                userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
+                users.add(userInfoStore);
             }
 
 

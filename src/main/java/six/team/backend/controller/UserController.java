@@ -14,6 +14,7 @@ import six.team.backend.PageJsonGen;
 import six.team.backend.model.User;
 import six.team.backend.store.PageStore;
 import six.team.backend.store.UserLoginStore;
+import six.team.backend.store.UserInfoStore;
 import six.team.backend.store.UserStore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,16 +27,17 @@ import java.util.LinkedList;
 public class UserController {
     private final static Logger logger = Logger.getLogger(UserController.class);
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
-    public @ResponseBody PageStore printUsers() {
-        LinkedList<UserStore> users = User.getAll();
 
-        PageJsonGen pageJsonGen = new PageJsonGen();
+    @RequestMapping(method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<LinkedList<UserInfoStore>> printUsers() {
+        LinkedList<UserInfoStore> users = User.getAll();
+
+//        PageJsonGen pageJsonGen = new PageJsonGen();
         //Send values to the page json generator, this will return the full json which is sent to the client
 
         //Information about the page may be needed to be collected from the db, this is for discussion
-        return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
-
+//        return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
+        return new ResponseEntity<LinkedList<UserInfoStore>>(users, HttpStatus.OK);
     }
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/login", method = RequestMethod.POST)
     public @ResponseBody

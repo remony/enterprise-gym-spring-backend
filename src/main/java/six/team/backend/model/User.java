@@ -1,17 +1,14 @@
 package six.team.backend.model;
 
+import java.util.LinkedList;
 import six.team.backend.dao.UserDAO;
 import six.team.backend.store.UserLoginStore;
+import six.team.backend.store.UserInfoStore;
 import six.team.backend.store.UserStore;
 
-import java.util.LinkedList;
-
-/**
- * Created by remon on 14/09/2015.
- */
 public class User {
 
-    public static LinkedList<UserStore> getAll() {
+    public static LinkedList<UserInfoStore> getAll() {
         UserDAO userDAO = new UserDAO();
         return userDAO.list();
     }
