@@ -16,18 +16,18 @@ public class News {
         return newsDAO.list();
     }
 
-    public static NewsStore get(int newsId) {
+    public static NewsStore get(String slug) {
         NewsDAO newsDAO = new NewsDAO();
-        return newsDAO.get(newsId);
+        return newsDAO.get(slug);
     }
 
-    public static boolean delete(int newsId){
+    public static boolean delete(String slug){
         NewsDAO newsDAO = new NewsDAO();
-        return newsDAO.delete(newsId);
+        return newsDAO.delete(slug);
 
     }
 
-    public static boolean update(int userId,String title, String text, String permission){
+    public static boolean update(String slug,String title, String text, String permission){
         NewsDAO newsDAO = new NewsDAO();
         NewsStore news = new NewsStore();
         Date date=new Date();
@@ -36,7 +36,7 @@ public class News {
         news.setText(text);
         news.setPermission(permission);
         news.setSlug(generateSlug(title));
-        return newsDAO.update(news);
+        return newsDAO.update(news,slug);
     }
     public static boolean save(String title, String text, String permission){
         NewsDAO newsDAO = new NewsDAO();
@@ -59,4 +59,11 @@ public class News {
         slug = slug.substring(0, slug.length()-1);
         return slug.toLowerCase();
     }
+    public static boolean checkValitity(String title)
+    {
+        NewsDAO newsDAO = new NewsDAO();
+        return newsDAO.titleExists(title);
+
+    }
+
 }

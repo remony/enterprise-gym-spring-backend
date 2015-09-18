@@ -39,18 +39,25 @@ public class NewsController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addNews(HttpServletRequest request,HttpServletResponse response) {
-        boolean success;
-        success=News.save(request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"));
-        if(success)
-         return new ResponseEntity<String>("", HttpStatus.valueOf(201));
-        else
-            return new ResponseEntity<String>("", HttpStatus.valueOf(401));
+        boolean success,exists;
+        exists = News.checkValitity(request.getHeader("title"));
+        if(exists)
+        {
+            return new ResponseEntity<String>("title exists", HttpStatus.valueOf(409));
+        }
+        else {
+            success = News.save(request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
+            if (success)
+                return new ResponseEntity<String>("", HttpStatus.valueOf(201));
+            else
+                return new ResponseEntity<String>("", HttpStatus.valueOf(401));
+        }
 
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> getNews(@PathVariable(value="id") String id) {
-        NewsStore news = News.get(Integer.parseInt(id));
+    @RequestMapping(value = "/{slug}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> getNews(@PathVariable(value="slug") String slug) {
+        NewsStore news = News.get(slug);
         if(news==null){
             return new ResponseEntity<String>("There is no news with that id", HttpStatus.NOT_FOUND);
         }
@@ -61,18 +68,18 @@ public class NewsController {
 
     }
 
-    @RequestMapping(value ="/{id}",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "id") String id ){
-        boolean success=News.update(Integer.parseInt(id),request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"));
+    @RequestMapping(value ="/{slug}",method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug ){
+        boolean success=News.update(slug,request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"));
         if(success)
             return new ResponseEntity<String>("The news was edited succesfully", HttpStatus.OK);
         else
             return new ResponseEntity<String>("News Cant be edited", HttpStatus.valueOf(501));
     }
 
-    @RequestMapping(value ="/{id}",method = RequestMethod.DELETE)
-    public @ResponseBody ResponseEntity updateUser(@PathVariable(value = "id") String id ){
-        boolean success=News.delete(Integer.parseInt(id));
+    @RequestMapping(value ="/{slug}",method = RequestMethod.DELETE)
+    public @ResponseBody ResponseEntity deleteUser(@PathVariable(value = "slug") String slug ){
+        boolean success=News.delete(slug);
         if(success)
             return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
         else
