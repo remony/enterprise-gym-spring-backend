@@ -38,21 +38,15 @@ public class NewsController {
         return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public
-    @ResponseBody
-    ResponseEntity<String> addNews(HttpServletRequest request, HttpServletResponse response) {
-        boolean success, exists;
-        exists = News.checkValidity(request.getHeader("title"));
-        if (exists) {
-            return new ResponseEntity<String>("title exists", HttpStatus.valueOf(409));
-        } else {
-            success = News.save(request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
-            if (success)
-                return new ResponseEntity<String>("", HttpStatus.valueOf(201));
-            else
-                return new ResponseEntity<String>("", HttpStatus.valueOf(401));
-        }
+    @
+
+    @RequestMapping(method = RequestMethod.POST)
+    public @ResponseBody PageStore addNews(HttpServletRequest request,HttpServletResponse response) {
+        LinkedList<NewsStore> news = News.save(request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"),request.getHeader("category"));
+        PageJsonGen pageJsonGen = new PageJsonGen();
+        //Send values to the page json generator, this will return the full json which is sent to the client
+        //Information about the page may be needed to be collected from the db, this is for discussion
+        return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
 
     }
 
