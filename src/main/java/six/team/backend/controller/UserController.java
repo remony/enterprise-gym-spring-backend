@@ -49,7 +49,7 @@ public class UserController {
             array.put(details);
             JSONObject object = new JSONObject();
             object.put("user_auth", array);
-            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.UNAUTHORIZED);
         }else{
             JSONObject details = new JSONObject();
             details.put("username", username);
