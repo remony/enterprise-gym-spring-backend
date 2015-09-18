@@ -26,17 +26,20 @@ public class UserDAO {
         try {
             connection = getDBConnection();
 
+            // get a resuls set with all usernames
             PreparedStatement psUsernameChecker = connection.prepareStatement("select * from Users where username = ?");
             psUsernameChecker.setString(1, userStore.getUsername());
             ResultSet rsUsernameChecker = psUsernameChecker.executeQuery();
 
+            // get a resuls set with all emails
             PreparedStatement psEmailChecker = connection.prepareStatement("select * from Users where email = ?");
-            psEmailChecker.setString(1, userStore.getUsername());
+            psEmailChecker.setString(1, userStore.getEmail());
             ResultSet rsEmailChecker = psEmailChecker.executeQuery();
 
             Boolean usernameExists = false;
             Boolean emailExists = false;
 
+            // check if the username or the email have been already used
             while (rsUsernameChecker.next()) {
                 if (rsUsernameChecker.getString("username").equals(userStore.getUsername())) {
                     usernameExists = true;
