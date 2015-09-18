@@ -15,9 +15,9 @@ public class NewsStore {
     private Date lastedited;
     private LinkedList<CommentStore> comments;
     private String permission;
-    private CommentStore comments;
     private String lock;
     private String category;
+
 
 
     public int getId() {
@@ -65,7 +65,6 @@ public class NewsStore {
     public Date getLastedited() {return lastedited;}
 
     public void setLastedited(Date lastedited) {this.lastedited = lastedited;}
-
 
     public void setCategory(String category) {this.category = category;}
 

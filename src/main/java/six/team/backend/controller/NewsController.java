@@ -41,14 +41,18 @@ public class NewsController {
     @
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody PageStore addNews(HttpServletRequest request,HttpServletResponse response) {
-        LinkedList<NewsStore> news = News.save(request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"),request.getHeader("category"));
-        PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-        //Information about the page may be needed to be collected from the db, this is for discussion
-        return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+    public
+    @ResponseBody
+    ResponseEntity<String> addNews(HttpServletRequest request, HttpServletResponse response) {
+        boolean success;
+        success = News.save(request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
+        if (success)
+            return new ResponseEntity<String>("", HttpStatus.valueOf(201));
+        else
+            return new ResponseEntity<String>("", HttpStatus.valueOf(401));
 
     }
+
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}", method = RequestMethod.GET)
     public
@@ -64,6 +68,7 @@ public class NewsController {
 
 
     }
+
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}", method = RequestMethod.POST)
     public
@@ -117,16 +122,18 @@ public class NewsController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comment/{commentid}", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity editComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
+    public
+    @ResponseBody
+    ResponseEntity editComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
         boolean success = News.editComment(Integer.parseInt(commentid), request.getHeader("text"));
         return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
     }
 
 
-
-
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody PageStore addNews() {
+    public
+    @ResponseBody
+    PageStore addNews() {
         LinkedList<NewsStore> news = News.getAll();
         PageJsonGen pageJsonGen = new PageJsonGen();
         //Send values to the page json generator, this will return the full json which is sent to the client
@@ -136,9 +143,10 @@ public class NewsController {
     }
 
 
-
-    @RequestMapping(value ="/{id}",method = RequestMethod.DELETE)
-    public @ResponseBody void updateUser(@PathVariable(value = "id") String id ){
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    void updateUser(@PathVariable(value = "id") String id) {
         News.delete(Integer.parseInt(id));
         PageJsonGen pageJsonGen = new PageJsonGen();
         //Send values to the page json generator, this will return the full json which is sent to the client
@@ -146,4 +154,3 @@ public class NewsController {
 
     }
 }
-

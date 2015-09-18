@@ -1,16 +1,12 @@
 package six.team.backend.dao;
 
 import six.team.backend.store.CommentStore;
-
 import six.team.backend.store.NewsStore;
-import six.team.backend.store.UserStore;
 import java.sql.*;
 import java.util.LinkedList;
-import java.util.UUID;
 
 public class NewsDAO {
 
-<<<<<<< HEAD
 
     public boolean save(NewsStore newsStore) {
         Connection connection = null;
@@ -28,21 +24,25 @@ public class NewsDAO {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             return false;
-=======
-    public void save(NewsStore newsStore) {
-        Connection connection = null;
 
+
+    public boolean save(NewsStore newsStore) {
+        Connection connection = null;
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("insert into News (title, text, date) values (?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("insert into News (title,slug, text, datecreated,lastupdated,permission) values (?,?,?,?,?,?)");
+            java.sql.Date sqlDate = new java.sql.Date(newsStore.getDateCreated().getTime());
             ps.setString(1, newsStore.getTitle());
-            ps.setString(2, newsStore.getText());
-            java.sql.Date sqlDate = new java.sql.Date(newsStore.getDate().getTime());
-            ps.setDate(2, sqlDate);
-             ps.executeUpdate();
+            ps.setString(2, newsStore.getSlug());
+            ps.setString(3, newsStore.getText());
+            ps.setDate(4, sqlDate);
+            ps.setDate(5, sqlDate);
+            ps.setString(6, newsStore.getPermission());
+            ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
->>>>>>> Still have things to change but news store and comment store added some changes to news dao and news controller
+            return false;
+
         } finally {
             try {
                 if (connection != null) {
@@ -51,13 +51,12 @@ public class NewsDAO {
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
-<<<<<<< HEAD
         }
         return true;
 
     }
 
-    public boolean update(NewsStore newsStore,String slug) {
+    public boolean update(NewsStore newsStore, String slug) {
         Connection connection = null;
         try {
             connection = getDBConnection();
@@ -82,22 +81,45 @@ public class NewsDAO {
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
-        }
-=======
 
         }
+        return true;
 
     }
 
-    public void update(int newsId,String title,String text) {
->>>>>>> Still have things to change but news store and comment store added some changes to news dao and news controller
+
+    public boolean update(NewsStore newsStore) {
+        Connection connection = null;
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("update News set title=?,slug=?, text=?, lastupdated=?,permission=? where newsid=?");
+            ps.setString(1, newsStore.getTitle());
+            ps.setString(2, newsStore.getSlug());
+            ps.setString(3, newsStore.getText());
+            java.sql.Date sqlDate = new java.sql.Date(newsStore.getLastedited().getTime());
+            ps.setDate(4, sqlDate);
+            ps.setString(5, newsStore.getPermission());
+            ps.setInt(6, newsStore.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+        finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            }
+        }
 
         return true;
     }
-<<<<<<< HEAD
 
-    public boolean delete(String slug) {
-    public void delete(int newsId) {
+    public boolean delete(int newsId) {
+
         Connection connection = null;
 
         try {
@@ -115,6 +137,7 @@ public class NewsDAO {
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            return false;
         } finally {
             try {
                 if (connection != null) {
@@ -123,7 +146,6 @@ public class NewsDAO {
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
-        }
 
         return true;
     }
@@ -136,6 +158,7 @@ public class NewsDAO {
 
         try {
             connection = getDBConnection();
+
             PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News where slug=?");
             ps.setString(1, slug);
             ResultSet rs = ps.executeQuery();
@@ -147,13 +170,7 @@ public class NewsDAO {
                 newsStore.setSlug(rs.getString("slug"));
                 newsStore.setLastedited(rs.getDate("lastupdated"));
                 newsStore.setDateCreated(rs.getDate("datecreated"));
-                newsStore.setComments(getAllComments(slug));
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                newsStore.setId(rs.getInt("newsid"));
-                newsStore.setTitle(rs.getString("title"));
-                newsStore.setText(rs.getString("title"));
-               // newsStore.setDate(rs.getDate("date"));
+
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -178,6 +195,7 @@ public class NewsDAO {
 
         try {
             connection = getDBConnection();
+
             PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
