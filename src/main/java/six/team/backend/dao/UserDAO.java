@@ -4,17 +4,14 @@ package six.team.backend.dao;
 import six.team.backend.model.User;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
-
-
 import java.security.SecureRandom;
 import java.sql.*;
+import java.sql.Date;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Random;
-import java.util.UUID;
-import java.util.Date;
-
+import java.util.*;
+//import java.util.Date;
+//import java.sql.Date;
 
 public class UserDAO {
 
@@ -55,11 +52,10 @@ public class UserDAO {
             if (!usernameExists && !emailExists) {
 
                 // not in the DB yet - , activated, token, registration_date
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, year, matricnumber, young_es, usergroup, mobile) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, year, matricnumber, young_es, usergroup, mobile, token, registration_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?) ");
 
-                Date d1 = new Date();
-                SimpleDateFormat df = new SimpleDateFormat("MM/dd/YYYY HH:mm a");
-                String formattedDate = df.format(d1);
+                // for the timestamp
+                Calendar cal = Calendar.getInstance();
 
                 ps.setString(1, userStore.getUsername());
                 ps.setString(2, userStore.getPassword());
@@ -80,9 +76,8 @@ public class UserDAO {
                 ps.setString(15, "Students");
 
                 ps.setString(16, userStore.getMobile());
-                //ps.setInt(17, 0);      // activated: 0 for false when registering
-                //ps.setString(18, "testToken");
-                //ps.setString(19, formattedDate);
+                ps.setString(17, "testToken");
+                ps.setTimestamp(18, (new java.sql.Timestamp(cal.getTimeInMillis())) );
 
                 ps.executeUpdate();
             }
