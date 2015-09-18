@@ -19,13 +19,13 @@ public class User {
         UserDAO userDAO = new UserDAO();
         return userDAO.unauthorisedList();
     }
-    public static void approve(int userid, String usergroup) {
+    public static boolean approve(int userid, String usergroup) {
         UserDAO userDAO = new UserDAO();
-        userDAO.approveUser(userid,usergroup);
+        return userDAO.approveUser(userid,usergroup);
     }
-    public static void delete(int userid) {
+    public static boolean delete(int userid) {
         UserDAO userDAO = new UserDAO();
-        userDAO.deleteUser(userid);
+        return userDAO.deleteUser(userid);
     }
 
     public static String verifyLogin(String username, String password){

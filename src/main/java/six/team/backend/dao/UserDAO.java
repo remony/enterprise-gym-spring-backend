@@ -160,6 +160,7 @@ public class UserDAO {
                     return randomToken;
                 }
             }
+
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         } finally {
@@ -175,19 +176,21 @@ public class UserDAO {
         return null;
     }
 
-    public void approveUser(int user_id,String user_group){
+    public boolean approveUser(int user_id,String user_group){
         Connection connection;
         connection = getDBConnection();
 
         try {
+
                 PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where userid = ?");
                 ps.setString(1, user_group);
                 ps.setInt(2, user_id);
                 ps.executeUpdate();
-
+                return true;
         }
         catch(SQLException e){
-
+            System.out.print(e.getMessage());
+            return false;
         }
         finally {
             try {
@@ -203,7 +206,7 @@ public class UserDAO {
     }
 
 
-    public void deleteUser(int user_id)
+    public boolean deleteUser(int user_id)
     {
         Connection connection;
         connection = getDBConnection();
@@ -212,11 +215,12 @@ public class UserDAO {
                 PreparedStatement ps = connection.prepareStatement("delete from Users where userid = ?");
                 ps.setInt(1, user_id);
                 ps.executeUpdate();
+            return true;
 
         }
         catch(SQLException e){
             System.out.print(e.getMessage());
-            e.printStackTrace();
+            return false;
         }
         finally {
             try {
