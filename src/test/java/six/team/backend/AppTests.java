@@ -9,12 +9,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import six.team.backend.dao.UserDAO;
+import six.team.backend.store.UserStore;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -35,12 +40,14 @@ public class AppTests {
         this.mockMvc = webAppContextSetup(this.wac).build();
     }
 
+    /*
     @Test
     public void simple() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("hello"));
     }
+
 
     private static Connection getDBConnection() {
         Connection connection = null;
@@ -58,24 +65,49 @@ public class AppTests {
 
         return connection;
     }
+*/
+
+    // requires a SPIKE - does not work ("Caused by: java.lang.ClassNotFoundException: javax.servlet.SessionCookieConfig")
 
     @Test
     public void insertNewUser() {
 
-        Connection connection = null;
-        connection = getDBConnection();
+        //Connection connection = null;
+        //connection = getDBConnection();
 
         try {
-            PreparedStatement psUsernameChecker = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, year, matricnumber, young_es, usergroup, mobile, activated, token, registration_date) VALUES ('billgates', 'baguettes', 'Bill', 'Gates', 'm', 'bgates@ms.com', '123456', 'UK', 'UoD', 'Undergraduate', 'CompSci', 2015, '123123', 'ES1', 'Students', '077123456', '0', 'token1', '01/01/2015 00:01')");
+            Calendar cal = Calendar.getInstance();
 
-            // fetch in a result set and count if the results match
+            UserStore mockup = new UserStore();
+            mockup.setUsername("billgates");
+            mockup.setPassword("baguettes");
+            mockup.setFirstname("Bill");
+            mockup.setLastname("Gates");
+            mockup.setGender("m");
+            mockup.setEmail("bgates@ms.com");
+            mockup.setContactnumber("123456");
+            mockup.setCountry("UK");
+            mockup.setUniversity("UoD");
+            mockup.setStatus("Undergraduate");
+            mockup.setSubject("CompSci");
+            mockup.setYear(2015);
+            mockup.setMatricnumber("123123");
+            mockup.setYoung_es(1);
+            mockup.setUsergroup("user");
+            mockup.setMobile("077123456");
+            mockup.setToken("someToken");
+            mockup.setRegistration_date(new java.sql.Timestamp(cal.getTimeInMillis()));
+
+            UserDAO userDAO = new UserDAO();
+
+            assertTrue(userDAO.Save(mockup));
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
             // do something appropriate with the exception, *at least*:
             e.printStackTrace();
         }
-
     }
+
 
 }

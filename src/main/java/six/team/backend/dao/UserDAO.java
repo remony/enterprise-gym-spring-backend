@@ -80,10 +80,13 @@ public class UserDAO {
                 ps.setTimestamp(18, (new java.sql.Timestamp(cal.getTimeInMillis())) );
 
                 ps.executeUpdate();
-            }
+                return true;
+            } else
+                return false;
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            return false;
         } finally {
             try {
                 if (connection != null) {
@@ -94,7 +97,6 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
-        return true;
     }
 
 
