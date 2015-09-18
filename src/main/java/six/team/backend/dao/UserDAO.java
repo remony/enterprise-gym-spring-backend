@@ -147,17 +147,19 @@ public class UserDAO {
             PreparedStatement ps = connection.prepareStatement("SELECT* FROM Users WHERE username=?");
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            if(rs != null) {
-                String passwordUser = rs.getString("password");
-                if (password.equals(passwordUser)) {
-                    String randomToken = UUID.randomUUID().toString();
-                    randomToken = randomToken.replaceAll("-","");
-                    PreparedStatement ps1 = connection.prepareStatement("UPDATE Users SET token=? WHERE username=?" );
-                    ps1.setString(1, randomToken);
-                    ps1.setString(2,username);
-                    int rs1 = ps1.executeUpdate();
-                    System.out.println(rs1);
-                    return randomToken;
+            while(rs.next()) {
+                if (rs != null) {
+                    String passwordUser = rs.getString("password");
+                    if (password.equals(passwordUser)) {
+                        String randomToken = UUID.randomUUID().toString();
+                        randomToken = randomToken.replaceAll("-", "");
+                        PreparedStatement ps1 = connection.prepareStatement("UPDATE Users SET token=? WHERE username=?");
+                        ps1.setString(1, randomToken);
+                        ps1.setString(2, username);
+                        int rs1 = ps1.executeUpdate();
+                        System.out.println(rs1);
+                        return randomToken;
+                    }
                 }
             }
 
