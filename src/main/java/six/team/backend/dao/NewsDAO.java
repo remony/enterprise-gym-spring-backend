@@ -12,19 +12,22 @@ import java.util.UUID;
  */
 public class NewsDAO {
 
-    public void save(NewsStore newsStore) {
+    public boolean save(NewsStore newsStore) {
         Connection connection = null;
-
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("insert into News (title, text, date) values (?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("insert into News (title,slug, text, datecreated,lastupdated,permission) values (?,?,?,?,?,?)");
+            java.sql.Date sqlDate = new java.sql.Date(newsStore.getDateCreated().getTime());
             ps.setString(1, newsStore.getTitle());
-            ps.setString(2, newsStore.getText());
-            java.sql.Date sqlDate = new java.sql.Date(newsStore.getDate().getTime());
-            ps.setDate(2, sqlDate);
-             ps.executeUpdate();
+            ps.setString(2, newsStore.getSlug());
+            ps.setString(3, newsStore.getText());
+            ps.setDate(4, sqlDate);
+            ps.setDate(5, sqlDate);
+            ps.setString(6, newsStore.getPermission());
+            ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            return false;
         } finally {
             try {
                 if (connection != null) {
@@ -33,15 +36,42 @@ public class NewsDAO {
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
+        }
+        return true;
 
+    }
+
+    public boolean update(NewsStore newsStore) {
+        Connection connection = null;
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("update News set title=?,slug=?, text=?, lastupdated=?,permission=? where newsid=?");
+            ps.setString(1, newsStore.getTitle());
+            ps.setString(2, newsStore.getSlug());
+            ps.setString(3, newsStore.getText());
+            java.sql.Date sqlDate = new java.sql.Date(newsStore.getLastedited().getTime());
+            ps.setDate(4, sqlDate);
+            ps.setString(5, newsStore.getPermission());
+            ps.setInt(6, newsStore.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+        finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
+        return true;
     }
 
-    public void update(int newsId,String title,String text) {
-
-    }
-    public void delete(int newsId) {
+    public boolean delete(int newsId) {
         Connection connection = null;
 
         try {
@@ -51,6 +81,7 @@ public class NewsDAO {
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            return false;
         } finally {
             try {
                 if (connection != null) {
@@ -60,6 +91,7 @@ public class NewsDAO {
                 System.err.println(e.getMessage());
             }
         }
+        return true;
     }
 
     public NewsStore get(int newsId) {
@@ -68,14 +100,17 @@ public class NewsDAO {
 
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select newsid, title, text, date from News where newsid = ?");
+            PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News where newsid=?");
             ps.setInt(1, newsId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 newsStore.setId(rs.getInt("newsid"));
                 newsStore.setTitle(rs.getString("title"));
-                newsStore.setText(rs.getString("title"));
-               // newsStore.setDate(rs.getDate("date"));
+                newsStore.setText(rs.getString("text"));
+                newsStore.setPermission(rs.getString("permission"));
+                newsStore.setSlug(rs.getString("slug"));
+                newsStore.setLastedited(rs.getDate("lastupdated"));
+                newsStore.setDateCreated(rs.getDate("datecreated"));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -102,17 +137,19 @@ public class NewsDAO {
         try {
             connection = getDBConnection();
 
-            PreparedStatement ps = connection.prepareStatement("select newsid, title, text, date from news");
+            PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 NewsStore news = new NewsStore();
                 news.setId(rs.getInt("newsid"));
                 news.setTitle(rs.getString("title"));
                 news.setText(rs.getString("text"));
-            //    news.setDate(rs.getString("date"));
+                news.setPermission(rs.getString("permission"));
+                news.setSlug(rs.getString("slug"));
+                news.setLastedited(rs.getDate("lastupdated"));
+                news.setDateCreated(rs.getDate("datecreated"));
                 allnews.add(news);
             }
-
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());

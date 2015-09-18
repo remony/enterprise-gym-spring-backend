@@ -15,7 +15,7 @@ public class NewsStore {
     private Date lastedited;
     private LinkedList<CommentStore> comments;
     private String permission;
-    private String category;
+
 
 
     public int getId() {
@@ -55,10 +55,6 @@ public class NewsStore {
     public void setPermission(String permission) {
         this.permission = permission;
     }
-
-    public String getCategory() {return category;}
-
-    public void setCategory(String category) {this.category = category;}
 
     public String getSlug() {return slug;}
 

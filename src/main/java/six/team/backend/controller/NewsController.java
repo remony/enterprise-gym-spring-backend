@@ -31,49 +31,51 @@ public class NewsController {
         LinkedList<NewsStore> news = News.getAll();
         PageJsonGen pageJsonGen = new PageJsonGen();
         JSONObject object = new JSONObject();
-        object.put("unauthorisedusers", news);
+        object.put("allnews", news);
         return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
 
 
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody PageStore addNews(HttpServletRequest request,HttpServletResponse response) {
-        LinkedList<NewsStore> news = News.save(request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"),request.getHeader("category"));
-        PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-        //Information about the page may be needed to be collected from the db, this is for discussion
-        return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+    public @ResponseBody ResponseEntity<String> addNews(HttpServletRequest request,HttpServletResponse response) {
+        boolean success;
+        success=News.save(request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"));
+        if(success)
+         return new ResponseEntity<String>("", HttpStatus.valueOf(201));
+        else
+            return new ResponseEntity<String>("", HttpStatus.valueOf(401));
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, value={"{/id}"})
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getNews(@PathVariable(value="id") String id) {
         NewsStore news = News.get(Integer.parseInt(id));
         if(news==null){
             return new ResponseEntity<String>("There is no news with that id", HttpStatus.NOT_FOUND);
         }
-        PageJsonGen pageJsonGen = new PageJsonGen();
         JSONObject object = new JSONObject();
         object.put("newsid", news);
         return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
 
 
     }
+
     @RequestMapping(value ="/{id}",method = RequestMethod.POST)
-    public @ResponseBody void updateUser(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "id") String id ){
-        News.update(Integer.parseInt(id),request.getHeader("title"),request.getHeader("text"));
-        PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-        //Information about the page may be needed to be collected from the db, this is for discussion
-      // return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "id") String id ){
+        boolean success=News.update(Integer.parseInt(id),request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"));
+        if(success)
+            return new ResponseEntity<String>("The news was edited succesfully", HttpStatus.OK);
+        else
+            return new ResponseEntity<String>("News Cant be edited", HttpStatus.valueOf(501));
     }
+
     @RequestMapping(value ="/{id}",method = RequestMethod.DELETE)
-    public @ResponseBody void updateUser(@PathVariable(value = "id") String id ){
-        News.delete(Integer.parseInt(id));
-        PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-        //Information about the page may be needed to be collected from the db, this is for discussion
-        // return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+    public @ResponseBody ResponseEntity updateUser(@PathVariable(value = "id") String id ){
+        boolean success=News.delete(Integer.parseInt(id));
+        if(success)
+            return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
+        else
+            return new ResponseEntity<String>("News Cant be deleted", HttpStatus.valueOf(501));
     }
 }
