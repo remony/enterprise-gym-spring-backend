@@ -19,6 +19,7 @@ public class News {
         return newsDAO.list();
     }
 
+<<<<<<< HEAD
     public static NewsStore get(String slug) {
         NewsDAO newsDAO = new NewsDAO();
         return newsDAO.get(slug);
@@ -97,14 +98,20 @@ public class News {
         NewsDAO news = new NewsDAO();
         return news.getAllComments(slug);
 
-    public static boolean delete(int userId){
+
+    public static NewsStore get(int newsId) {
         NewsDAO newsDAO = new NewsDAO();
-        return newsDAO.delete(userId);
+        return newsDAO.get(newsId);
     }
 
-    public static void update(int userId){
+    public static void delete(int newsId){
         NewsDAO newsDAO = new NewsDAO();
-        newsDAO.update(userId);
+        newsDAO.delete(newsId);
+    }
+
+    public static void update(int userId,String title, String text){
+        NewsDAO newsDAO = new NewsDAO();
+        newsDAO.update(userId,title,text);
     }
     public static void save(NewsStore newsStore){
         NewsDAO newsDAO = new NewsDAO();

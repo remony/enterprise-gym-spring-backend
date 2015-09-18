@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +15,6 @@ import six.team.backend.model.News;
 import six.team.backend.store.CommentStore;
 import six.team.backend.store.NewsStore;
 import six.team.backend.store.PageStore;
-
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedList;
@@ -135,21 +132,24 @@ public class NewsController {
 
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody void addNews() {
+    public @ResponseBody PageStore addNews() {
         LinkedList<NewsStore> news = News.getAll();
         PageJsonGen pageJsonGen = new PageJsonGen();
         //Send values to the page json generator, this will return the full json which is sent to the client
         //Information about the page may be needed to be collected from the db, this is for discussion
-        //return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+        return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
 
     }
 
-    @RequestMapping(value ="/{id}",method = RequestMethod.POST)
-    public @ResponseBody PageStore printUsers() {
+
+
+    @RequestMapping(value ="/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody void updateUser(@PathVariable(value = "id") String id ){
+        News.delete(Integer.parseInt(id));
         PageJsonGen pageJsonGen = new PageJsonGen();
         //Send values to the page json generator, this will return the full json which is sent to the client
         //Information about the page may be needed to be collected from the db, this is for discussion
-        //  return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+
     }
 }
 

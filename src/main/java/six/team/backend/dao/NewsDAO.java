@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public class NewsDAO {
 
+<<<<<<< HEAD
 
     public boolean save(NewsStore newsStore) {
         Connection connection = null;
@@ -27,6 +28,21 @@ public class NewsDAO {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             return false;
+=======
+    public void save(NewsStore newsStore) {
+        Connection connection = null;
+
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("insert into News (title, text, date) values (?,?,?)");
+            ps.setString(1, newsStore.getTitle());
+            ps.setString(2, newsStore.getText());
+            java.sql.Date sqlDate = new java.sql.Date(newsStore.getDate().getTime());
+            ps.setDate(2, sqlDate);
+             ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+>>>>>>> Still have things to change but news store and comment store added some changes to news dao and news controller
         } finally {
             try {
                 if (connection != null) {
@@ -35,6 +51,7 @@ public class NewsDAO {
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
+<<<<<<< HEAD
         }
         return true;
 
@@ -66,22 +83,38 @@ public class NewsDAO {
                 System.err.println(e.getMessage());
             }
         }
+=======
+
+        }
+
+    }
+
+    public void update(int newsId,String title,String text) {
+>>>>>>> Still have things to change but news store and comment store added some changes to news dao and news controller
 
         return true;
     }
+<<<<<<< HEAD
 
     public boolean delete(String slug) {
+    public void delete(int newsId) {
         Connection connection = null;
 
         try {
             connection = getDBConnection();
+
             PreparedStatement ps = connection.prepareStatement("delete from News where slug=?");
             ps.setString(1, slug);
             ps.executeUpdate();
             deleteComments(slug);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-            return false;
+
+            PreparedStatement ps = connection.prepareStatement("delete from News where newsid=?");
+            ps.setInt(1, newsId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
         } finally {
             try {
                 if (connection != null) {
@@ -91,6 +124,7 @@ public class NewsDAO {
                 System.err.println(e.getMessage());
             }
         }
+
         return true;
     }
 
@@ -114,13 +148,12 @@ public class NewsDAO {
                 newsStore.setLastedited(rs.getDate("lastupdated"));
                 newsStore.setDateCreated(rs.getDate("datecreated"));
                 newsStore.setComments(getAllComments(slug));
-
-            PreparedStatement ps = connection.prepareStatement("select id, username from Users where id = ?");
-            ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                //newsStore.setId(rs.getInt("id"));
-               // newsStore.setUsername(rs.getString("username"));
+                newsStore.setId(rs.getInt("newsid"));
+                newsStore.setTitle(rs.getString("title"));
+                newsStore.setText(rs.getString("title"));
+               // newsStore.setDate(rs.getDate("date"));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -145,7 +178,6 @@ public class NewsDAO {
 
         try {
             connection = getDBConnection();
-
             PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -158,17 +190,6 @@ public class NewsDAO {
                 news.setLastedited(rs.getDate("lastupdated"));
                 news.setDateCreated(rs.getDate("datecreated"));
                 news.setComments(getAllComments(rs.getString("slug")));
-                allnews.add(news);
-            }
-
-
-            PreparedStatement ps = connection.prepareStatement("select id, username from users");
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                NewsStore news = new NewsStore();
-               // news.setId(rs.getInt("id"));
-               // news.setUsername(rs.getString("username"));
                 allnews.add(news);
             }
 

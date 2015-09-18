@@ -1,14 +1,22 @@
 package six.team.backend.store;
 
 import java.util.Date;
+<<<<<<< HEAD
 import java.util.LinkedList;
 
 
+=======
+
+/**
+ * Created by Anna on 17/09/2015.
+ */
+>>>>>>> Still have things to change but news store and comment store added some changes to news dao and news controller
 public class NewsStore {
     private int id;
     private String title;
     private String slug;
     private String text;
+
     private Date datecreated;
     private Date lastedited;
     private LinkedList<CommentStore> comments;
@@ -17,7 +25,10 @@ public class NewsStore {
     private String time;
     private String lock;
 
-
+    private Date date;
+    private String time;
+    private CommentStore comments;
+    private String lock;
 
     public int getId() {
         return id;
@@ -66,7 +77,12 @@ public class NewsStore {
     public void setLastedited(Date lastedited) {this.lastedited = lastedited;}
 
 
+    public String getLock() {
+        return lock;
+    }
 
-    
+    public void setLock(String lock) {
+        this.lock = lock;
+    }
 
 }
