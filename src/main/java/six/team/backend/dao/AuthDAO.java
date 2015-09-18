@@ -10,6 +10,7 @@ public class AuthDAO {
 
     public boolean verifyUser(String token, String username){
         Connection connection = null;
+        boolean isAuthorised = false;
 
         try {
             connection = getDBConnection();
@@ -21,7 +22,7 @@ public class AuthDAO {
                 if(rs != null) {
                     String token1 = rs.getString("token");
                     if (token.equals(token1)) {
-                        return true;
+                        isAuthorised = true;
                     }
                 }
             }
@@ -37,7 +38,7 @@ public class AuthDAO {
                 System.err.println(e.getMessage());
             }
         }
-        return false;
+        return isAuthorised;
     }
     private static Connection getDBConnection() {
         Connection connection = null;

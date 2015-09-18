@@ -23,7 +23,6 @@ public class IndexDAO {
                     index.setSlug(rs.getString("slug"));
                     index.setDescription(rs.getString("description"));
                     index.setNavigation(rs.getString("navigation"));
-                    return index;
                 }
             }
         } catch (SQLException e) {
