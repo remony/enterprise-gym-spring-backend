@@ -27,18 +27,19 @@ import java.util.LinkedList;
 public class NewsController {
 
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody PageStore printNews() {
+    public @ResponseBody ResponseEntity<String> printNews() {
         LinkedList<NewsStore> news = News.getAll();
         PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-        //Information about the page may be needed to be collected from the db, this is for discussion
-        return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
+        JSONObject object = new JSONObject();
+        object.put("unauthorisedusers", news);
+        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+
 
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody PageStore addNews() {
-        LinkedList<NewsStore> news = News.getAll();
+    public @ResponseBody PageStore addNews(HttpServletRequest request,HttpServletResponse response) {
+        LinkedList<NewsStore> news = News.save(request.getHeader("title"),request.getHeader("text"),request.getHeader("permission"),request.getHeader("category"));
         PageJsonGen pageJsonGen = new PageJsonGen();
         //Send values to the page json generator, this will return the full json which is sent to the client
         //Information about the page may be needed to be collected from the db, this is for discussion

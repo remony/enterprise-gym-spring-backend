@@ -1,6 +1,7 @@
 package six.team.backend.store;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 /**
  * Created by Anna on 17/09/2015.
@@ -8,11 +9,14 @@ import java.util.Date;
 public class NewsStore {
     private int id;
     private String title;
+    private String slug;
     private String text;
-    private Date date;
-    private String time;
-    private CommentStore comments;
-    private String lock;
+    private Date datecreated;
+    private Date lastedited;
+    private LinkedList<CommentStore> comments;
+    private String permission;
+    private String category;
+
 
     public int getId() {
         return id;
@@ -34,39 +38,33 @@ public class NewsStore {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setText(String text) {this.text = text;}
+
+    public Date getDateCreated() { return datecreated; }
+
+    public void setDateCreated(Date datecreated) { this.datecreated = datecreated; }
+
+    public LinkedList<CommentStore> getComments() { return comments;}
+
+    public void setComments(LinkedList<CommentStore> comments) {this.comments = comments;}
+
+    public String getPermission() {
+        return permission;
     }
 
-    public Date getDate() {
-        return date;
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+    public String getCategory() {return category;}
 
-    public String getTime() {
-        return time;
-    }
+    public void setCategory(String category) {this.category = category;}
 
-    public void setTime(String time) {
-        this.time = time;
-    }
+    public String getSlug() {return slug;}
 
-    public CommentStore getComments() {
-        return comments;
-    }
+    public void setSlug(String slug) {this.slug = slug;}
 
-    public void setComments(CommentStore comments) {
-        this.comments = comments;
-    }
+    public Date getLastedited() {return lastedited;}
 
-    public String getLock() {
-        return lock;
-    }
-
-    public void setLock(String lock) {
-        this.lock = lock;
-    }
+    public void setLastedited(Date lastedited) {this.lastedited = lastedited;}
 }
