@@ -8,16 +8,99 @@ import six.team.backend.store.UserStore;
 
 import java.security.SecureRandom;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
 import java.util.UUID;
+import java.util.Date;
 
 
 public class UserDAO {
 
 
-    public void saveOrUpdate(UserStore userStore) {
+    public Boolean Save(UserStore userStore) {
+        UserStore userStoreSave = new UserStore();
+        Connection connection = null;
+
+        try {
+            connection = getDBConnection();
+
+            PreparedStatement psUsernameChecker = connection.prepareStatement("select * from Users where username = ?");
+            psUsernameChecker.setString(1, userStore.getUsername());
+            ResultSet rsUsernameChecker = psUsernameChecker.executeQuery();
+
+            PreparedStatement psEmailChecker = connection.prepareStatement("select * from Users where email = ?");
+            psEmailChecker.setString(1, userStore.getUsername());
+            ResultSet rsEmailChecker = psEmailChecker.executeQuery();
+
+            Boolean usernameExists = false;
+            Boolean emailExists = false;
+
+            while (rsUsernameChecker.next()) {
+                if (rsUsernameChecker.getString("username").equals(userStore.getUsername())) {
+                    usernameExists = true;
+                }
+            }
+
+            while (rsEmailChecker.next()) {
+                if (rsEmailChecker.getString("email").equals(userStore.getEmail())) {
+                    emailExists = true;
+                }
+            }
+
+            if (!usernameExists && !emailExists) {
+
+                // not in the DB yet - , activated, token, registration_date
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, year, matricnumber, young_es, usergroup, mobile) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
+
+                Date d1 = new Date();
+                SimpleDateFormat df = new SimpleDateFormat("MM/dd/YYYY HH:mm a");
+                String formattedDate = df.format(d1);
+
+                ps.setString(1, userStore.getUsername());
+                ps.setString(2, userStore.getPassword());
+                ps.setString(3, userStore.getFirstname());
+                ps.setString(4, userStore.getLastname());
+                ps.setString(5, userStore.getGender());
+
+                ps.setString(6, userStore.getEmail());
+                ps.setString(7, userStore.getContactnumber());
+                ps.setString(8, userStore.getCountry());
+                ps.setString(9, userStore.getUniversity());
+                ps.setString(10, userStore.getStatus());
+
+                ps.setString(11, userStore.getSubject());
+                ps.setInt(12, userStore.getYear());
+                ps.setString(13, userStore.getMatricnumber());
+                ps.setInt(14, userStore.getYoung_es());
+                ps.setString(15, "Students");
+
+                ps.setString(16, userStore.getMobile());
+                //ps.setInt(17, 0);      // activated: 0 for false when registering
+                //ps.setString(18, "testToken");
+                //ps.setString(19, formattedDate);
+
+                ps.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return true;
+    }
+
+
+    public void Update(UserStore userStore) {
 
     }
 
