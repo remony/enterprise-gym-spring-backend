@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import six.team.backend.PageJsonGen;
 import six.team.backend.model.User;
 import six.team.backend.store.PageStore;
+import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,9 +41,9 @@ public class UserController {
     ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
         String username= request.getHeader("username");
         String password= request.getHeader("password");
-        String token = User.verifyLogin(username, password);
+        UserLoginStore user = User.verifyLogin(username, password);
 
-        if(token.equals("LoginFailed")) {
+        if(user.getMessage().equals("LoginFailed")) {
             JSONObject details = new JSONObject();
             details.put("message", "Login Failed");
             JSONArray array = new JSONArray();
@@ -53,7 +54,8 @@ public class UserController {
         }else{
             JSONObject details = new JSONObject();
             details.put("username", username);
-            details.put("token:" , token);
+            details.put("token:" , user.getToken());
+            details.put("usergroup", user.getUsergroup());
             JSONArray array = new JSONArray();
             array.put(details);
             JSONObject object = new JSONObject();

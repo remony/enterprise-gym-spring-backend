@@ -2,6 +2,7 @@ package six.team.backend.dao;
 
 
 import six.team.backend.model.User;
+import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
 
 
@@ -139,9 +140,10 @@ public class UserDAO {
         return connection;
     }
 
-    public String verifyUser(String username, String password){
+    public UserLoginStore verifyUser(String username, String password){
         Connection connection = null;
-
+        UserLoginStore user = new UserLoginStore();
+        user.setMessage("LoginFailed");
         try {
             connection = getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT* FROM Users WHERE username=?");
@@ -157,8 +159,9 @@ public class UserDAO {
                         ps1.setString(1, randomToken);
                         ps1.setString(2, username);
                         int rs1 = ps1.executeUpdate();
-                        System.out.println(rs1);
-                        return randomToken;
+                        user.setToken(randomToken);
+                        user.setUsergroup(rs.getString("usergroup"));
+                        user.setMessage("Login Success");
                     }
                 }
             }
@@ -175,7 +178,7 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
-        return null;
+        return user;
     }
 
     public boolean approveUser(int user_id,String user_group){
