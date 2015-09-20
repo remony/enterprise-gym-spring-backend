@@ -126,4 +126,32 @@ public class News {
 
     }
 
+
+
+
+    //Methods for  comments
+
+    public static boolean addComment(String slug, String text,String author){
+        NewsDAO news = new NewsDAO();
+        CommentStore comment= new CommentStore();
+        comment.setText(text);
+        comment.setAuthor(author);
+        comment.setSlug(slug);
+        Date date= new Date();
+        comment.setDate(date);
+        return news.addComment(comment);
+    }
+
+    public static boolean deleteComment(int commentid){
+        NewsDAO news = new NewsDAO();
+        return news.deleteComment(commentid);
+    }
+    public static boolean editComment(int commentid,String text){
+        NewsDAO news = new NewsDAO();
+        return news.editComment(commentid,text);
+    }
+    public static LinkedList<CommentStore> getAllComments(String slug){
+        NewsDAO news = new NewsDAO();
+        return news.getAllComments(slug);
+    }
 }

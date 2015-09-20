@@ -135,7 +135,7 @@ public class NewsDAO {
                 newsStore.setSlug(rs.getString("slug"));
                 newsStore.setLastedited(rs.getDate("lastupdated"));
                 newsStore.setDateCreated(rs.getDate("datecreated"));
-
+                newsStore.setComments(getAllComments(slug));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());

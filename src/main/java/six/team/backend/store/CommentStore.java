@@ -13,6 +13,7 @@ public class CommentStore {
     private String slug;
     private int newsid;
 
+
     public int getCommentid() {
         return commentid;
     }
@@ -38,24 +39,18 @@ public class CommentStore {
     }
 
 
-
     public String getSlug() {return slug;}
 
 
-    public Date getDate() {
-        return date;
-    }
+    public Date getDate() {return date;}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+    public void setDate(Date date) {this.date = date;}
 
-    public int getNewsid() {
-        return newsid;
-    }
 
     public void setNewsid(int newsid) {
         this.newsid = newsid;
     }
+
+    public void setSlug(String slug) {this.slug = slug;}
 
 }
