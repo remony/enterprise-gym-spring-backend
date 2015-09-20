@@ -60,7 +60,7 @@ public class News {
         slug = slug.substring(0, slug.length()-1);
         return slug.toLowerCase();
     }
-    public static boolean checkValitity(String title)
+    public static boolean checkValidity(String title)
     {
         NewsDAO newsDAO = new NewsDAO();
         return newsDAO.titleExists(title);
