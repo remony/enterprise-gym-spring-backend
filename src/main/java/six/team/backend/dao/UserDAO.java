@@ -162,6 +162,9 @@ public class UserDAO {
                         user.setToken(randomToken);
                         user.setUsergroup(rs.getString("usergroup"));
                         user.setMessage("Login Success");
+                        if(rs.getString("usergroup").equals("unauthorised")){
+                            user.setMessage("Unapproved");
+                        }
                     }
                 }
             }

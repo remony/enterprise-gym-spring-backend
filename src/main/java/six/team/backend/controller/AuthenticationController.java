@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 
     @Controller
-    @RequestMapping("/auth")
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value= "/auth")
     public class AuthenticationController {
     private final static Logger logger = Logger.getLogger(AuthenticationController.class);
 
