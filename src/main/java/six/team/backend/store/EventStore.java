@@ -16,8 +16,9 @@ public class EventStore {
     private String venue;
     private int points;
     private String description;
-    private Date startDate;
-    private Date endDate;
+    private String startDate;
+    private String endDate;
+    private Date orderStartDate;
 
     public int getId() {
         return id;
@@ -55,17 +56,19 @@ public class EventStore {
     public void setDescription(String description) {
         this.description = description;
     }
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
-    public void setStartDate (Date startDate) {
+    public void setStartDate (String startDate) {
         this.startDate = startDate;
     }
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
+    public Date getOrderStartDate(){return orderStartDate;}
+    public void setOrderStartDate(Date orderStartDate){this.orderStartDate = orderStartDate;}
 
 }
