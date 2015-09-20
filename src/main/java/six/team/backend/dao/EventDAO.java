@@ -271,7 +271,7 @@ public class EventDAO {
         Connection connection = null;
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select* from Participants where user_id = ? order by attended");
+            PreparedStatement ps = connection.prepareStatement("select* from Participants where userid = ? order by attended");
             ps.setInt(1,userid);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

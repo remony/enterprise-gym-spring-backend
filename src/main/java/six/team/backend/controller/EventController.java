@@ -166,7 +166,7 @@ public class EventController {
         LinkedList<ParticipantStore> participant;
         participant = Event.getUserEvents(Integer.parseInt(id));
         JSONObject details = new JSONObject();
-        details.put("Participants: ",participant);
+        details.put("Events: ",participant);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 }
