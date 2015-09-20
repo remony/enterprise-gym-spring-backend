@@ -32,4 +32,7 @@
 
     <mvc:resources mapping="/data/**" location="file:///${user.home}/images/"/>
 
+
 </beans>
+
+
