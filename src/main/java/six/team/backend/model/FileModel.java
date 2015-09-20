@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import six.team.backend.dao.FileDAO;
 import six.team.backend.store.FileStore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,8 +17,8 @@ import java.util.LinkedList;
 public class FileModel {
     private final FileDAO fileDao = new FileDAO();
 
-    public FileStore getFile(String filename) {
-        return fileDao.getFileDB(filename);
+    public LinkedList<FileStore> getFile(String filename, HttpServletRequest req) {
+        return fileDao.getFileDB(filename, req);
     }
 
     //TODO check if the folder exists, if not then create it
@@ -76,26 +77,26 @@ public class FileModel {
             json.put("page_id", file.getPage_id());
         }
         json.put("date_uploaded", file.getDate_uploaded());
+        json.put("access_url", file.getAccess_url());
         return json;
     }
 
-    public JSONObject getAllFiles() {
-        LinkedList<FileStore> files = fileDao.getAllFiles();
+    public JSONObject getAllFiles(HttpServletRequest req) {
+        LinkedList<FileStore> files = fileDao.getAllFiles(req);
         JSONObject json = new JSONObject();
         json.put("files", files);
         return json;
     }
 
-    public LinkedList<FileStore> getAllFilesOfType(String type, String id) {
+    public LinkedList<FileStore> getAllFilesOfType(String type, String id, HttpServletRequest req) {
         if (type.equals("event")) {
-            return fileDao.getAllEventFiles(id);
+            return fileDao.getAllEventFiles(id, req);
         } else if (type.equals("news")) {
-            return fileDao.getAllNewsFiles(id);
+            return fileDao.getAllNewsFiles(id, req);
         } else if (type.equals("page")) {
-            return fileDao.getAllPageFiles(id);
-        } else {
-            return null;
+            return fileDao.getAllPageFiles(id, req);
         }
+        return new LinkedList<FileStore>();
     }
 
     public boolean removeFile(String filename) {

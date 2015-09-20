@@ -10,12 +10,13 @@ public class FileStore {
     private int event_id;
     private int news_id;
     private int page_id;
+    private String access_url;
 
     /*
         Method: addFileStore
         Description: A simplified method for quicking importing of entities when inserting all values
      */
-    public void addFileStore(int id, String filename, String expanded_filename, int event_id, int news_id, int page_id, Date date_uploaded) {
+    public void addFileStore(int id, String filename, String expanded_filename, int event_id, int news_id, int page_id, Date date_uploaded, String access_url) {
         this.id = id;
         this.filename = filename;
         this.expanded_filename = expanded_filename;
@@ -23,6 +24,7 @@ public class FileStore {
         this.news_id = news_id;
         this.page_id = page_id;
         this.date_uploaded = date_uploaded;
+        this.access_url = access_url;
     }
 
     public int getId() {
@@ -82,5 +84,13 @@ public class FileStore {
     }
 
     private Date date_uploaded;
+
+    public String getAccess_url() {
+        return access_url;
+    }
+
+    public void setAccess_url(String access_url) {
+        this.access_url = access_url;
+    }
 
 }

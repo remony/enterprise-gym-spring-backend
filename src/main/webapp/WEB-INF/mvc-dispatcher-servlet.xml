@@ -30,6 +30,6 @@
         </property>
     </bean>
 
-    <mvc:resources mapping="/data/files/images/**" location="file:///${user.home}/images/"/>
+    <mvc:resources mapping="/data/**" location="file:///${user.home}/images/"/>
 
 </beans>

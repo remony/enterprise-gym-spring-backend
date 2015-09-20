@@ -3,6 +3,7 @@ package six.team.backend.dao;
 import six.team.backend.utils.Config;
 import six.team.backend.store.FileStore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.*;
 import java.util.LinkedList;
     /*
@@ -49,8 +50,9 @@ public class FileDAO {
             Description: Gets a file from the database when given a filename
      */
 
-    public FileStore getFileDB(String filename) {
-        FileStore file = new FileStore();
+    public LinkedList<FileStore> getFileDB(String filename, HttpServletRequest req) {
+        LinkedList<FileStore> files = new LinkedList<FileStore>();
+
         Connection connection = null;
 
         try {
@@ -59,7 +61,10 @@ public class FileDAO {
             ps.setString(1, filename);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                file.addFileStore(rs.getInt("id"), rs.getString("filename"), rs.getString("expanded_filename"), rs.getInt("event_id"), rs.getInt("news_id"), rs.getInt("page_id"), rs.getDate("date_uploaded"));
+                FileStore file = new FileStore();
+                String access_url = "http://" + req.getServerName() + ":" + req.getServerPort() + "/data/" + rs.getString("expanded_filename");
+                file.addFileStore(rs.getInt("id"), rs.getString("filename"), rs.getString("expanded_filename"), rs.getInt("event_id"), rs.getInt("news_id"), rs.getInt("page_id"), rs.getDate("date_uploaded"), access_url);
+                files.add(file);
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -73,7 +78,7 @@ public class FileDAO {
                 System.err.println(e.getMessage());
             }
         }
-        return file;
+        return files;
     }
 
     /*
@@ -81,7 +86,7 @@ public class FileDAO {
             Description: Gets all of the files
      */
 
-    public LinkedList<FileStore> getAllFiles() {
+    public LinkedList<FileStore> getAllFiles(HttpServletRequest req) {
         LinkedList<FileStore> files = new LinkedList<FileStore>();
         Connection connection = null;
         try {
@@ -89,6 +94,7 @@ public class FileDAO {
             PreparedStatement ps = connection.prepareStatement("select * from Files");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                String access_url = "http://" + req.getServerName() + ":" + req.getServerPort() + "/data/" + rs.getString("expanded_filename");
                 FileStore file = new FileStore();
                 file.setFilename(rs.getString("filename"));
                 file.setExpanded_filename(rs.getString("expanded_filename"));
@@ -102,6 +108,7 @@ public class FileDAO {
                 if (rs.getInt("page_id") != -1) {
                     file.setPage_id(rs.getInt("page_id"));
                 }
+                file.setAccess_url(access_url);
                 files.add(file);
             }
         } catch (SQLException e) {
@@ -124,7 +131,7 @@ public class FileDAO {
             Description: Gets all of the files of the event type of the given id
      */
 
-    public LinkedList<FileStore> getAllEventFiles(String id) {
+    public LinkedList<FileStore> getAllEventFiles(String id, HttpServletRequest req) {
         LinkedList<FileStore> files = new LinkedList<FileStore>();
         Connection connection = null;
         try {
@@ -133,6 +140,7 @@ public class FileDAO {
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                String access_url = "http://" + req.getServerName() + ":" + req.getServerPort() + "/data/" + rs.getString("expanded_filename");
                 FileStore file = new FileStore();
                 file.setFilename(rs.getString("filename"));
                 file.setExpanded_filename(rs.getString("expanded_filename"));
@@ -140,12 +148,7 @@ public class FileDAO {
                 if (rs.getInt("event_id") != -1) {
                     file.setEvent_id(rs.getInt("event_id"));
                 }
-                if (rs.getInt("news_id") != -1) {
-                    file.setEvent_id(rs.getInt("news_id"));
-                }
-                if (rs.getInt("page_id") != -1) {
-                    file.setPage_id(rs.getInt("page_id"));
-                }
+                file.setAccess_url(access_url);
                 files.add(file);
             }
         } catch (SQLException e) {
@@ -167,7 +170,7 @@ public class FileDAO {
             Description: Gets all of the files of the page type of the given id
      */
 
-    public LinkedList<FileStore> getAllPageFiles(String id) {
+    public LinkedList<FileStore> getAllPageFiles(String id, HttpServletRequest req) {
         LinkedList<FileStore> files = new LinkedList<FileStore>();
         Connection connection = null;
         try {
@@ -176,19 +179,15 @@ public class FileDAO {
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                String access_url = "http://" + req.getServerName() + ":" + req.getServerPort() + "/data/" + rs.getString("expanded_filename");
                 FileStore file = new FileStore();
                 file.setFilename(rs.getString("filename"));
                 file.setExpanded_filename(rs.getString("expanded_filename"));
                 file.setDate_uploaded(rs.getDate("date_uploaded"));
-                if (rs.getInt("event_id") != -1) {
-                    file.setEvent_id(rs.getInt("event_id"));
-                }
-                if (rs.getInt("news_id") != -1) {
-                    file.setEvent_id(rs.getInt("news_id"));
-                }
                 if (rs.getInt("page_id") != -1) {
                     file.setPage_id(rs.getInt("page_id"));
                 }
+                file.setAccess_url(access_url);
                 files.add(file);
             }
         } catch (SQLException e) {
@@ -211,7 +210,7 @@ public class FileDAO {
             Description: Gets all of the files of the news type of the given id
      */
 
-    public LinkedList<FileStore> getAllNewsFiles(String id) {
+    public LinkedList<FileStore> getAllNewsFiles(String id, HttpServletRequest req) {
         LinkedList<FileStore> files = new LinkedList<FileStore>();
         Connection connection = null;
         try {
@@ -220,19 +219,15 @@ public class FileDAO {
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                String access_url = "http://" + req.getServerName() + ":" + req.getServerPort() + "/data/" + rs.getString("expanded_filename");
                 FileStore file = new FileStore();
                 file.setFilename(rs.getString("filename"));
                 file.setExpanded_filename(rs.getString("expanded_filename"));
                 file.setDate_uploaded(rs.getDate("date_uploaded"));
-                if (rs.getInt("event_id") != -1) {
-                    file.setEvent_id(rs.getInt("event_id"));
-                }
                 if (rs.getInt("news_id") != -1) {
                     file.setEvent_id(rs.getInt("news_id"));
                 }
-                if (rs.getInt("page_id") != -1) {
-                    file.setPage_id(rs.getInt("page_id"));
-                }
+                file.setAccess_url(access_url);
                 files.add(file);
             }
         } catch (SQLException e) {

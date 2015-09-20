@@ -22,8 +22,8 @@ public class FileController {
             method = RequestMethod.GET,
             value ="/files")
     public @ResponseBody
-    ResponseEntity<String> getFiles() {
-        JSONObject json = fileModel.getAllFiles();
+    ResponseEntity<String> getFiles(HttpServletRequest req) {
+        JSONObject json = fileModel.getAllFiles(req);
         return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
     }
 
@@ -41,9 +41,9 @@ public class FileController {
             method = RequestMethod.GET,
             value ="/files/{type}/{id}")
     public @ResponseBody
-    ResponseEntity<String> filesImages(@PathVariable("type") String type, @PathVariable("id") String id) {
+    ResponseEntity<String> filesImages(HttpServletRequest req, @PathVariable("type") String type, @PathVariable("id") String id) {
         JSONObject json = new JSONObject();
-        json.put("files", fileModel.getAllFilesOfType(type, id));
+        json.put("files", fileModel.getAllFilesOfType(type, id, req));
         return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
     }
 
@@ -61,17 +61,25 @@ public class FileController {
             method = RequestMethod.GET,
             value ="/file/{filename}")
     public @ResponseBody
-    ResponseEntity<String> getImage(HttpServletRequest request, @PathVariable("filename") String filename) {
-        JSONObject json = fileModel.createImageJSON(fileModel.getFile(filename));
+    ResponseEntity<String> getImage(HttpServletRequest req, @PathVariable("filename") String filename) {
+
+        JSONObject json = new JSONObject();
+        json.put("files", fileModel.getFile(filename, req));
            return new ResponseEntity<String> (json.toString(), HttpStatus.OK);
     }
-
-    @RequestMapping(value="/file/upload", method=RequestMethod.POST)
-     public @ResponseBody String handleFileUpload(HttpServletRequest req, @RequestParam("file") MultipartFile file, @RequestParam("event_id") int eventID, @RequestParam("news_id") int newsID, @RequestParam("page_id") int pageID){
+    @RequestMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST,
+            value ="/file")
+     public @ResponseBody ResponseEntity<String> handleFileUpload(HttpServletRequest req, @RequestParam("file") MultipartFile file, @RequestParam("event_id") int eventID, @RequestParam("news_id") int newsID, @RequestParam("page_id") int pageID) {
         String filename = fileModel.generateName(8);
         fileModel.saveToDisk(file, filename);
         fileModel.addToDB(file, eventID, newsID, pageID, filename);
-        return "Success";
+        JSONObject json = new JSONObject();
+        json.put("file", fileModel.getFile(filename, req));
+        //json.put("access_url", "http://" + req.getServerName() + ":" + req.getServerPort() + "/data/" + json.get("expanded_filename"));
+
+        return new ResponseEntity<String> (json.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(
