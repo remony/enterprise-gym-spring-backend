@@ -10,7 +10,7 @@ public class CommentStore {
     private String author;
     private String text;
     private java.util.Date date;
-    private int newsid;
+    private String slug;
 
     public int getCommentid() {
         return commentid;
@@ -36,19 +36,11 @@ public class CommentStore {
         this.text = text;
     }
 
-    public Date getDate() {
-        return date;
-    }
+    public Date getDate() {return date;}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+    public void setDate(Date date) {this.date = date;}
 
-    public int getNewsid() {
-        return newsid;
-    }
+    public String getSlug() {return slug;}
 
-    public void setNewsid(int newsid) {
-        this.newsid = newsid;
-    }
+    public void setSlug(String slug) {this.slug = slug;}
 }

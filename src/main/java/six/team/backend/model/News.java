@@ -1,6 +1,7 @@
 package six.team.backend.model;
 
 import six.team.backend.dao.NewsDAO;
+import six.team.backend.store.CommentStore;
 import six.team.backend.store.NewsStore;
 
 import java.util.Date;
@@ -36,7 +37,7 @@ public class News {
         news.setText(text);
         news.setPermission(permission);
         news.setSlug(generateSlug(title));
-        return newsDAO.update(news,slug);
+        return newsDAO.update(news, slug);
     }
     public static boolean save(String title, String text, String permission){
         NewsDAO newsDAO = new NewsDAO();
@@ -66,4 +67,32 @@ public class News {
 
     }
 
+
+
+
+    //Methods for  comments
+
+    public static boolean addComment(String slug, String text,String author){
+        NewsDAO news = new NewsDAO();
+        CommentStore comment= new CommentStore();
+        comment.setText(text);
+        comment.setAuthor(author);
+        comment.setSlug(slug);
+        Date date= new Date();
+        comment.setDate(date);
+        return news.addComment(comment);
+    }
+
+    public static boolean deleteComment(int commentid){
+        NewsDAO news = new NewsDAO();
+        return news.deleteComment(commentid);
+    }
+    public static boolean editComment(int commentid,String text){
+        NewsDAO news = new NewsDAO();
+        return news.editComment(commentid,text);
+    }
+    public static LinkedList<CommentStore> getAllComments(String slug){
+        NewsDAO news = new NewsDAO();
+        return news.getAllComments(slug);
+    }
 }
