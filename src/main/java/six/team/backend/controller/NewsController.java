@@ -43,7 +43,7 @@ public class NewsController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addNews(HttpServletRequest request,HttpServletResponse response) {
         boolean success,exists;
-        exists = News.checkValitity(request.getHeader("title"));
+        exists = News.checkValidity(request.getHeader("title"));
         if(exists)
         {
             return new ResponseEntity<String>("title exists", HttpStatus.valueOf(409));

@@ -61,6 +61,7 @@ public class News {
         return slug.toLowerCase();
     }
 
+
     public static boolean checkValidity(String title) {
         NewsDAO newsDAO = new NewsDAO();
         return newsDAO.titleExists(title);
@@ -119,15 +120,8 @@ public class News {
         return newsDAO.update(news,slug);
     }
 
-    public static boolean checkValitity(String title)
-    {
-        NewsDAO newsDAO = new NewsDAO();
-        return newsDAO.titleExists(title);
 
-    }
-
-
-
+    
 
     //Methods for  comments
 
