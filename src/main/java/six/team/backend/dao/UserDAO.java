@@ -75,9 +75,9 @@ public class UserDAO {
                 ps.setInt(14, userStore.getYoung_es());
                 ps.setString(15, "Students");
 
-                ps.setString(16, userStore.getMobile());
-                ps.setString(17, "testToken");
-                ps.setTimestamp(18, (new java.sql.Timestamp(cal.getTimeInMillis())) );
+                ps.setString(16, "testToken");
+                ps.setTimestamp(17, (new java.sql.Timestamp(cal.getTimeInMillis())) );
+                ps.setString(18, userStore.getBio());
 
                 ps.executeUpdate();
                 return true;

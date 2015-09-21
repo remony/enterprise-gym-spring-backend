@@ -22,21 +22,17 @@ public class UserStore {
     private String matricnumber;
     private int young_es;
     private String usergroup;
-    private String mobile;
-
-    // not in the DB
-    private int activated;
     private String token;
     private Date registration_date;
-    private String number;  // ?
+    private String bio;
 
 
-    public int getActivated() {
-        return activated;
+    public String getBio() {
+        return bio;
     }
 
-    public void setActivated(int activated) {
-        this.activated = activated;
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getToken() {
@@ -127,14 +123,6 @@ public class UserStore {
         this.university = university;
     }
 
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -173,14 +161,6 @@ public class UserStore {
 
     public void setYoung_es(int young_es) {
         this.young_es = young_es;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
     }
 
     public UserStore() {

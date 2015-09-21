@@ -56,7 +56,6 @@ public class RegisterController {
         userStore.setYear(year);
         userStore.setMatricnumber(matricnumber);
         userStore.setYoung_es(young_es);
-        userStore.setMobile(mobile);
         userStore.setGender(gender);
         userStore.setRegistration_date(new Date());
 
