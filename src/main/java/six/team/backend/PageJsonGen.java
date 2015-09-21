@@ -14,11 +14,7 @@ public class PageJsonGen {
     public PageStore createPageJson(String title, String description, LinkedList content) {
         PageStore pageStore = new PageStore();
         pageStore.setTitle(title);
-        pageStore.setContent(content);
-        pageStore.setPage_generated(new Date());
-        pageStore.setDescription(description);
-        //TODO find a way of getting the url from the request
-        pageStore.setUrl("null");
+
 
         return pageStore; //return the full page json
     }

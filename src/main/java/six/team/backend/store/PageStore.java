@@ -5,60 +5,51 @@ import java.util.LinkedList;
 
 
 public class PageStore {
+    private int pageid;
     private String title;
     private String description;
-    private Date page_generated;
-    private String url;
-    private LinkedList content;
+    private String text;
+    private String slug;
+    private String permission;
+    private LinkedList<PageStore> subpages;
+    private String parentSlug;
+    private int order;
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDescription(String description) {this.description = description;}
 
-    public String getUrl() {
-        return url;
-    }
+    public String getTitle() {return title;}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    public void setTitle(String title) {this.title = title;}
 
-    public Date getPage_generated() {
-        return page_generated;
-    }
+    public String getText() {return text;}
 
-    public void setPage_generated(Date page_generated) {
-        this.page_generated = page_generated;
-    }
+    public void setText(String text) {this.text = text;}
 
+    public String getSlug() {return slug;}
 
+    public void setSlug(String slug) {this.slug = slug;}
 
-    public LinkedList getContent() {
-        return content;
-    }
+    public String getPermission() {return permission;}
 
-    public void setContent(LinkedList content) {
-        this.content = content;
-    }
+    public void setPermission(String permission) {this.permission = permission;}
 
+    public LinkedList<PageStore> getSubpages() {return subpages;}
 
+    public void setSubpages(LinkedList<PageStore> subpages) {this.subpages = subpages;}
 
+    public String getParentSlug() {return parentSlug;}
 
+    public void setParentSlug(String parentSlug) {this.parentSlug = parentSlug;}
 
-    public String getTitle() {
-        return title;
-    }
+    public int getOrder() {return order;}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public void setOrder(int order) {this.order = order;}
 
+    public int getPageid() {return pageid;}
 
-
-    public PageStore() {
-    }
+    public void setPageid(int pageid) {this.pageid = pageid;}
 }
