@@ -31,8 +31,9 @@ public class NewsController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public
     @ResponseBody
-    ResponseEntity<String> printNews() {
-        LinkedList<NewsStore> news = News.getAll();
+    ResponseEntity<String> printNews(HttpServletRequest request, HttpServletResponse response) {
+
+        LinkedList<NewsStore> news = News.getAll(Integer.parseInt(request.getHeader("page")), Integer.parseInt(request.getHeader("pagesize")));
         PageJsonGen pageJsonGen = new PageJsonGen();
         JSONObject object = new JSONObject();
         object.put("allnews", news);
@@ -75,6 +76,7 @@ public class NewsController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> updateNews(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug ){
+
         boolean success=News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
         JSONObject message = new JSONObject();
         if(success) {
@@ -85,10 +87,11 @@ public class NewsController {
             message.put("status", "success");
             return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
         }
+
     }
 
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.DELETE)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}/delete",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity deleteNews(@PathVariable(value = "slug") String slug ){
         boolean success=News.delete(slug);
 
@@ -119,7 +122,7 @@ public class NewsController {
 
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comment/{commentid}", method = RequestMethod.DELETE)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comment/{commentid}/delete", method = RequestMethod.DELETE)
     public
     @ResponseBody
     ResponseEntity deleteComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
