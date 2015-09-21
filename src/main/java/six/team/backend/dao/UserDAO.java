@@ -148,8 +148,8 @@ public class UserDAO {
         try {
             connection = getDBConnection();
 
-            PreparedStatement ps = connection.prepareStatement("SELECT userid, username, firstname, lastname, gender, email, contactnumber, country, " +
-                    "university, status, subject, yearofstudy, matricnumber, usergroup, young_es, mobile, registration_date FROM Users WHERE username = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT userid, bio, username, firstname, lastname, gender, email, contactnumber, country, " +
+                    "university, status, subject, yearofstudy, matricnumber, usergroup, young_es, registration_date FROM Users WHERE username = ?");
 
             ps.setString(1, userName);
 
@@ -169,9 +169,9 @@ public class UserDAO {
                 userInfoStore.setMmtricNo(rs.getString("matricnumber"));
                 userInfoStore.setUserGroup(rs.getString("usergroup"));
                 userInfoStore.setGender(rs.getString("gender"));
-                userInfoStore.setMobile(rs.getInt("mobile"));
                 userInfoStore.setRegDate(rs.getDate("registration_date"));
                 userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
+                userInfoStore.setBio(rs.getString("bio"));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -190,25 +190,21 @@ public class UserDAO {
         return userInfoStore;
     }
 
-
-    /*public LinkedList<UserStore> list(){
-        LinkedList<UserStore> users = new LinkedList<UserStore>();
+    public boolean userCheck(String username) {
         Connection connection = null;
-
+        boolean found = false;
         try {
             connection = getDBConnection();
 
-            PreparedStatement ps = connection.prepareStatement("select userid, username from users");
-
+            PreparedStatement ps = connection.prepareStatement("select userid from Users where username = ?");
+            ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                UserStore user = new UserStore();
-                user.setId(rs.getInt("userid"));
-                user.setUsername(rs.getString("username"));
-                users.add(user);
+
+            if (rs.next() == true) {
+                found = true;
+            } else {
+                found = false;
             }
-
-
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         } finally {
@@ -220,10 +216,9 @@ public class UserDAO {
                 //failed to close connection
                 System.err.println(e.getMessage());
             }
-
+            return found;
         }
-        return users;
-    }*/
+    }
 
     public LinkedList<UserInfoStore> list(){
         LinkedList<UserInfoStore> users = new LinkedList<UserInfoStore>();
@@ -233,7 +228,7 @@ public class UserDAO {
             connection = getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("select userid, username, firstname, lastname, gender, email, contactnumber, country, university," +
-                    " status, subject, yearofstudy, matricnumber, usergroup, young_es, mobile, registration_date from Users");
+                    " status, subject, yearofstudy, matricnumber, usergroup, young_es, registration_date from Users");
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -252,7 +247,6 @@ public class UserDAO {
                 userInfoStore.setMmtricNo(rs.getString("matricnumber"));
                 userInfoStore.setUserGroup(rs.getString("usergroup"));
                 userInfoStore.setGender(rs.getString("gender"));
-                userInfoStore.setMobile(rs.getInt("mobile"));
                 userInfoStore.setRegDate(rs.getDate("registration_date"));
                 userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
                 users.add(userInfoStore);

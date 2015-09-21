@@ -29,8 +29,8 @@ import java.util.LinkedList;
 public class UserController {
     private final static Logger logger = Logger.getLogger(UserController.class);
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<LinkedList<UserInfoStore>> printUsers(HttpServletRequest request) {
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/users", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> printUsers(HttpServletRequest request) {
         LinkedList<UserInfoStore> users = User.getAll();
 
         UserDAO UD = new UserDAO();
@@ -38,10 +38,36 @@ public class UserController {
         String userGroup = UD.getUserGroup(token);
 
         if(userGroup.equals("admin") || userGroup.equals("editor")){
-            return new ResponseEntity<LinkedList<UserInfoStore>>(users, HttpStatus.OK);
+            JSONArray array = new JSONArray();
+
+            for (int i = 0; i < users.size(); i++) {
+                UserInfoStore user = users.get(i);
+                JSONObject details = new JSONObject();
+
+                details.put("id", user.getId());
+                details.put("username", user.getUsername());
+                details.put("firstname", user.getFirstName());
+                details.put("lastname", user.getLastName());
+                details.put("contactNo", user.getContactNo());
+                details.put("email", user.getEmail());
+                details.put("yearofstudy", user.getYearOfStudy());
+                details.put("gender", user.getGender());
+                details.put("matricNo", user.getMatricNo());
+                details.put("country", user.getCountry());
+                details.put("university", user.getUniversity());
+                details.put("status", user.getStatus());
+                details.put("degreeSubject", user.getDegreeSubject());
+                details.put("usergroup", user.getUserGroup());
+                details.put("regDate", user.getRegDate());
+                array.put(details);
+            }
+                JSONObject UserInfo = new JSONObject();
+                UserInfo.put("UserInfo", array);
+                return new ResponseEntity<String>(UserInfo.toString(), HttpStatus.OK);
         }else {
-            users = new LinkedList<UserInfoStore>();
-            return new ResponseEntity<LinkedList<UserInfoStore>>(users, HttpStatus.valueOf(401));
+            JSONObject message = new JSONObject();
+            message.put("user", "You are Unauthorized to view this content");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
 
 //        PageJsonGen pageJsonGen = new PageJsonGen();
@@ -54,20 +80,51 @@ public class UserController {
 
 
 
-    @RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<UserInfoStore> getAttr(HttpServletRequest request, @PathVariable(value="username") String userName ){
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> getAttr(HttpServletRequest request, @PathVariable(value="username") String userName ){
 
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
         String userGroup = UD.getUserGroup(token);
         String tokenUserName = UD.getUserName(token);
+        JSONObject details = new JSONObject();
+        UserInfoStore user = User.getUser(userName);
 
         if(userGroup.equals("admin") || userGroup.equals("editor") || tokenUserName.equals(userName)){
-            UserInfoStore user = User.getUser(userName);
-            return new ResponseEntity<UserInfoStore>(user, HttpStatus.OK);
+
+
+            if (UD.userCheck(userName) == true) {
+                details.put("id", user.getId());
+                details.put("username", user.getUsername());
+                details.put("firstname", user.getFirstName());
+                details.put("lastname", user.getLastName());
+                details.put("contactNo", user.getContactNo());
+                details.put("email", user.getEmail());
+                details.put("yearofstudy", user.getYearOfStudy());
+                details.put("gender", user.getGender());
+                details.put("matricNo", user.getMatricNo());
+                details.put("country", user.getCountry());
+                details.put("university", user.getUniversity());
+                details.put("status", user.getStatus());
+                details.put("degreeSubject", user.getDegreeSubject());
+                details.put("usergroup", user.getUserGroup());
+                details.put("regDate", user.getRegDate());
+                details.put("bio", user.getBio());
+
+                JSONArray array = new JSONArray();
+                array.put(details);
+                JSONObject UserInfo = new JSONObject();
+                UserInfo.put("UserInfo", array);
+                return new ResponseEntity<String>(UserInfo.toString(), HttpStatus.OK);
+            }else{
+                details.put("user", "User does not exist!");
+                return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
+            }
         }else {
-            UserInfoStore user = new UserInfoStore();
-            return new ResponseEntity<UserInfoStore>(user, HttpStatus.valueOf(401));
+            details.put("username", user.getUsername());
+            details.put("firstname", user.getFirstName());
+            details.put("lastname", user.getLastName());
+            return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
         }
     }
 

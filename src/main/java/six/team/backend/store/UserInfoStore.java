@@ -15,6 +15,7 @@ public class UserInfoStore {
     private String firstName;
     private String lastName;
     private String email;
+    private String bio;
     private String country;
     private String university;
     private String status;
@@ -22,6 +23,14 @@ public class UserInfoStore {
     private String userGroup;
     private Date regDate;
     private int young_e_s;
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
 
     public int getMobile() {
         return mobile;
