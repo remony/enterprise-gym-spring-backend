@@ -60,7 +60,7 @@ public class NewsController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{slug}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getNews(@PathVariable(value="slug") String slug) {
-        NewsStore news = News.get(slug);
+        LinkedList<NewsStore> news = News.get(slug);
         if(news==null){
             return new ResponseEntity<String>("There is no news with that id", HttpStatus.NOT_FOUND);
         }
