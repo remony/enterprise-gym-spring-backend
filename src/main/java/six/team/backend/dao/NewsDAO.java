@@ -8,25 +8,9 @@ import java.util.LinkedList;
 public class NewsDAO {
 
 
-    public boolean save(NewsStore newsStore) {
-        Connection connection = null;
-        try {
-            connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("insert into News (title,slug, text, datecreated,lastupdated,permission) values (?,?,?,?,?,?)");
-            java.sql.Date sqlDate = new java.sql.Date(newsStore.getDateCreated().getTime());
-            ps.setString(1, newsStore.getTitle());
-            ps.setString(2, newsStore.getSlug());
-            ps.setString(3, newsStore.getText());
-            ps.setDate(4, sqlDate);
-            ps.setDate(5, sqlDate);
-            ps.setString(6, newsStore.getPermission());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            return false;
 
 
-    public boolean save(NewsStore newsStore) {
+        public boolean save(NewsStore newsStore) {
         Connection connection = null;
         try {
             connection = getDBConnection();
@@ -111,6 +95,7 @@ public class NewsDAO {
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
+        }
 
         return true;
     }
@@ -157,7 +142,6 @@ public class NewsDAO {
     public LinkedList<NewsStore> list(){
         LinkedList<NewsStore> allnews = new LinkedList<NewsStore>();
         Connection connection = null;
-
         try {
             connection = getDBConnection();
 
@@ -191,7 +175,6 @@ public class NewsDAO {
         }
         return allnews;
     }
-
 
     private static Connection getDBConnection() {
         Connection connection = null;
@@ -239,36 +222,6 @@ public class NewsDAO {
        return exists;
    }
 
-
-   public boolean titleExists(String title){
-       Connection connection = null;
-       boolean exists=false;
-       try {
-           connection = getDBConnection();
-
-           PreparedStatement ps = connection.prepareStatement("select newsid from News where title=?");
-           ps.setString(1, title);
-           ResultSet rs = ps.executeQuery();
-           if (rs != null)
-              exists=true;
-           else
-               exists=false;
-
-       } catch (SQLException e) {
-           System.err.println(e.getMessage());
-       } finally {
-           try {
-               if (connection != null) {
-                   connection.close();
-               }
-           } catch (SQLException e) {
-               //failed to close connection
-               System.err.println(e.getMessage());
-           }
-
-       }
-       return exists;
-   }
 
 
     // code for CRUD for comments

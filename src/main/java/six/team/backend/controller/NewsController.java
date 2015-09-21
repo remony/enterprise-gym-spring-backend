@@ -74,9 +74,8 @@ public class NewsController {
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug ){
+    public @ResponseBody ResponseEntity<String> updateNews(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug ){
         boolean success=News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
-
         if(success)
             return new ResponseEntity<String>("The news was edited succesfully", HttpStatus.OK);
         else
@@ -85,7 +84,7 @@ public class NewsController {
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.DELETE)
-    public @ResponseBody ResponseEntity deleteUser(@PathVariable(value = "slug") String slug ){
+    public @ResponseBody ResponseEntity deleteNews(@PathVariable(value = "slug") String slug ){
         boolean success=News.delete(slug);
 
         if(success)
@@ -131,44 +130,5 @@ public class NewsController {
         return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
     }
 
-
-    @RequestMapping(method = RequestMethod.POST)
-    public
-    @ResponseBody
-    PageStore addNews() {
-        LinkedList<NewsStore> news = News.getAll();
-        PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-        //Information about the page may be needed to be collected from the db, this is for discussion
-        return pageJsonGen.createPageJson("Users", "A list of all registered users", news);
-
-    }
-
-
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="{slug}/comments",method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity viewComments( @PathVariable(value = "slug") String slug){
-
-            LinkedList<CommentStore> comments = News.getAllComments(slug);
-             JSONObject object = new JSONObject();
-             object.put("newscomments", comments);
-            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
-
-    }
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}/comments",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity addComments(HttpServletRequest request,HttpServletResponse response, @PathVariable(value = "slug") String slug){
-        boolean success=News.addComment(slug,request.getHeader("text"), request.getHeader("author"));
-        return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
-
-    }
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}/comment/{commentid}",method = RequestMethod.DELETE)
-    public @ResponseBody ResponseEntity deleteComment(HttpServletRequest request,HttpServletResponse response, @PathVariable(value = "commentid") String commentid,@PathVariable(value = "slug") String slug){
-        boolean success=News.deleteComment(Integer.parseInt(commentid));
-        return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
-    }
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value ="/{slug}/comment/{commentid}",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity editComment( HttpServletRequest request,HttpServletResponse response, @PathVariable(value = "commentid") String commentid,@PathVariable(value = "slug") String slug){
-        boolean success=News.editComment(Integer.parseInt(commentid), request.getHeader("text"));
-        return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
-    }
 
 }

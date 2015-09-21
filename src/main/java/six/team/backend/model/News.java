@@ -71,59 +71,13 @@ public class News {
 
     //Methods for  comments
 
-    public static boolean addComment(String slug, String text, String author) {
-        NewsDAO news = new NewsDAO();
-        CommentStore comment = new CommentStore();
-        comment.setText(text);
-        comment.setAuthor(author);
-        comment.setSlug(slug);
-        Date date = new Date();
-        comment.setDate(date);
-        return news.addComment(comment);
-    }
-
-    public static boolean deleteComment(int commentid) {
-        NewsDAO news = new NewsDAO();
-        return news.deleteComment(commentid);
-    }
-
-    public static boolean editComment(int commentid, String text) {
-        NewsDAO news = new NewsDAO();
-        return news.editComment(commentid, text);
-    }
-
     public static LinkedList<CommentStore> getAllComments(String slug) {
         NewsDAO news = new NewsDAO();
         return news.getAllComments(slug);
 
-
-    public static NewsStore get(int newsId) {
-        NewsDAO newsDAO = new NewsDAO();
-        return newsDAO.get(slug);
-    }
-
-    public static boolean delete(String slug){
-        NewsDAO newsDAO = new NewsDAO();
-        return newsDAO.delete(slug);
-
-    }
-
-    public static boolean update(String slug,String title, String text, String permission){
-        NewsDAO newsDAO = new NewsDAO();
-        NewsStore news = new NewsStore();
-        Date date=new Date();
-        news.setLastedited(date);
-        news.setTitle(title);
-        news.setText(text);
-        news.setPermission(permission);
-        news.setSlug(generateSlug(title));
-        return newsDAO.update(news,slug);
     }
 
 
-    
-
-    //Methods for  comments
 
     public static boolean addComment(String slug, String text,String author){
         NewsDAO news = new NewsDAO();
@@ -143,9 +97,5 @@ public class News {
     public static boolean editComment(int commentid,String text){
         NewsDAO news = new NewsDAO();
         return news.editComment(commentid,text);
-    }
-    public static LinkedList<CommentStore> getAllComments(String slug){
-        NewsDAO news = new NewsDAO();
-        return news.getAllComments(slug);
     }
 }

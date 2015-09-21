@@ -14,13 +14,9 @@ public class CommentStore {
     private int newsid;
 
 
-    public int getCommentid() {
-        return commentid;
-    }
+    public int getCommentid() {return commentid;}
 
-    public void setCommentid(int commentid) {
-        this.commentid = commentid;
-    }
+    public void setCommentid(int commentid) {this.commentid = commentid;}
 
     public String getAuthor() {
         return author;
@@ -30,16 +26,13 @@ public class CommentStore {
         this.author = author;
     }
 
-    public String getText() {
-        return text;
-    }
+    public String getText() {return text;}
 
-    public void setText(String text) {
-        this.text = text;
-    }
+    public void setText(String text) {this.text = text;}
 
 
     public String getSlug() {return slug;}
+    public void setSlug(String slug) {this.slug = slug;}
 
 
     public Date getDate() {return date;}
@@ -47,10 +40,7 @@ public class CommentStore {
     public void setDate(Date date) {this.date = date;}
 
 
-    public void setNewsid(int newsid) {
-        this.newsid = newsid;
-    }
+    public void setNewsid(int newsid) {this.newsid = newsid;}
 
-    public void setSlug(String slug) {this.slug = slug;}
-
+    public int getNewsid() {return newsid;}
 }
