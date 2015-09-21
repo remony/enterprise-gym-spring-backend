@@ -1,9 +1,13 @@
 package six.team.backend.dao;
 
 
+
 import six.team.backend.model.User;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
+import six.team.backend.store.*;
+
+
 import java.security.SecureRandom;
 import java.sql.*;
 import java.sql.Date;
@@ -106,7 +110,7 @@ public class UserDAO {
 
 
 
-    public UserStore get(int userId) {
+    /*public UserStore get(int userId) {
         UserStore userStore = new UserStore();
         Connection connection = null;
 
@@ -135,24 +139,117 @@ public class UserDAO {
         }
 
         return userStore;
-    }
+    }*/
 
-
-    public LinkedList<UserStore> list(){
-        LinkedList<UserStore> users = new LinkedList<UserStore>();
+    public UserInfoStore getUserInfo (String userName) {
+        UserInfoStore userInfoStore = new UserInfoStore();
         Connection connection = null;
 
         try {
             connection = getDBConnection();
 
-            PreparedStatement ps = connection.prepareStatement("select userid, username from users");
+            PreparedStatement ps = connection.prepareStatement("SELECT userid, bio, username, firstname, lastname, gender, email, contactnumber, country, " +
+                    "university, status, subject, yearofstudy, matricnumber, usergroup, young_es, registration_date FROM Users WHERE username = ?");
+
+            ps.setString(1, userName);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                UserStore user = new UserStore();
-                user.setId(rs.getInt("userid"));
-                user.setUsername(rs.getString("username"));
-                users.add(user);
+                userInfoStore.setId(rs.getInt("userid"));
+                userInfoStore.setUsername(rs.getString("username"));
+                userInfoStore.setFirstName(rs.getString("firstname"));
+                userInfoStore.setLastName(rs.getString("lastname"));
+                userInfoStore.setEmail(rs.getString("email"));
+                userInfoStore.setCountry(rs.getString("country"));
+                userInfoStore.setUniversity(rs.getString("university"));
+                userInfoStore.setStatus(rs.getString("status"));
+                userInfoStore.setDegreeSubject(rs.getString("subject"));
+                userInfoStore.setContactNo(rs.getString("contactnumber"));
+                userInfoStore.setYearOfStudy(rs.getInt("yearofstudy"));
+                userInfoStore.setMmtricNo(rs.getString("matricnumber"));
+                userInfoStore.setUserGroup(rs.getString("usergroup"));
+                userInfoStore.setGender(rs.getString("gender"));
+                userInfoStore.setRegDate(rs.getDate("registration_date"));
+                userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
+                userInfoStore.setBio(rs.getString("bio"));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+
+        }
+
+        return userInfoStore;
+    }
+
+    public boolean userCheck(String username) {
+        Connection connection = null;
+        boolean found = false;
+        try {
+            connection = getDBConnection();
+
+            PreparedStatement ps = connection.prepareStatement("select userid from Users where username = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next() == true) {
+                found = true;
+            } else {
+                found = false;
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+            return found;
+        }
+    }
+
+    public LinkedList<UserInfoStore> list(){
+        LinkedList<UserInfoStore> users = new LinkedList<UserInfoStore>();
+        Connection connection = null;
+
+        try {
+            connection = getDBConnection();
+
+            PreparedStatement ps = connection.prepareStatement("select userid, username, firstname, lastname, gender, email, contactnumber, country, university," +
+                    " status, subject, yearofstudy, matricnumber, usergroup, young_es, registration_date from Users");
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                UserInfoStore userInfoStore = new UserInfoStore();
+                userInfoStore.setId(rs.getInt("userid"));
+                userInfoStore.setUsername(rs.getString("username"));
+                userInfoStore.setFirstName(rs.getString("firstname"));
+                userInfoStore.setLastName(rs.getString("lastname"));
+                userInfoStore.setContactNo(rs.getString("contactnumber"));
+                userInfoStore.setEmail(rs.getString("email"));
+                userInfoStore.setCountry(rs.getString("country"));
+                userInfoStore.setUniversity(rs.getString("university"));
+                userInfoStore.setStatus(rs.getString("status"));
+                userInfoStore.setDegreeSubject(rs.getString("subject"));
+                userInfoStore.setYearOfStudy(rs.getInt("yearofstudy"));
+                userInfoStore.setMmtricNo(rs.getString("matricnumber"));
+                userInfoStore.setUserGroup(rs.getString("usergroup"));
+                userInfoStore.setGender(rs.getString("gender"));
+                userInfoStore.setRegDate(rs.getDate("registration_date"));
+                userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
+                users.add(userInfoStore);
             }
 
 
@@ -267,6 +364,64 @@ public class UserDAO {
         return user;
     }
 
+    public String getUserGroup(String token){
+        Connection connection = null;
+        String userGroup = "";
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT usergroup FROM Users WHERE token=?");
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                if (rs != null) {
+                    userGroup = rs.getString("usergroup");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return userGroup;
+    }
+
+    public String getUserName(String token){
+        Connection connection = null;
+        String userName = "";
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT username FROM Users WHERE token=?");
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                if (rs != null) {
+                    userName = rs.getString("username");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return userName;
+    }
+
     public boolean approveUser(int user_id,String user_group){
         Connection connection;
         connection = getDBConnection();
@@ -295,7 +450,6 @@ public class UserDAO {
         }
 
     }
-
 
     public boolean deleteUser(int user_id)
     {
