@@ -4,20 +4,103 @@ package six.team.backend.dao;
 import six.team.backend.model.User;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
-
-
 import java.security.SecureRandom;
 import java.sql.*;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Random;
-import java.util.UUID;
-
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+//import java.util.Date;
+//import java.sql.Date;
 
 public class UserDAO {
 
 
-    public void saveOrUpdate(UserStore userStore) {
+    public Boolean Save(UserStore userStore) {
+        UserStore userStoreSave = new UserStore();
+        Connection connection = null;
+
+        try {
+            connection = getDBConnection();
+
+            // get a resuls set with all usernames
+            PreparedStatement psUsernameChecker = connection.prepareStatement("select * from Users where username = ?");
+            psUsernameChecker.setString(1, userStore.getUsername());
+            ResultSet rsUsernameChecker = psUsernameChecker.executeQuery();
+
+            // get a resuls set with all emails
+            PreparedStatement psEmailChecker = connection.prepareStatement("select * from Users where email = ?");
+            psEmailChecker.setString(1, userStore.getEmail());
+            ResultSet rsEmailChecker = psEmailChecker.executeQuery();
+
+            Boolean usernameExists = false;
+            Boolean emailExists = false;
+
+            // check if the username or the email have been already used
+            while (rsUsernameChecker.next()) {
+                if (rsUsernameChecker.getString("username").equals(userStore.getUsername())) {
+                    usernameExists = true;
+                }
+            }
+
+            while (rsEmailChecker.next()) {
+                if (rsEmailChecker.getString("email").equals(userStore.getEmail())) {
+                    emailExists = true;
+                }
+            }
+
+            if (!usernameExists && !emailExists) {
+
+                // not in the DB yet - , activated, token, registration_date
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, year, matricnumber, young_es, usergroup, mobile, token, registration_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?) ");
+
+                // for the timestamp
+                Calendar cal = Calendar.getInstance();
+
+                ps.setString(1, userStore.getUsername());
+                ps.setString(2, userStore.getPassword());
+                ps.setString(3, userStore.getFirstname());
+                ps.setString(4, userStore.getLastname());
+                ps.setString(5, userStore.getGender());
+
+                ps.setString(6, userStore.getEmail());
+                ps.setString(7, userStore.getContactnumber());
+                ps.setString(8, userStore.getCountry());
+                ps.setString(9, userStore.getUniversity());
+                ps.setString(10, userStore.getStatus());
+
+                ps.setString(11, userStore.getSubject());
+                ps.setInt(12, userStore.getYear());
+                ps.setString(13, userStore.getMatricnumber());
+                ps.setInt(14, userStore.getYoung_es());
+                ps.setString(15, "Students");
+
+                ps.setString(16, "testToken");
+                ps.setTimestamp(17, (new java.sql.Timestamp(cal.getTimeInMillis())) );
+                ps.setString(18, userStore.getBio());
+
+                ps.executeUpdate();
+                return true;
+            } else
+                return false;
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+
+    public void Update(UserStore userStore) {
 
     }
 
