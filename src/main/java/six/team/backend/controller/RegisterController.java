@@ -40,6 +40,7 @@ public class RegisterController {
         int young_es = Integer.parseInt((request.getHeader("young_es")));
         String mobile = request.getHeader("mobile");
         String gender = request.getHeader("gender");
+        String bio = request.getHeader("bio");
 
         UserStore userStore = new UserStore();
         userStore.setUsername(username);
@@ -50,7 +51,6 @@ public class RegisterController {
         userStore.setContactnumber(contactnumber);
         userStore.setCountry(country);
         userStore.setUniversity(university);
-        userStore.setNumber(number);
         userStore.setStatus(status);
         userStore.setSubject(subject);
         userStore.setYear(year);
@@ -58,27 +58,13 @@ public class RegisterController {
         userStore.setYoung_es(young_es);
         userStore.setGender(gender);
         userStore.setRegistration_date(new Date());
+        userStore.setBio(bio);
 
         UserDAO userDAO = new UserDAO();
         System.out.println(username + password);
         userDAO.Save(userStore);
 
-
-
-
-        //System.out.println("Name: " + username);
-        //boolean test = User.verifyLogin(username);
         return username;
     }
 
-
-
-
-    /*@RequestMapping(method = RequestMethod.POST)
-
-    public void RegsiterUser(@RequestParam("firstname") String firstname) {
-        //System.out.print(firstname);
-
-    }
-    */
 }
