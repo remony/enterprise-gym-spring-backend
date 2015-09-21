@@ -4,6 +4,9 @@ package six.team.backend.dao;
 import six.team.backend.model.User;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
+import six.team.backend.store.*;
+
+
 import java.security.SecureRandom;
 import java.sql.*;
 import java.sql.Date;
@@ -135,6 +138,49 @@ public class UserDAO {
         }
 
         return userStore;
+    }
+
+    public UserInfoStore getUserInfo(int userId) {
+        UserInfoStore userInfoStore = new UserInfoStore();
+        Connection connection = null;
+
+        try {
+            connection = getDBConnection();
+
+            PreparedStatement ps = connection.prepareStatement("select userid, username, firstname, lastname, gender, email, contactnumber, country, university, " +
+                    "status, subject, year, matricnumber, usergroup from Users where id = ?");
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                userInfoStore.setId(rs.getInt("userid"));
+                userInfoStore.setUsername(rs.getString("username"));
+                userInfoStore.setFirstName(rs.getString("firstname"));
+                userInfoStore.setLastName(rs.getString("lastname"));
+                userInfoStore.setEmail(rs.getString("email"));
+                userInfoStore.setCountry(rs.getString("country"));
+                userInfoStore.setUniversity(rs.getString("university"));
+                userInfoStore.setStatus(rs.getString("status"));
+                userInfoStore.setDegreeSubject(rs.getString("degreeSubject"));
+                userInfoStore.setYearOfStudy(rs.getInt("yearOfStudy"));
+                userInfoStore.setMmtricNo(rs.getString("matricNo"));
+                userInfoStore.setUserGroup(rs.getString("userGroup"));
+                userInfoStore.setGender(rs.getString("gender"));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+
+        }
+
+        return userInfoStore;
     }
 
 
