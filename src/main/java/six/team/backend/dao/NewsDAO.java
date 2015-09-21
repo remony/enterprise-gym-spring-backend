@@ -201,7 +201,7 @@ public class NewsDAO {
            PreparedStatement ps = connection.prepareStatement("select newsid from News where title=?");
            ps.setString(1, title);
            ResultSet rs = ps.executeQuery();
-           if (rs != null)
+           if (rs.next())
               exists=true;
            else
                exists=false;
