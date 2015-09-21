@@ -37,7 +37,7 @@ public class AdminController {
     public @ResponseBody ResponseEntity<String> approveUser(HttpServletRequest request,HttpServletResponse res) {
         String approved_id = request.getHeader("approvedId");
         String approved_group = request.getHeader("approvedGroup");
-        String approved_status= request.getHeader("approvedStatus");
+        String approved_status= request.getHeader("approvedStatus"); // approved
         User user = new User();
         boolean success;
         if(approved_status.equals("approved")){

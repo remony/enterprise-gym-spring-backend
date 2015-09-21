@@ -42,10 +42,34 @@ public class AppTests {
 
     /*
     @Test
-    public void simple() throws Exception {
+    public void index() throws Exception {
         mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("hello"));
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAllFiles() throws Exception {
+        mockMvc.perform(get("/files"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    // This should pass since we want to pass an empty json: 200 is valid http status code for this behaviour
+    public void getNonExistentFile() throws Exception {
+        mockMvc.perform(get("/file/afile"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAllFilesForEventID() throws Exception {
+        mockMvc.perform(get("/files/event/123"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAllFilesForUnNamedType() throws Exception {
+        mockMvc.perform(get("/files/NEWSASJNDASD/123"))
+                .andExpect(status().isOk());
     }
 
 
