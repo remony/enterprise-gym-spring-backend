@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import six.team.backend.PageJsonGen;
 import six.team.backend.model.User;
 import six.team.backend.store.PageStore;
+import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +26,7 @@ import java.util.LinkedList;
 public class UserController {
     private final static Logger logger = Logger.getLogger(UserController.class);
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     public @ResponseBody PageStore printUsers() {
         LinkedList<UserStore> users = User.getAll();
 
@@ -35,16 +37,24 @@ public class UserController {
         return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
 
     }
-    @RequestMapping(value ="/login", method = RequestMethod.POST)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
         String username= request.getHeader("username");
         String password= request.getHeader("password");
-        String token = User.verifyLogin(username, password);
+        UserLoginStore user = User.verifyLogin(username, password);
 
-        if(token.equals("LoginFailed")) {
+        if(user.getMessage().equals("LoginFailed")) {
             JSONObject details = new JSONObject();
             details.put("message", "Login Failed");
+            JSONArray array = new JSONArray();
+            array.put(details);
+            JSONObject object = new JSONObject();
+            object.put("user_auth", array);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.UNAUTHORIZED);
+        }else  if(user.getMessage().equals("Unapproved")) {
+            JSONObject details = new JSONObject();
+            details.put("message", "Your account has not yet been approved");
             JSONArray array = new JSONArray();
             array.put(details);
             JSONObject object = new JSONObject();
@@ -53,7 +63,8 @@ public class UserController {
         }else{
             JSONObject details = new JSONObject();
             details.put("username", username);
-            details.put("token:" , token);
+            details.put("token:" , user.getToken());
+            details.put("usergroup", user.getUsergroup());
             JSONArray array = new JSONArray();
             array.put(details);
             JSONObject object = new JSONObject();

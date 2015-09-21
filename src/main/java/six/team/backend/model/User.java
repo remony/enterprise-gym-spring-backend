@@ -1,6 +1,7 @@
 package six.team.backend.model;
 
 import six.team.backend.dao.UserDAO;
+import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
 
 import java.util.LinkedList;
@@ -21,14 +22,14 @@ public class User {
     }
     public static boolean approve(int userid, String usergroup) {
         UserDAO userDAO = new UserDAO();
-        return userDAO.approveUser(userid,usergroup);
+        return userDAO.approveUser(userid, usergroup);
     }
     public static boolean delete(int userid) {
         UserDAO userDAO = new UserDAO();
         return userDAO.deleteUser(userid);
     }
 
-    public static String verifyLogin(String username, String password){
+    public static UserLoginStore verifyLogin(String username, String password){
         UserDAO userDAO = new UserDAO();
         return userDAO.verifyUser(username,password);
 
