@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import six.team.backend.dao.UserDAO;
 import six.team.backend.model.Auth;
 import six.team.backend.model.User;
 

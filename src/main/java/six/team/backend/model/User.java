@@ -13,6 +13,11 @@ public class User {
         return userDAO.list();
     }
 
+    public static UserInfoStore getUser(String userName) {
+        UserDAO userDAO = new UserDAO();
+        return userDAO.getUserInfo(userName);
+    }
+
     public static LinkedList<UserStore> getAllUnauthorised() {
         UserDAO userDAO = new UserDAO();
         return userDAO.unauthorisedList();

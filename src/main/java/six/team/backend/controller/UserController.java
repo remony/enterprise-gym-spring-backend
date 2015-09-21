@@ -7,10 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import six.team.backend.PageJsonGen;
+import six.team.backend.dao.UserDAO;
 import six.team.backend.model.User;
 import six.team.backend.store.PageStore;
 import six.team.backend.store.UserLoginStore;
@@ -23,22 +25,52 @@ import java.util.LinkedList;
 
 
 @Controller
-@RequestMapping("/users")
+//@RequestMapping("/users")
 public class UserController {
     private final static Logger logger = Logger.getLogger(UserController.class);
 
-
-    @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<LinkedList<UserInfoStore>> printUsers() {
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<LinkedList<UserInfoStore>> printUsers(HttpServletRequest request) {
         LinkedList<UserInfoStore> users = User.getAll();
+
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        String userGroup = UD.getUserGroup(token);
+
+        if(userGroup.equals("admin") || userGroup.equals("editor")){
+            return new ResponseEntity<LinkedList<UserInfoStore>>(users, HttpStatus.OK);
+        }else {
+            users = new LinkedList<UserInfoStore>();
+            return new ResponseEntity<LinkedList<UserInfoStore>>(users, HttpStatus.valueOf(401));
+        }
 
 //        PageJsonGen pageJsonGen = new PageJsonGen();
         //Send values to the page json generator, this will return the full json which is sent to the client
 
         //Information about the page may be needed to be collected from the db, this is for discussion
 //        return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
-        return new ResponseEntity<LinkedList<UserInfoStore>>(users, HttpStatus.OK);
     }
+
+
+
+
+    @RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<UserInfoStore> getAttr(HttpServletRequest request, @PathVariable(value="username") String userName ){
+
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        String userGroup = UD.getUserGroup(token);
+        String tokenUserName = UD.getUserName(token);
+
+        if(userGroup.equals("admin") || userGroup.equals("editor") || tokenUserName.equals(userName)){
+            UserInfoStore user = User.getUser(userName);
+            return new ResponseEntity<UserInfoStore>(user, HttpStatus.OK);
+        }else {
+            UserInfoStore user = new UserInfoStore();
+            return new ResponseEntity<UserInfoStore>(user, HttpStatus.valueOf(401));
+        }
+    }
+
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
