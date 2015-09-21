@@ -106,8 +106,8 @@ public class PagesDAO {
         LinkedList<PageStore> pages= new LinkedList<PageStore>() ;
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select * from Pages");
-
+            PreparedStatement ps = connection.prepareStatement("select * from Pages where parentslug=?");
+            ps.setString(1,"main");
             ResultSet rs= ps.executeQuery();
 
             while(rs.next())
@@ -200,6 +200,7 @@ public class PagesDAO {
                 page.setPermission(rs.getString("permission"));
                 page.setOrder(rs.getInt("pageorder"));
                 page.setPageid(rs.getInt("pageid"));
+                page.setSubpages(getSubpages(page.getSlug()));
                 pages.add(page);
             }
         } catch (SQLException e) {
