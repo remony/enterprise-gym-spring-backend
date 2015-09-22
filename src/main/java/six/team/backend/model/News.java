@@ -12,9 +12,9 @@ import java.util.LinkedList;
  */
 public class News {
 
-    public static LinkedList<NewsStore> getAll() {
+    public static LinkedList<NewsStore> getAll(int page, int pageSize) {
         NewsDAO newsDAO = new NewsDAO();
-        return newsDAO.list();
+        return newsDAO.list(page,pageSize);
     }
 
     public static LinkedList<NewsStore> get(String slug) {

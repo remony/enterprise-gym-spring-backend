@@ -142,13 +142,18 @@ public class NewsDAO {
     }
 
 
-    public LinkedList<NewsStore> list(){
+    public LinkedList<NewsStore> list(int page,int pageSize){
         LinkedList<NewsStore> allnews = new LinkedList<NewsStore>();
         Connection connection = null;
         try {
             connection = getDBConnection();
+            String query = String.format(
+                    "select newsid, title,text,permission,slug,lastupdated,datecreated from News ORDER BY datecreated DESC LIMIT %d OFFSET %d",
+                    pageSize,
+                    (page-1)*pageSize
 
-            PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News");
+            );
+            PreparedStatement ps = connection.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 NewsStore news = new NewsStore();
@@ -341,7 +346,7 @@ public class NewsDAO {
         LinkedList<CommentStore> comments= new LinkedList<CommentStore>() ;
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select * from NewsComments where slug=?");
+            PreparedStatement ps = connection.prepareStatement("select * from NewsComments where slug=? ORDER BY date DESC");
             ps.setString(1, slug);
             ResultSet rs= ps.executeQuery();
 
