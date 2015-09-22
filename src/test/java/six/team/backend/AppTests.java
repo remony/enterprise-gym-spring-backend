@@ -118,7 +118,7 @@ public class AppTests {
             mockup.setMatricnumber("123123");
             mockup.setYoung_es(1);
             mockup.setUsergroup("user");
-            mockup.setMobile("077123456");
+//            mockup.setMobile("077123456");
             mockup.setToken("someToken");
             mockup.setRegistration_date(new java.sql.Timestamp(cal.getTimeInMillis()));
 

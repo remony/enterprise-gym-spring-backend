@@ -128,7 +128,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/login", method = RequestMethod.POST)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/user/login", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
         String username= request.getHeader("username");

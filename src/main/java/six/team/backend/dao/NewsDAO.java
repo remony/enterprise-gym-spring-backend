@@ -103,8 +103,9 @@ public class NewsDAO {
 
 
 
-    public NewsStore get(String slug) {
-        NewsStore newsStore = new NewsStore();
+    public LinkedList<NewsStore> get(String slug) {
+        LinkedList<NewsStore> news = new LinkedList<NewsStore>();
+
         Connection connection = null;
 
         try {
@@ -113,6 +114,7 @@ public class NewsDAO {
             ps.setString(1, slug);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                NewsStore newsStore = new NewsStore();
                 newsStore.setId(rs.getInt("newsid"));
                 newsStore.setTitle(rs.getString("title"));
                 newsStore.setText(rs.getString("text"));
@@ -121,6 +123,7 @@ public class NewsDAO {
                 newsStore.setLastedited(rs.getDate("lastupdated"));
                 newsStore.setDateCreated(rs.getDate("datecreated"));
                 newsStore.setComments(getAllComments(slug));
+                news.add(newsStore);
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -135,7 +138,7 @@ public class NewsDAO {
             }
 
         }
-        return newsStore;
+        return news;
     }
 
 

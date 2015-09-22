@@ -17,7 +17,7 @@ public class News {
         return newsDAO.list();
     }
 
-    public static NewsStore get(String slug) {
+    public static LinkedList<NewsStore> get(String slug) {
         NewsDAO newsDAO = new NewsDAO();
         return newsDAO.get(slug);
     }
