@@ -30,10 +30,37 @@ public class User {
         UserDAO userDAO = new UserDAO();
         return userDAO.deleteUser(userid);
     }
+    public static boolean update(int userid, String username, String password, String firstname,
+                                 String secondname, String gender, String email,String contactnumber, String country,
+                                 String university, String status, String subject,
+                                 String matricnumber, int young_es, String usergroup,
+                                 int yearofstudy, String bio) {
+        UserDAO userDAO = new UserDAO();
+        UserStore user=new UserStore();
+        user.setUsergroup(usergroup);
+        user.setBio(bio);
+        user.setContactnumber(contactnumber);
+        user.setCountry(country);
+        user.setEmail(email);
+        user.setFirstname(firstname);
+        user.setLastname(secondname);
+        user.setId(userid);
+        user.setMatricnumber(matricnumber);
+        user.setGender(gender);
+        user.setPassword(password);
+        user.setStatus(status);
+        user.setSubject(subject);
+        user.setUniversity(university);
+        user.setUsername(username);
+        user.setYear(yearofstudy);
+        user.setYoung_es(young_es);
+        return userDAO.updateUser(user);
+    }
 
     public static UserLoginStore verifyLogin(String username, String password){
         UserDAO userDAO = new UserDAO();
         return userDAO.verifyUser(username,password);
 
     }
+
 }
