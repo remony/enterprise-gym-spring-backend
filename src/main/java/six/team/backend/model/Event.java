@@ -42,13 +42,18 @@ public class Event {
         return eventDAO.signupEvent(participant);
     }
 
-    public static LinkedList<ParticipantStore> getParticipants(int eventid){
+    public static LinkedList<ParticipantStore> getParticipants(boolean permissions, int eventid){
         EventDAO eventDAO = new EventDAO();
-        return eventDAO.listParticipants(eventid);
+        return eventDAO.listParticipants(permissions, eventid);
     }
 
     public static LinkedList<ParticipantStore> getUserEvents(int eventid){
         EventDAO eventDAO = new EventDAO();
         return eventDAO.listUserEvents(eventid);
+    }
+
+    public static boolean updateAttendance(int userid, int eventid, int attended){
+        EventDAO eventDAO = new EventDAO();
+        return eventDAO.updateAttendance(userid, eventid, attended);
     }
 }

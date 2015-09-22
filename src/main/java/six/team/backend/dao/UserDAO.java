@@ -422,6 +422,35 @@ public class UserDAO {
         return userName;
     }
 
+    public int getUserID(String token){
+        Connection connection = null;
+        int userID = 0;
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT userid FROM Users WHERE token=?");
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                if (rs != null) {
+                    userID = rs.getInt("userid");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return userID;
+    }
+
     public boolean approveUser(int user_id,String user_group){
         Connection connection;
         connection = getDBConnection();
