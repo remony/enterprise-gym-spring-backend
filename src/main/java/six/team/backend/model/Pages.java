@@ -1,5 +1,6 @@
 package six.team.backend.model;
 
+import org.json.JSONObject;
 import six.team.backend.dao.NewsDAO;
 import six.team.backend.dao.PagesDAO;
 import six.team.backend.store.CommentStore;
@@ -10,6 +11,10 @@ import java.util.LinkedList;
 
 public class Pages {
 
+    public static JSONObject getHierarchy(){
+        PagesDAO pages= new PagesDAO();
+        return pages.getHierarchy();
+    }
     public static boolean addPage(String parentSlug,String title,String description, String text,String permission,int order) {
         PagesDAO pagesDAO = new PagesDAO();
         PageStore pages=new PageStore();

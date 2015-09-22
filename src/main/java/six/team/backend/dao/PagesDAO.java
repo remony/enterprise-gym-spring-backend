@@ -1,5 +1,6 @@
 package six.team.backend.dao;
 
+import org.json.JSONObject;
 import six.team.backend.store.CommentStore;
 import six.team.backend.store.NewsStore;
 import six.team.backend.store.PageStore;
@@ -218,6 +219,71 @@ public class PagesDAO {
         return pages;
     }
 
+    public static JSONObject getHierarchy(){
+        Connection connection = null;
+        JSONObject  hierarchy = new JSONObject();
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("select * from Pages where parentslug=?");
+            ps.setString(1,"main");
+            ResultSet rs= ps.executeQuery();
+
+            while(rs.next())
+            {
+                JSONObject obj = new JSONObject();
+                obj.put("title", rs.getString("title"));
+                obj.put("slug", rs.getString("slug"));
+                obj.put("subpages", getSubHierarchy(rs.getString("slug")));
+                hierarchy.append("pages", obj);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return hierarchy;
+    }
+    public static JSONObject getSubHierarchy(String slug){
+        Connection connection = null;
+        JSONObject hierarchy = new JSONObject();
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("select * from Pages where parentslug=?");
+            ps.setString(1,slug);
+            ResultSet rs= ps.executeQuery();
+
+            while(rs.next())
+            {
+                JSONObject obj = new JSONObject();
+                obj.put("title", rs.getString("title"));
+                obj.put("slug", rs.getString("slug"));
+                obj.put("subpages",getSubHierarchy(rs.getString("slug")));
+                hierarchy.append("pages",obj);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return hierarchy;
+    }
+
 
     public boolean titleExists(String title){
         Connection connection = null;
@@ -266,4 +332,5 @@ public class PagesDAO {
 
         return connection;
     }
+
 }
