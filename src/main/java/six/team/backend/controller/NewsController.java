@@ -76,10 +76,15 @@ public class NewsController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> updateNews(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug ){
         boolean success=News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
-        if(success)
-            return new ResponseEntity<String>("The news was edited succesfully", HttpStatus.OK);
-        else
-            return new ResponseEntity<String>("News Cant be edited", HttpStatus.valueOf(501));
+        JSONObject message = new JSONObject();
+        if(success) {
+            message.put("status", "success");
+            message.put("slug", slug);
+            return new ResponseEntity<String>(message.toString(), HttpStatus.OK);
+        } else {
+            message.put("status", "success");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
+        }
     }
 
 
