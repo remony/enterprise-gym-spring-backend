@@ -77,17 +77,34 @@ public class NewsController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> updateNews(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug ){
 
-        boolean success=News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
+       boolean success,exists;
         JSONObject message = new JSONObject();
-        if(success) {
-            message.put("status", "success");
-            message.put("slug", slug);
-            return new ResponseEntity<String>(message.toString(), HttpStatus.OK);
-        } else {
-            message.put("status", "success");
-            return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
-        }
+        if(News.checkValidity(request.getHeader("title"))){
+            if (News.generateSlug(request.getHeader("title")).equals(slug)) {
+                success=News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
+                if(success) {
+                    message.put("status", "success");
+                    message.put("slug", slug);
+                    return new ResponseEntity<String>(message.toString(), HttpStatus.OK);
+                } else {
+                    message.put("status", "success");
+                    return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
+                }
 
+            } else
+                return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
+        }else
+        {
+            success = News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
+            if(success) {
+                message.put("status", "success");
+                message.put("slug", slug);
+                return new ResponseEntity<String>(message.toString(), HttpStatus.OK);
+            } else {
+                message.put("status", "success");
+                return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
+            }
+        }
     }
 
 
