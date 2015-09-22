@@ -479,4 +479,49 @@ public class UserDAO {
         }
 
     }
+
+    public boolean updateUser(UserStore user)
+    {
+        Connection connection;
+        connection = getDBConnection();
+        boolean success=false;
+        try {
+
+            PreparedStatement ps = connection.prepareStatement("update Users set username=?, password=?, firstname=?, lastname=?, gender=?, email=?,contactnumber=?, country=?, university=?, status=?, subject=?, matricnumber=?,young_es=?, usergroup=?,yearofstudy=?, bio=? where userid = ?");
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getFirstname());
+            ps.setString(4, user.getLastname());
+            ps.setString(5, user.getGender());
+            ps.setString(6, user.getEmail());
+            ps.setString(7, user.getContactnumber());
+            ps.setString(8, user.getCountry());
+            ps.setString(9, user.getUniversity());
+            ps.setString(10, user.getStatus());
+            ps.setString(11, user.getSubject());
+            ps.setString(12, user.getMatricnumber());
+            ps.setInt(13, user.getYoung_es());
+            ps.setString(14, user.getUsergroup());
+            ps.setInt(15, user.getYear());
+            ps.setString(16, user.getBio());
+            ps.setInt(17, user.getId());
+            ps.executeUpdate();
+            success=true;
+        }
+        catch(SQLException e){
+            System.out.print(e.getMessage());
+            success= false;
+        }
+        finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+    return success;
+    }
 }
