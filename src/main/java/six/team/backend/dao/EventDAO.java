@@ -360,11 +360,21 @@ public class EventDAO {
         return participant;
     }
 
-    public LinkedList<ParticipantStore> listUserEvents(int userid){
+    public LinkedList<ParticipantStore> listUserEvents(String username){
         LinkedList<ParticipantStore> events = new LinkedList<ParticipantStore>();
         Connection connection = null;
+        int userid =0;
         try {
             connection = getDBConnection();
+            PreparedStatement ps1 = connection.prepareStatement("select* from Users where username = ?");
+            ps1.setString(1,username);
+            ResultSet rs1 = ps1.executeQuery();
+            while (rs1.next()) {
+                if(rs1!=null){
+                    userid = rs1.getInt("userid");
+                    System.out.println(userid);
+                }
+            }
             PreparedStatement ps = connection.prepareStatement("select* from Participants where userid = ? order by attended");
             ps.setInt(1,userid);
             ResultSet rs = ps.executeQuery();
