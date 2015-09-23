@@ -1,5 +1,6 @@
 package six.team.backend.dao;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import six.team.backend.model.Calendar;
 import six.team.backend.store.CalendarStore;
 import six.team.backend.utils.Config;
@@ -8,11 +9,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 
 /**
  * Created by Gareth on 23/09/2015.
  */
+@SuppressWarnings("deprecation")
 public class CalendarDAO {
 
     public LinkedList<CalendarStore> getCalendar(){
@@ -27,8 +31,8 @@ public class CalendarDAO {
                 if(rs != null) {
                     CalendarStore event = new CalendarStore();
                     event.setUrl("#/events/" + rs.getInt("event_id"));
-                    event.setStartdate(rs.getString("event_startdate"));
-                    event.setEnddate(rs.getString("event_enddate"));
+                    event.setStart(DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date(rs.getString("event_startdate"))).toString());
+                    event.setEnd(DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date(rs.getString("event_enddate"))));
                     event.setTitle(rs.getString("event_title"));
                     calendars.add(event);
                 }

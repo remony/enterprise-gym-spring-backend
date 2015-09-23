@@ -26,19 +26,19 @@ public class CalendarStore {
         this.title = title;
     }
 
-    public String getStartdate() {
+    public String getStart() {
         return start;
     }
 
-    public void setStartdate(String start) {
+    public void setStart(String start) {
         this.start = start;
     }
 
-    public String getEnddate() {
+    public String getEnd() {
         return end;
     }
 
-    public void setEnddate(String end) {
+    public void setEnd(String end) {
         this.end = end;
     }
 
