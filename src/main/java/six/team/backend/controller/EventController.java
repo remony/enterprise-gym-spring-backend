@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  * Created by Gareth on 16/09/2015.
@@ -50,9 +51,11 @@ public class EventController {
         event.setDescription(request.getHeader("description"));
         event.setStartDate(request.getHeader("startdate"));
         event.setEndDate(request.getHeader("enddate"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss z",
+                Locale.ENGLISH);
         try{
-            event.setOrderStartDate(formatter.parse(request.getHeader("startdate")));
+            Date date = sdf.parse(request.getHeader("startdate"));
+            event.setOrderStartDate(date);
         }catch(ParseException e){
             System.out.println(e);
         }
