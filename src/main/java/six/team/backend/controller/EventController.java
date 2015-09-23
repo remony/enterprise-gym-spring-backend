@@ -27,7 +27,7 @@ import java.util.LinkedList;
  */
 
 @Controller
-@RequestMapping("/event")
+@RequestMapping("/events")
 public class EventController {
         private final static Logger logger = Logger.getLogger(EventController.class);
 
@@ -35,7 +35,7 @@ public class EventController {
     public @ResponseBody ResponseEntity<String> allEvents() {
         LinkedList<EventStore> events = Event.getAll();
         JSONObject details = new JSONObject();
-        details.put("Events: ",events);
+        details.put("events",events);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
 
     }
@@ -74,7 +74,7 @@ public class EventController {
         if(event.getName()!=null) {
             JSONObject details = new JSONObject();
             details.put("id", id);
-            details.put("title:" , event.getName());
+            details.put("title" , event.getName());
             details.put("location", event.getLocation());
             details.put("venue", event.getVenue());
             details.put("points" , event.getPoints());
@@ -164,7 +164,7 @@ public class EventController {
         Boolean permissions = false;
         String token = request.getHeader("token");
 
-        if (UD.getUserGroup(token).equals("admin") || UD.getUserGroup(token).equals("editor")) {
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
             permissions = true;
         }
         participant = Event.getParticipants(permissions,Integer.parseInt(id));
@@ -179,7 +179,7 @@ public class EventController {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
 
-        if (UD.getUserGroup(token).equals("admin") || UD.getUserGroup(token).equals("editor")) {
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
             if (Event.updateAttendance(Integer.parseInt(id), Integer.parseInt(request.getHeader("attendeeid")), Integer.parseInt(request.getHeader("attendance")))) {
                 LinkedList<ParticipantStore> participant;
                 participant = Event.getParticipants(true, Integer.parseInt(id));
