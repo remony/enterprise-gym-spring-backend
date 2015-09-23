@@ -17,6 +17,11 @@ public class UserGroupsStore {
     private int pagesview;
     private int pagesdelete;
     private int pagesedit;
+    private int userssadd;
+    private int usersview;
+    private int usersdelete;
+    private int usersedit;
+
 
     public String getUsergroup() {return usergroup;}
 
@@ -69,4 +74,20 @@ public class UserGroupsStore {
     public int getPagesedit() {return pagesedit;}
 
     public void setPagesedit(int pagesedit) {this.pagesedit = pagesedit;}
+
+    public int getUserssadd() {return userssadd;}
+
+    public void setUserssadd(int userssadd) {this.userssadd = userssadd;}
+
+    public int getUsersview() {return usersview;}
+
+    public void setUsersview(int usersview) {this.usersview = usersview;}
+
+    public int getUsersdelete() {return usersdelete;}
+
+    public void setUsersdelete(int usersdelete) {this.usersdelete = usersdelete;}
+
+    public int getUsersedit() {return usersedit;}
+
+    public void setUsersedit(int usersedit) {this.usersedit = usersedit;}
 }
