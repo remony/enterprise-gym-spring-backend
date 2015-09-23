@@ -16,7 +16,7 @@ public class UserGroupDAO {
         boolean success=false;
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("insert into RolePermissions (usergroup,eventsadd,eventsdelete,eventsedit,eventsview,newsadd,newsdelete,newsedit,newsview,pagesadd,pagesdelete,pagesedit,pagesview) values (?,?,?,?,?,?,?,?,?,?,?,?,?) ");
+            PreparedStatement ps = connection.prepareStatement("insert into RolePermissions (usergroup,eventsadd,eventsdelete,eventsedit,eventsview,newsadd,newsdelete,newsedit,newsview,pagesadd,pagesdelete,pagesedit,pagesview,usersadd,usersdelete,usersedit,usersview) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
             ps.setString(1, groups.getUsergroup());
             ps.setInt(2, groups.getEventsadd());
             ps.setInt(3, groups.getEventsdelete());
@@ -30,6 +30,10 @@ public class UserGroupDAO {
             ps.setInt(11, groups.getPagesdelete());
             ps.setInt(12, groups.getPagesedit());
             ps.setInt(13, groups.getPagesview());
+            ps.setInt(14, groups.getUserssadd());
+            ps.setInt(15, groups.getUsersdelete());
+            ps.setInt(16, groups.getUsersedit());
+            ps.setInt(17, groups.getUsersview());
             ps.executeUpdate();
             success=true;
 
@@ -54,7 +58,7 @@ public class UserGroupDAO {
         boolean success=false;
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("update  RolePermissions set usergroup=?,eventsadd=?,eventsdelete=?,eventsedit=?,eventsview=?,newsadd=?,newsdelete=?,newsedit=?,newsview=?,pagesadd=?,pagesdelete=?,pagesedit=?,pagesview=? ");
+            PreparedStatement ps = connection.prepareStatement("update  RolePermissions set usergroup=?,eventsadd=?,eventsdelete=?,eventsedit=?,eventsview=?,newsadd=?,newsdelete=?,newsedit=?,newsview=?,pagesadd=?,pagesdelete=?,pagesedit=?,pagesview=?,usersadd=?,usersdelete=?,usersedit=?,usersview=? ");
             ps.setString(1, groups.getUsergroup());
             ps.setInt(2, groups.getEventsadd());
             ps.setInt(3, groups.getEventsdelete());
@@ -68,6 +72,10 @@ public class UserGroupDAO {
             ps.setInt(11, groups.getPagesdelete());
             ps.setInt(12, groups.getPagesedit());
             ps.setInt(13, groups.getPagesview());
+            ps.setInt(14, groups.getUserssadd());
+            ps.setInt(15, groups.getUsersdelete());
+            ps.setInt(16, groups.getUsersedit());
+            ps.setInt(17, groups.getUsersview());
             ps.executeUpdate();
             success=true;
 
@@ -135,6 +143,10 @@ public class UserGroupDAO {
                 group.setPagesdelete(rs.getInt("pagesdelete"));
                 group.setPagesedit(rs.getInt("pagesedit"));
                 group.setPagesview(rs.getInt("pagesview"));
+                group.setUserssadd(rs.getInt("usersadd"));
+                group.setUsersdelete(rs.getInt("usersdelete"));
+                group.setUsersedit(rs.getInt("usersedit"));
+                group.setUsersview(rs.getInt("usersview"));
                 group.setUsergroup(rs.getString("usergroup"));
                 groups.add(group);
             }
@@ -175,6 +187,10 @@ public class UserGroupDAO {
                 group.setPagesdelete(rs.getInt("pagesdelete"));
                 group.setPagesedit(rs.getInt("pagesedit"));
                 group.setPagesview(rs.getInt("pagesview"));
+                group.setUserssadd(rs.getInt("usersadd"));
+                group.setUsersdelete(rs.getInt("usersdelete"));
+                group.setUsersedit(rs.getInt("usersedit"));
+                group.setUsersview(rs.getInt("usersview"));
                 group.setUsergroup(rs.getString("usergroup"));
                 groups.add(group);
             }
