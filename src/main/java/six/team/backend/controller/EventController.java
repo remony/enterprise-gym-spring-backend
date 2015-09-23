@@ -172,7 +172,7 @@ public class EventController {
         }
         participant = Event.getParticipants(permissions,Integer.parseInt(id));
         JSONObject details = new JSONObject();
-        details.put("Participants: ",participant);
+        details.put("participants",participant);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 
