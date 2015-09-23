@@ -390,7 +390,41 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
+
         return userGroup;
+    }
+
+    public Boolean getUserGroupPermissions(String userGroup, String columnName){
+        Connection connection = null;
+        int permissionGranted = 0;
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT " + columnName + " FROM RolePermissions WHERE usergroup = ?");
+            ps.setString(1, userGroup);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                if (rs != null) {
+                    permissionGranted = rs.getInt(columnName);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        if(permissionGranted == 1){
+            return true;
+        }else {
+            return false;
+        }
     }
 
     public String getUserName(String token){
@@ -420,6 +454,35 @@ public class UserDAO {
             }
         }
         return userName;
+    }
+
+    public int getUserID(String token){
+        Connection connection = null;
+        int userID = 0;
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT userid FROM Users WHERE token=?");
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                if (rs != null) {
+                    userID = rs.getInt("userid");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return userID;
     }
 
     public boolean approveUser(int user_id,String user_group){

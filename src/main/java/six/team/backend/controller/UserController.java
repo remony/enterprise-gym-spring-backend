@@ -35,9 +35,8 @@ public class UserController {
 
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        String userGroup = UD.getUserGroup(token);
 
-        if(userGroup.equals("admin") || userGroup.equals("editor")){
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"viewAllUsers")){
             JSONArray array = new JSONArray();
 
             for (int i = 0; i < users.size(); i++) {
@@ -90,7 +89,7 @@ public class UserController {
         JSONObject details = new JSONObject();
         UserInfoStore user = User.getUser(userName);
 
-        if(userGroup.equals("admin") || userGroup.equals("editor") || tokenUserName.equals(userName)){
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"viewAllUsers") || tokenUserName.equals(userName)){
 
 
             if (UD.userCheck(userName) == true) {

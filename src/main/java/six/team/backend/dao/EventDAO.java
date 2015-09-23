@@ -109,7 +109,7 @@ public class EventDAO {
             connection = getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("select* from Events where event_id=?");
-            ps.setInt(1,eventid);
+            ps.setInt(1, eventid);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
                 if (rs != null) {
@@ -236,7 +236,38 @@ public class EventDAO {
         return signedUp;
     }
 
-    public LinkedList<ParticipantStore> listParticipants(int eventid){
+    public boolean updateAttendance(int eventid, int userid, int newAttended){
+
+        Connection connection = null;
+        boolean attended = false;
+
+        try {
+            connection = getDBConnection();
+
+            PreparedStatement ps = connection.prepareStatement("UPDATE Participants SET attended = ? WHERE event_id = ? AND userid = ?");
+            ps.setInt(1, newAttended);
+            ps.setInt(2, eventid);
+            ps.setInt(3, userid);
+            int rs = ps.executeUpdate();
+            if(rs ==1){
+                attended = true;
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return attended;
+    }
+
+    public LinkedList<ParticipantStore> listParticipants(boolean permissions, int eventid){
         LinkedList<ParticipantStore> participants = new LinkedList<ParticipantStore>();
         Connection connection = null;
         try {
@@ -246,10 +277,13 @@ public class EventDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ParticipantStore participant = new ParticipantStore();
-                participant.setUserid(rs.getInt("userid"));
+                if (permissions) {
+                    participant.setUserid(rs.getInt("userid"));
+                    participant.setAttended(rs.getInt("attended"));
+                }
+
                 participant.setEvent_id(rs.getInt("event_id"));
-                participant.setAttended(rs.getInt("attended"));
-                participants.add(participant);
+                participants.add(collectDetails(participant, rs.getInt("userid")));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -264,6 +298,33 @@ public class EventDAO {
             }
         }
         return participants;
+    }
+
+    public ParticipantStore collectDetails(ParticipantStore participant, int userid){
+        Connection connection = null;
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("select username, firstname, lastname from Users where userid = ?");
+            ps.setInt(1,userid);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                participant.setUsername(rs.getString("username"));
+                participant.setFirstname(rs.getString("firstname"));
+                participant.setLastname(rs.getString("lastname"));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return participant;
     }
 
     public LinkedList<ParticipantStore> listUserEvents(int userid){

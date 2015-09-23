@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import six.team.backend.PageJsonGen;
+import six.team.backend.dao.UserDAO;
 import six.team.backend.model.Event;
 import six.team.backend.store.EventStore;
 import six.team.backend.store.PageStore;
@@ -20,13 +21,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  * Created by Gareth on 16/09/2015.
  */
 
 @Controller
-@RequestMapping("/event")
+@RequestMapping("/events")
 public class EventController {
         private final static Logger logger = Logger.getLogger(EventController.class);
 
@@ -34,7 +36,7 @@ public class EventController {
     public @ResponseBody ResponseEntity<String> allEvents() {
         LinkedList<EventStore> events = Event.getAll();
         JSONObject details = new JSONObject();
-        details.put("Events: ",events);
+        details.put("events",events);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
 
     }
@@ -49,9 +51,11 @@ public class EventController {
         event.setDescription(request.getHeader("description"));
         event.setStartDate(request.getHeader("startdate"));
         event.setEndDate(request.getHeader("enddate"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss z",
+                Locale.ENGLISH);
         try{
-            event.setOrderStartDate(formatter.parse(request.getHeader("startdate")));
+            Date date = sdf.parse(request.getHeader("startdate"));
+            event.setOrderStartDate(date);
         }catch(ParseException e){
             System.out.println(e);
         }
@@ -73,7 +77,7 @@ public class EventController {
         if(event.getName()!=null) {
             JSONObject details = new JSONObject();
             details.put("id", id);
-            details.put("title:" , event.getName());
+            details.put("title" , event.getName());
             details.put("location", event.getLocation());
             details.put("venue", event.getVenue());
             details.put("points" , event.getPoints());
@@ -140,7 +144,11 @@ public class EventController {
             ParticipantStore participant = new ParticipantStore();
             participant.setAttended(0);
             participant.setEvent_id(Integer.parseInt(id));
-            participant.setUserid(Integer.parseInt(request.getHeader("userid")));
+
+            UserDAO UD = new UserDAO();
+            String token = request.getHeader("token");
+            participant.setUserid(UD.getUserID(token));
+            //participant.setUserid(Integer.parseInt(request.getHeader("userid")));
             boolean signedUp = Event.signupEvent(participant);
         JSONObject createObject = new JSONObject();
         if(signedUp) {
@@ -153,12 +161,44 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{eventid}/participants", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> showParticpants(@PathVariable(value="eventid") String id) {
+    public @ResponseBody ResponseEntity<String> showParticpants(@PathVariable(value="eventid") String id, HttpServletRequest request) {
         LinkedList<ParticipantStore> participant;
-        participant = Event.getParticipants(Integer.parseInt(id));
+        UserDAO UD = new UserDAO();
+        Boolean permissions = false;
+        String token = request.getHeader("token");
+
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
+            permissions = true;
+        }
+        participant = Event.getParticipants(permissions,Integer.parseInt(id));
         JSONObject details = new JSONObject();
         details.put("Participants: ",participant);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
+    }
+
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{eventid}/participants", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> updateAttendance(@PathVariable(value="eventid") String id, HttpServletRequest request,HttpServletResponse res) {
+
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
+            if (Event.updateAttendance(Integer.parseInt(id), Integer.parseInt(request.getHeader("attendeeid")), Integer.parseInt(request.getHeader("attendance")))) {
+                LinkedList<ParticipantStore> participant;
+                participant = Event.getParticipants(true, Integer.parseInt(id));
+                JSONObject details = new JSONObject();
+                details.put("Participants: ", participant);
+                return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
+            } else {
+                JSONObject createObject = new JSONObject();
+                createObject.put("message", "Attendance could not be updated");
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+            }
+        }else{
+            JSONObject createObject = new JSONObject();
+            createObject.put("message", "You do not have the permissions to send this request");
+            return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+        }
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{userid}", method = RequestMethod.GET)
