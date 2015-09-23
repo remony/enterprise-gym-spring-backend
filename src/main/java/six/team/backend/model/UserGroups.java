@@ -19,7 +19,7 @@ public class UserGroups {
         UserGroupDAO user = new UserGroupDAO();
         return user.get(usergroup);
     }
-    public static boolean addUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv)
+    public static boolean addUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv,int ua,int ud,int ue,int uv)
     {
         UserGroupDAO user = new UserGroupDAO();
         UserGroupsStore userstore=new UserGroupsStore();
@@ -36,6 +36,10 @@ public class UserGroups {
         userstore.setPagesdelete(pd);
         userstore.setPagesedit(pe);
         userstore.setPagesview(pv);
+        userstore.setUserssadd(ua);
+        userstore.setUsersdelete(ud);
+        userstore.setUsersedit(ue);
+        userstore.setUsersview(uv);
         return user.add(userstore);
     }
     public static boolean deleteUserGroup(String usergroup)
@@ -43,7 +47,7 @@ public class UserGroups {
         UserGroupDAO user = new UserGroupDAO();
         return user.delete(usergroup);
     }
-    public static boolean updateUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv)
+    public static boolean updateUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv,int ua,int ud,int ue,int uv)
     {
         UserGroupDAO user = new UserGroupDAO();
         UserGroupsStore userstore=new UserGroupsStore();
@@ -60,6 +64,10 @@ public class UserGroups {
         userstore.setPagesdelete(pd);
         userstore.setPagesedit(pe);
         userstore.setPagesview(pv);
+        userstore.setUserssadd(ua);
+        userstore.setUsersdelete(ud);
+        userstore.setUsersedit(ue);
+        userstore.setUsersview(uv);
         return user.update(userstore);
     }
 

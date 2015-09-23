@@ -57,7 +57,9 @@ public class UserGroupsController {
                     Integer.parseInt(request.getHeader("newsadd")), Integer.parseInt(request.getHeader("newsdelete")),
                     Integer.parseInt(request.getHeader("newsedit")), Integer.parseInt(request.getHeader("newsview")),
                     Integer.parseInt(request.getHeader("pagesadd")), Integer.parseInt(request.getHeader("pagesdelete")),
-                    Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")));
+                    Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")),
+                    Integer.parseInt(request.getHeader("usersadd")), Integer.parseInt(request.getHeader("usersdelete")),
+                    Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")));
             JSONObject object = new JSONObject();
             object.put("addnews", success);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
@@ -76,7 +78,9 @@ public class UserGroupsController {
                         Integer.parseInt(request.getHeader("newsadd")), Integer.parseInt(request.getHeader("newsdelete")),
                         Integer.parseInt(request.getHeader("newsedit")), Integer.parseInt(request.getHeader("newsview")),
                         Integer.parseInt(request.getHeader("pagesadd")), Integer.parseInt(request.getHeader("pagesdelete")),
-                        Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")));
+                        Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")),
+                        Integer.parseInt(request.getHeader("usersadd")), Integer.parseInt(request.getHeader("usersdelete")),
+                        Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")));
                 object.put("updatenews", success);
                     return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
 
@@ -91,7 +95,9 @@ public class UserGroupsController {
                     Integer.parseInt(request.getHeader("newsadd")), Integer.parseInt(request.getHeader("newsdelete")),
                     Integer.parseInt(request.getHeader("newsedit")), Integer.parseInt(request.getHeader("newsview")),
                     Integer.parseInt(request.getHeader("pagesadd")), Integer.parseInt(request.getHeader("pagesdelete")),
-                    Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")));
+                    Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")),
+                    Integer.parseInt(request.getHeader("usersadd")), Integer.parseInt(request.getHeader("usersdelete")),
+                    Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")));
             object.put("updatenews", success);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         }
