@@ -184,6 +184,44 @@ public class NewsDAO {
         return allnews;
     }
 
+    public LinkedList<NewsStore> getAll(){
+        LinkedList<NewsStore> allnews = new LinkedList<NewsStore>();
+        Connection connection = null;
+        try {
+            connection = getDBConnection();
+            String query = String.format(
+                    "select newsid, title,text,permission,slug,lastupdated,datecreated from News ORDER BY datecreated DESC ");
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                NewsStore news = new NewsStore();
+                news.setId(rs.getInt("newsid"));
+                news.setTitle(rs.getString("title"));
+                news.setText(rs.getString("text"));
+                news.setPermission(rs.getString("permission"));
+                news.setSlug(rs.getString("slug"));
+                news.setLastedited(rs.getDate("lastupdated"));
+                news.setDateCreated(rs.getDate("datecreated"));
+                news.setComments(getAllComments(rs.getString("slug")));
+                allnews.add(news);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+
+        }
+        return allnews;
+    }
+
     private static Connection getDBConnection() {
         Connection connection = null;
         try {
@@ -340,6 +378,34 @@ public class NewsDAO {
         }
         return success;
     }
+
+    public static int getPagesNumber() {
+        Connection connection = null;
+        boolean success=false;
+        int count=0;
+        try {
+            connection = getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) AS rowcount FROM News");
+            ResultSet rs= ps.executeQuery();
+            rs.next();
+            count = rs.getInt("rowcount");
+            rs.close();
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return count;
+    }
+
     public static LinkedList<CommentStore> getAllComments(String slug){
         Connection connection = null;
         boolean success=false;
