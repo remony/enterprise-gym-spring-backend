@@ -67,6 +67,11 @@ public class News {
         return newsDAO.titleExists(title);
 
     }
+    public static int getPagesNumber() {
+        NewsDAO newsDAO = new NewsDAO();
+        return newsDAO.getPagesNumber();
+
+    }
 
 
     //Methods for  comments

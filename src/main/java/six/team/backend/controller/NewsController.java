@@ -34,9 +34,10 @@ public class NewsController {
     ResponseEntity<String> printNews(HttpServletRequest request, HttpServletResponse response) {
 
         LinkedList<NewsStore> news = News.getAll(Integer.parseInt(request.getHeader("page")), Integer.parseInt(request.getHeader("pagesize")));
-        PageJsonGen pageJsonGen = new PageJsonGen();
         JSONObject object = new JSONObject();
+        int count =News.getPagesNumber();
         object.put("allnews", news);
+        object.put("count", count);
         return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
     }
 
