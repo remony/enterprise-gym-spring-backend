@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import six.team.backend.PageJsonGen;
 import six.team.backend.model.News;
 import six.team.backend.store.CommentStore;
@@ -43,7 +40,7 @@ public class NewsController {
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> addNews(HttpServletRequest request,HttpServletResponse response) {
+    public @ResponseBody ResponseEntity<String> addNews(HttpServletRequest request,HttpServletResponse response, @RequestBody String text) {
         boolean success,exists;
         exists = News.checkValidity(request.getHeader("title"));
         if(exists)
@@ -51,7 +48,7 @@ public class NewsController {
             return new ResponseEntity<String>("title exists", HttpStatus.valueOf(409));
         }
         else {
-            success = News.save(request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
+            success = News.save(request.getHeader("title"), text , request.getHeader("permission"));
             if (success)
                 return new ResponseEntity<String>("", HttpStatus.valueOf(201));
             else
@@ -76,13 +73,13 @@ public class NewsController {
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updateNews(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug ){
+    public @ResponseBody ResponseEntity<String> updateNews(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug , @RequestBody String text){
 
        boolean success,exists;
         JSONObject message = new JSONObject();
         if(News.checkValidity(request.getHeader("title"))){
             if (News.generateSlug(request.getHeader("title")).equals(slug)) {
-                success=News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
+                success=News.update(slug, request.getHeader("title"), text, request.getHeader("permission"));
                 if(success) {
                     message.put("status", "success");
                     message.put("slug", slug);
