@@ -155,7 +155,7 @@ public class EventController {
             createObject.put("message", "Signed Up successfully for Event id:" + id);
             return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
         }else{
-            createObject.put("message", "Not signed Up successfully for Event id:" + id);
+            createObject.put("message", "You are already signed up for this event:" + id);
             return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
         }
     }
@@ -183,6 +183,7 @@ public class EventController {
         String token = request.getHeader("token");
 
         if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
+
             if (Event.updateAttendance(Integer.parseInt(id), Integer.parseInt(request.getHeader("attendeeid")), Integer.parseInt(request.getHeader("attendance")))) {
                 LinkedList<ParticipantStore> participant;
                 participant = Event.getParticipants(true, Integer.parseInt(id));

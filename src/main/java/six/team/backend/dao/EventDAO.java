@@ -205,11 +205,12 @@ public class EventDAO {
         return deleted;
     }
 
+
     public boolean signupEvent(ParticipantStore participant){
 
         Connection connection = null;
         boolean signedUp = false;
-
+        if(hasSignedUp(participant) != true){
         try {
             connection = getDBConnection();
 
@@ -232,9 +233,41 @@ public class EventDAO {
                 //failed to close connection
                 System.err.println(e.getMessage());
             }
+        }}
+        return signedUp;
+    }
+
+    public boolean hasSignedUp(ParticipantStore participant){
+
+        Connection connection = null;
+        boolean signedUp = false;
+
+        try {
+            connection = getDBConnection();
+
+            PreparedStatement ps = connection.prepareStatement("SELECT userid FROM Participants WHERE event_id = ? AND userid = ?");
+            ps.setInt(1, participant.getEvent_id());
+            ps.setInt(2, participant.getUserid());
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                if(rs != null) signedUp = true;
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
         }
         return signedUp;
     }
+
 
     public boolean updateAttendance(int eventid, int userid, int newAttended){
 
