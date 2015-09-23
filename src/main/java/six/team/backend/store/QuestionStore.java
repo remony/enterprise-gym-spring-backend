@@ -6,16 +6,16 @@ import java.util.LinkedList;
  * Created by Gareth on 20/09/2015.
  */
 public class QuestionStore {
-    int question_id;
+    String question_id;
     String question_text;
-    int correctAnswer;
+    String correctAnswer;
     LinkedList<AnswerStore> answers;
 
-    public int getCorrectAnswer() {
+    public String getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(int correctAnswer) {
+    public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 
@@ -27,11 +27,11 @@ public class QuestionStore {
         this.question_text = question_text;
     }
 
-    public int getQuestion_id() {
+    public String getQuestion_id() {
         return question_id;
     }
 
-    public void setQuestion_id(int question_id) {
+    public void setQuestion_id(String question_id) {
         this.question_id = question_id;
     }
     public LinkedList<AnswerStore> getAnswers() {
