@@ -184,6 +184,44 @@ public class NewsDAO {
         return allnews;
     }
 
+    public LinkedList<NewsStore> getAll(){
+        LinkedList<NewsStore> allnews = new LinkedList<NewsStore>();
+        Connection connection = null;
+        try {
+            connection = getDBConnection();
+            String query = String.format(
+                    "select newsid, title,text,permission,slug,lastupdated,datecreated from News ORDER BY datecreated DESC ");
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                NewsStore news = new NewsStore();
+                news.setId(rs.getInt("newsid"));
+                news.setTitle(rs.getString("title"));
+                news.setText(rs.getString("text"));
+                news.setPermission(rs.getString("permission"));
+                news.setSlug(rs.getString("slug"));
+                news.setLastedited(rs.getDate("lastupdated"));
+                news.setDateCreated(rs.getDate("datecreated"));
+                news.setComments(getAllComments(rs.getString("slug")));
+                allnews.add(news);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+
+        }
+        return allnews;
+    }
+
     private static Connection getDBConnection() {
         Connection connection = null;
         try {
