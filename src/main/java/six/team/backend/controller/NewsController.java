@@ -37,7 +37,7 @@ public class NewsController {
         JSONObject object = new JSONObject();
         int count =News.getPagesNumber();
         object.put("allnews", news);
-        object.put("count", count);
+        object.put("count", (count + Integer.parseInt(request.getHeader("pagesize")) - 1) /Integer.parseInt(request.getHeader("pagesize")));
         return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
     }
 
