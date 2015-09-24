@@ -15,4 +15,18 @@ public class Points {
         PointDAO pointDAO = new PointDAO();
         return pointDAO.updatePoints(userid,points,category);
     }
+    public static LinkedList<PointStore> allPoints() {
+        PointDAO pointDAO = new PointDAO();
+        return pointDAO.allPoints();
+    }
+
+    public static boolean resetPoints() {
+        PointDAO pointDAO = new PointDAO();
+        return pointDAO.resetPoints();
+    }
+
+    public static LinkedList<PointStore> getUserPoints(int userid) {
+        PointDAO pointDAO = new PointDAO();
+        return pointDAO.getUserPoints(userid);
+    }
 }

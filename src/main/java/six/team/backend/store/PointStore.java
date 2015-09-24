@@ -10,6 +10,7 @@ public class PointStore {
     int project;
     int action;
     int virtual;
+    int total;
 
     public int getUserid() {
         return userid;
@@ -57,6 +58,14 @@ public class PointStore {
 
     public void setVirtual(int virtual) {
         this.virtual = virtual;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 
 }
