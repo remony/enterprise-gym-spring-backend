@@ -4,10 +4,10 @@ package six.team.backend.store;
  * Created by Gareth on 19/09/2015.
  */
 public class ParticipantStore {
-    int event_id;
-    int userid;
-    int attended;
-    String lastname, firstname, username;
+   private  int event_id;
+   private  int userid;
+   private  int attended;
+    private String lastname, firstname, username;
 
     public String getFirstname() {
         return firstname;

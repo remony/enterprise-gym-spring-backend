@@ -19,6 +19,7 @@ public class EventStore {
     private String startDate;
     private String endDate;
     private Date orderStartDate;
+    private String points_category;
 
     public int getId() {
         return id;
@@ -70,5 +71,11 @@ public class EventStore {
     }
     public Date getOrderStartDate(){return orderStartDate;}
     public void setOrderStartDate(Date orderStartDate){this.orderStartDate = orderStartDate;}
+    public String getPoints_category() {
+        return points_category;
+    }
+    public void setPoints_category(String points_category) {
+        this.points_category = points_category;
+    }
 
 }

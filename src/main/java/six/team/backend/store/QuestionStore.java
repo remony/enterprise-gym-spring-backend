@@ -6,10 +6,10 @@ import java.util.LinkedList;
  * Created by Gareth on 20/09/2015.
  */
 public class QuestionStore {
-    String question_id;
-    String question_text;
-    String correctAnswer;
-    LinkedList<AnswerStore> answers;
+    private String question_id;
+    private String question_text;
+    private String correctAnswer;
+    private LinkedList<AnswerStore> answers;
 
     public String getCorrectAnswer() {
         return correctAnswer;

@@ -4,13 +4,13 @@ package six.team.backend.store;
  * Created by Gareth on 23/09/2015.
  */
 public class PointStore {
-    int userid;
-    int enterprise_challenge;
-    int theory;
-    int project;
-    int action;
-    int virtual;
-    int total;
+    private int userid;
+    private int enterprise_challenge;
+    private int theory;
+    private int project;
+    private int action;
+    private int virtual;
+    private int total;
 
     public int getUserid() {
         return userid;

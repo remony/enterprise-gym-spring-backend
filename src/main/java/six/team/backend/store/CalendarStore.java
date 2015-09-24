@@ -5,10 +5,10 @@ package six.team.backend.store;
  */
 public class CalendarStore {
 
-    String url;
-    String title;
-    String start;
-    String end;
+    private String url;
+    private String title;
+    private String start;
+    private String end;
 
     public String getUrl() {
         return url;

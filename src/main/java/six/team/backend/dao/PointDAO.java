@@ -58,7 +58,7 @@ public class PointDAO {
         Connection connection = null;
         try {
             connection = Config.getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select* from Points");
+            PreparedStatement ps = connection.prepareStatement("select* from Points ORDER BY total DESC");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                     PointStore pointStore = new PointStore();

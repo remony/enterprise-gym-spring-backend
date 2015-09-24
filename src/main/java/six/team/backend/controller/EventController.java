@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import six.team.backend.PageJsonGen;
 import six.team.backend.dao.UserDAO;
 import six.team.backend.model.Event;
+import six.team.backend.model.Points;
 import six.team.backend.store.EventStore;
 import six.team.backend.store.PageStore;
 import six.team.backend.store.ParticipantStore;
@@ -59,6 +60,7 @@ public class EventController {
         }catch(ParseException e){
             System.out.println(e);
         }
+        event.setPoints_category(request.getHeader("points_category"));
         boolean isCreated = Event.createEvent(event);
         JSONObject createObject = new JSONObject();
         createObject.put("message", "Event: " + request.getHeader("name") + " was successfully created");
@@ -84,6 +86,7 @@ public class EventController {
             details.put("startdate", event.getStartDate());
             details.put("enddate", event.getEndDate());
             details.put("description", event.getDescription());
+            details.put("points_category", event.getPoints_category());
             JSONArray array = new JSONArray();
             array.put(details);
             JSONObject eventInfo = new JSONObject();
@@ -115,6 +118,7 @@ public class EventController {
         }catch(ParseException e){
             System.out.println(e);
         }
+        event.setPoints_category(request.getHeader("points_category"));
         boolean isUpdated = Event.updateEvent(event);
         JSONObject createObject = new JSONObject();
         if(isUpdated) {
@@ -181,10 +185,19 @@ public class EventController {
 
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
+        int attended = Integer.parseInt(request.getHeader("attendance"));
+        String category = request.getHeader("category");
+        int points  = Integer.parseInt(request.getHeader("points"));
 
         if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
 
             if (Event.updateAttendance(Integer.parseInt(id), Integer.parseInt(request.getHeader("attendeeid")), Integer.parseInt(request.getHeader("attendance")))) {
+                if(attended ==1) {
+                    Points.updatePoints(Integer.parseInt(request.getHeader("attendeeid")),points,category);
+                }
+                else{
+                    Points.updatePoints(Integer.parseInt(request.getHeader("attendeeid")),-points,category);
+                }
                 LinkedList<ParticipantStore> participant;
                 participant = Event.getParticipants(true, Integer.parseInt(id));
                 JSONObject details = new JSONObject();

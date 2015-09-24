@@ -4,8 +4,8 @@ package six.team.backend.store;
  * Created by admin on 22/09/2015.
  */
 public class QuizStore {
-    String quiz_id;
-    String quiz_title;
+    private String quiz_id;
+    private String quiz_title;
 
     public String getQuiz_id() {
         return quiz_id;

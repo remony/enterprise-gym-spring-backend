@@ -37,7 +37,7 @@ public class EventDAO {
 
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO Events (event_id,event_title,event_location,event_description,event_points,event_venue,event_startdate,event_enddate, order_startdate) VALUES(?,?,?,?,?,?,?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO Events (event_id,event_title,event_location,event_description,event_points,event_venue,event_startdate,event_enddate, order_startdate, points_category) VALUES(?,?,?,?,?,?,?,?,?,?)");
             ps.setInt(1,event.getId());
             ps.setString(2, event.getName());
             ps.setString(3, event.getLocation());
@@ -47,6 +47,7 @@ public class EventDAO {
             ps.setString(7, event.getStartDate());
             ps.setString(8,event.getEndDate());
             ps.setDate(9, new java.sql.Date(event.getOrderStartDate().getTime()));
+            ps.setString(10, event.getPoints_category());
             int result = ps.executeUpdate();
             if(result ==1){
                 added =true;
@@ -83,6 +84,7 @@ public class EventDAO {
                 event.setPoints(rs.getInt("event_points"));
                 event.setStartDate(rs.getString("event_startdate"));
                 event.setEndDate((rs.getString("event_enddate")));
+                event.setPoints_category((rs.getString("points_category")));
                 events.add(event);
             }
         } catch (SQLException e) {
@@ -122,6 +124,7 @@ public class EventDAO {
                     event.setPoints(rs.getInt("event_points"));
                     event.setStartDate(rs.getString("event_startdate"));
                     event.setEndDate((rs.getString("event_enddate")));
+                    event.setPoints_category(rs.getString("points_category"));
                 }
             }
         } catch (SQLException e) {
@@ -146,7 +149,7 @@ public class EventDAO {
 
         try {
             connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("UPDATE Events set event_title=?,event_location=?,event_description=?,event_points=?,event_venue=?,event_startdate=?,event_enddate=?, order_startdate=? where event_id = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE Events set event_title=?,event_location=?,event_description=?,event_points=?,event_venue=?,event_startdate=?,event_enddate=?, order_startdate=? , points_category =? where event_id = ?");
             ps.setString(1, event.getName());
             ps.setString(2, event.getLocation());
             ps.setString(3, event.getDescription());
@@ -156,6 +159,7 @@ public class EventDAO {
             ps.setString(7,event.getEndDate());
             ps.setDate(8, new java.sql.Date(event.getOrderStartDate().getTime()));
             ps.setInt(9,event.getId());
+            ps.setString(10,event.getPoints_category());
             int result = ps.executeUpdate();
             if(result ==1){
                 updated = true;
