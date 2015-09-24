@@ -4,6 +4,7 @@ import six.team.backend.dao.EventDAO;
 import six.team.backend.dao.UserDAO;
 import six.team.backend.store.EventStore;
 import six.team.backend.store.ParticipantStore;
+import six.team.backend.store.UpcomingStore;
 import six.team.backend.store.UserStore;
 
 import java.util.LinkedList;
@@ -56,4 +57,9 @@ public class Event {
         EventDAO eventDAO = new EventDAO();
         return eventDAO.updateAttendance(userid, eventid, attended);
     }
+
+   public static LinkedList<UpcomingStore> getUpcomingEvents(int resultNumber){
+       EventDAO eventDAO = new EventDAO();
+       return eventDAO.getUpcomingEvents(resultNumber);
+   }
 }

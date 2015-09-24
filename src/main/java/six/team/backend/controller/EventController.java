@@ -15,6 +15,7 @@ import six.team.backend.model.Points;
 import six.team.backend.store.EventStore;
 import six.team.backend.store.PageStore;
 import six.team.backend.store.ParticipantStore;
+import six.team.backend.store.UpcomingStore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -216,17 +217,33 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
+         public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
         LinkedList<ParticipantStore> participant;
         LinkedList<EventStore> events = new LinkedList<EventStore>();
         participant = Event.getUserEvents(id);
         JSONObject details = new JSONObject();
         for(int i =0; i<participant.size(); i++){
-         EventStore  event =   Event.getEvent(participant.get(i).getEvent_id());
+            EventStore  event =   Event.getEvent(participant.get(i).getEvent_id());
             events.add(event);
         }
         details.put("events",events);
 
+        return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
+    }
+
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/upcoming", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> showUpcoming(HttpServletRequest request,HttpServletResponse res) {
+       int resultNumber;
+        if(request.getHeader("number")!=null){
+            resultNumber = Integer.parseInt(request.getHeader("number"));
+        }
+        else{
+            resultNumber =5;
+        }
+        LinkedList<UpcomingStore> upcoming;
+        upcoming = Event.getUpcomingEvents(resultNumber);
+        JSONObject details = new JSONObject();
+        details.put("upcoming", upcoming);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 }
