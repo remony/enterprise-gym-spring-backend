@@ -4,11 +4,11 @@ package six.team.backend.store;
  * Created by Gareth on 18/09/2015.
  */
 public class IndexStore {
-    int id;
-    String title;
-    String slug;
-    String description;
-    String navigation;
+   private int id;
+    private String title;
+   private String slug;
+    private String description;
+    private String navigation;
 
     public int getId() {
         return id;

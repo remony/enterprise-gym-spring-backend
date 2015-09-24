@@ -4,8 +4,8 @@ package six.team.backend.store;
  * Created by admin on 20/09/2015.
  */
 public class AnswerStore {
-    String answer_id;
-    String answer_text;
+    private String answer_id;
+    private String answer_text;
 
     public String getAnswer_id() {
         return answer_id;

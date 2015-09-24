@@ -153,7 +153,7 @@ public class UserController {
         }else{
             JSONObject details = new JSONObject();
             details.put("username", username);
-            details.put("token:" , user.getToken());
+            details.put("token" , user.getToken());
             details.put("usergroup", user.getUsergroup());
             JSONArray array = new JSONArray();
             array.put(details);

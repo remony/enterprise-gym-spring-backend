@@ -101,11 +101,11 @@ public class NewsController {
         {
             success = News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
             if(success) {
-                message.put("status", "success");
+                message.put("status", success);
                 message.put("slug", slug);
                 return new ResponseEntity<String>(message.toString(), HttpStatus.OK);
             } else {
-                message.put("status", "success");
+                message.put("status", success);
                 return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
             }
         }
