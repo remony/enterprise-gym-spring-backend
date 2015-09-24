@@ -42,17 +42,23 @@ public class NewsController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addNews(HttpServletRequest request,HttpServletResponse response, @RequestBody String text) {
         boolean success,exists;
+        JSONObject object = new JSONObject();
         exists = News.checkValidity(request.getHeader("title"));
         if(exists)
         {
-            return new ResponseEntity<String>("title exists", HttpStatus.valueOf(409));
+            object.put("message","The title already exists");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         }
         else {
             success = News.save(request.getHeader("title"), text , request.getHeader("permission"));
-            if (success)
-                return new ResponseEntity<String>("", HttpStatus.valueOf(201));
-            else
-                return new ResponseEntity<String>("", HttpStatus.valueOf(401));
+            if (success) {
+                object.put("message", "The news was added successfully");
+                return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(201));
+            }
+            else{
+                    object.put("message", "The news was not added successfully");
+                    return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(401));
+                }
         }
 
     }
@@ -109,11 +115,12 @@ public class NewsController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}/delete",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity deleteNews(@PathVariable(value = "slug") String slug ){
         boolean success=News.delete(slug);
-
+        JSONObject object = new JSONObject();
+        object.put("message","news deleted: " + success);
         if(success)
-            return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         else
-            return new ResponseEntity<String>("News Cant be deleted", HttpStatus.valueOf(501));
+            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(501));
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "{slug}/comments", method = RequestMethod.GET)
@@ -133,7 +140,9 @@ public class NewsController {
     @ResponseBody
     ResponseEntity addComments(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "slug") String slug) {
         boolean success = News.addComment(slug, request.getHeader("text"), request.getHeader("author"));
-        return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
+        JSONObject object = new JSONObject();
+        object.put("message",success);
+        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
 
     }
 
@@ -142,7 +151,9 @@ public class NewsController {
     @ResponseBody
     ResponseEntity deleteComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
         boolean success = News.deleteComment(Integer.parseInt(commentid));
-        return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
+        JSONObject object = new JSONObject();
+        object.put("message",success);
+        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comment/{commentid}", method = RequestMethod.POST)
@@ -150,7 +161,9 @@ public class NewsController {
     @ResponseBody
     ResponseEntity editComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
         boolean success = News.editComment(Integer.parseInt(commentid), request.getHeader("text"));
-        return new ResponseEntity<String>("The news was deleted succesfully", HttpStatus.OK);
+        JSONObject object = new JSONObject();
+        object.put("message",success);
+        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
     }
 
 
