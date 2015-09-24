@@ -172,7 +172,7 @@ public class EventController {
         }
         participant = Event.getParticipants(permissions,Integer.parseInt(id));
         JSONObject details = new JSONObject();
-        details.put("Participants: ",participant);
+        details.put("participants",participant);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 
@@ -202,12 +202,18 @@ public class EventController {
         }
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{userid}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="userid") String id) {
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
         LinkedList<ParticipantStore> participant;
-        participant = Event.getUserEvents(Integer.parseInt(id));
+        LinkedList<EventStore> events = new LinkedList<EventStore>();
+        participant = Event.getUserEvents(id);
         JSONObject details = new JSONObject();
-        details.put("Events: ",participant);
+        for(int i =0; i<participant.size(); i++){
+         EventStore  event =   Event.getEvent(participant.get(i).getEvent_id());
+            events.add(event);
+        }
+        details.put("events",events);
+
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 }

@@ -47,9 +47,9 @@ public class Event {
         return eventDAO.listParticipants(permissions, eventid);
     }
 
-    public static LinkedList<ParticipantStore> getUserEvents(int eventid){
+    public static LinkedList<ParticipantStore> getUserEvents(String username){
         EventDAO eventDAO = new EventDAO();
-        return eventDAO.listUserEvents(eventid);
+        return eventDAO.listUserEvents(username);
     }
 
     public static boolean updateAttendance(int userid, int eventid, int attended){
