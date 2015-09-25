@@ -2,6 +2,7 @@ package six.team.backend.dao;
 
 
 
+import six.team.backend.controller.RegisterController;
 import six.team.backend.model.User;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
@@ -18,7 +19,6 @@ import java.util.*;
 //import java.sql.Date;
 
 public class UserDAO {
-
 
     public Boolean Save(UserStore userStore) {
         UserStore userStoreSave = new UserStore();
@@ -56,7 +56,7 @@ public class UserDAO {
             if (!usernameExists && !emailExists) {
 
                 // not in the DB yet - , activated, token, registration_date
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, year, matricnumber, young_es, usergroup, mobile, token, registration_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?) ");
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, matricnumber, young_es, usergroup, token, registration_date, yearofstudy, bio ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
 
                 // for the timestamp
                 Calendar cal = Calendar.getInstance();
@@ -74,17 +74,21 @@ public class UserDAO {
                 ps.setString(10, userStore.getStatus());
 
                 ps.setString(11, userStore.getSubject());
-                ps.setInt(12, userStore.getYear());
-                ps.setString(13, userStore.getMatricnumber());
-                ps.setInt(14, userStore.getYoung_es());
-                ps.setString(15, "Students");
+                ps.setString(12, userStore.getMatricnumber());
+                ps.setInt(13, userStore.getYoung_es());
+                ps.setString(14, "Students");
 
-                ps.setString(16, "testToken");
-                ps.setTimestamp(17, (new java.sql.Timestamp(cal.getTimeInMillis())) );
+                ps.setString(15, "testToken");
+                ps.setTimestamp(16, (new java.sql.Timestamp(cal.getTimeInMillis())));
+                ps.setInt(17, userStore.getYearofstudy());
                 ps.setString(18, userStore.getBio());
 
                 ps.executeUpdate();
+
+                RegisterController registerController = new RegisterController();
+
                 return true;
+
             } else
                 return false;
 
@@ -167,7 +171,7 @@ public class UserDAO {
                 userInfoStore.setContactNo(rs.getString("contactnumber"));
                 userInfoStore.setYearOfStudy(rs.getInt("yearofstudy"));
                 userInfoStore.setMmtricNo(rs.getString("matricnumber"));
-                userInfoStore.setUserGroup(rs.getString("usergroup"));
+                userInfoStore.setUserGroup("Students");
                 userInfoStore.setGender(rs.getString("gender"));
                 userInfoStore.setRegDate(rs.getDate("registration_date"));
                 userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
@@ -245,7 +249,7 @@ public class UserDAO {
                 userInfoStore.setDegreeSubject(rs.getString("subject"));
                 userInfoStore.setYearOfStudy(rs.getInt("yearofstudy"));
                 userInfoStore.setMmtricNo(rs.getString("matricnumber"));
-                userInfoStore.setUserGroup(rs.getString("usergroup"));
+                userInfoStore.setUserGroup("Students");
                 userInfoStore.setGender(rs.getString("gender"));
                 userInfoStore.setRegDate(rs.getDate("registration_date"));
                 userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
@@ -519,11 +523,11 @@ public class UserDAO {
 
         try {
 
-                PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where userid = ?");
-                ps.setString(1, user_group);
-                ps.setInt(2, user_id);
-                ps.executeUpdate();
-                return true;
+            PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where userid = ?");
+            ps.setString(1, "Students");
+            ps.setInt(2, user_id);
+            ps.executeUpdate();
+            return true;
         }
         catch(SQLException e){
             System.out.print(e.getMessage());
@@ -547,6 +551,7 @@ public class UserDAO {
         Connection connection;
         connection = getDBConnection();
         try {
+
 
                 PreparedStatement ps = connection.prepareStatement("delete from Points where user_id = ?");
                 ps.setInt(1, user_id);
@@ -581,23 +586,24 @@ public class UserDAO {
         boolean success=false;
         try {
 
-            PreparedStatement ps = connection.prepareStatement("update Users set username=?, firstname=?, lastname=?, gender=?, email=?,contactnumber=?, country=?, university=?, status=?, subject=?, matricnumber=?,young_es=?, usergroup=?,yearofstudy=?, bio=? where userid = ?");
+            PreparedStatement ps = connection.prepareStatement("update Users set username=?, passsword =?, firstname=?, lastname=?, gender=?, email=?,contactnumber=?, country=?, university=?, status=?, subject=?, matricnumber=?,young_es=?, usergroup=?,yearofstudy=?, bio=? where userid = ?");
             ps.setString(1, user.getUsername());
-            ps.setString(2, user.getFirstname());
-            ps.setString(3, user.getLastname());
-            ps.setString(4, user.getGender());
-            ps.setString(5, user.getEmail());
-            ps.setString(6, user.getContactnumber());
-            ps.setString(7, user.getCountry());
-            ps.setString(8, user.getUniversity());
-            ps.setString(9, user.getStatus());
-            ps.setString(10, user.getSubject());
-            ps.setString(11, user.getMatricnumber());
-            ps.setInt(12, user.getYoung_es());
-            ps.setString(13, user.getUsergroup());
-            ps.setInt(14, user.getYear());
-            ps.setString(15, user.getBio());
-            ps.setInt(16, user.getId());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getFirstname());
+            ps.setString(4, user.getLastname());
+            ps.setString(5, user.getGender());
+            ps.setString(6, user.getEmail());
+            ps.setString(7, user.getContactnumber());
+            ps.setString(8, user.getCountry());
+            ps.setString(9, user.getUniversity());
+            ps.setString(10, user.getStatus());
+            ps.setString(11, user.getSubject());
+            ps.setString(12, user.getMatricnumber());
+            ps.setInt(13, user.getYoung_es());
+            ps.setString(14, "unauthorised");
+            ps.setInt(15, user.getYearofstudy());
+            ps.setString(16, user.getBio());
+            ps.setInt(17, user.getId());
             ps.executeUpdate();
             success=true;
         }
@@ -615,6 +621,6 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
-    return success;
+        return success;
     }
 }

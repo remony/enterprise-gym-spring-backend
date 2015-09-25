@@ -51,7 +51,7 @@ public class User {
         user.setSubject(subject);
         user.setUniversity(university);
         user.setUsername(username);
-        user.setYear(yearofstudy);
+        user.setYearofstudy(yearofstudy);
         user.setYoung_es(young_es);
         return userDAO.updateUser(user);
     }

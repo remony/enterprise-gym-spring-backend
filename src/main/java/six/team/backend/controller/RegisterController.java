@@ -1,5 +1,9 @@
 package six.team.backend.controller;
 
+import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +15,9 @@ import six.team.backend.store.UserStore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Date;
 
 /**
@@ -21,9 +28,18 @@ import java.util.Date;
 @RequestMapping("/registration")
 public class RegisterController {
 
+    // NOTE: to look at line 88 when things get merged: "You should be returning conflict when a user of the same username already exists, your sending a conflict when the user does not have a email and username"
 
-    @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody String loginUsers(HttpServletRequest request,HttpServletResponse res) {
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> registerUser(HttpServletRequest request,HttpServletResponse res) {
+
+        // convert the true/false value for Enterpr. Society to the bit value used in the SQL db
+        int young_es_int = 0;
+        if (request.getHeader("young_es").equals("true"))
+            young_es_int = 1;
+        else
+            young_es_int = 0;
+
         String username = request.getHeader("username");
         String password = request.getHeader("password");
         String firstname = request.getHeader("firstname");
@@ -35,9 +51,9 @@ public class RegisterController {
         String number = request.getHeader("number");
         String status = request.getHeader("status");
         String subject = request.getHeader("subject");
-        int year = Integer.parseInt(request.getHeader("year"));
+        int yearofstudy = Integer.parseInt(request.getHeader("yearofstudy"));
         String matricnumber = request.getHeader("matricnumber");
-        int young_es = Integer.parseInt((request.getHeader("young_es")));
+        int young_es = young_es_int;
         String mobile = request.getHeader("mobile");
         String gender = request.getHeader("gender");
         String bio = request.getHeader("bio");
@@ -53,18 +69,27 @@ public class RegisterController {
         userStore.setUniversity(university);
         userStore.setStatus(status);
         userStore.setSubject(subject);
-        userStore.setYear(year);
+        userStore.setYearofstudy(yearofstudy);
         userStore.setMatricnumber(matricnumber);
         userStore.setYoung_es(young_es);
         userStore.setGender(gender);
         userStore.setRegistration_date(new Date());
         userStore.setBio(bio);
 
+        // for testing:
         UserDAO userDAO = new UserDAO();
-        System.out.println(username + password);
+        System.out.println("u: " + username + ",p: " + password);
         userDAO.Save(userStore);
 
-        return username;
+        // return a JSON object
+        JSONObject object = new JSONObject();
+        object.put("success", username);
+
+        if(!userStore.getEmail().isEmpty() && !userStore.getUsergroup().isEmpty())
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        else
+            return new ResponseEntity<String>(object.toString(), HttpStatus.CONFLICT);
+
     }
 
 }
