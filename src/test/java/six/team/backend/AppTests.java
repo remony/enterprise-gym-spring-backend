@@ -114,7 +114,7 @@ public class AppTests {
             mockup.setUniversity("UoD");
             mockup.setStatus("Undergraduate");
             mockup.setSubject("CompSci");
-            mockup.setYear(2015);
+            mockup.setYearofstudy(2015);
             mockup.setMatricnumber("123123");
             mockup.setYoung_es(1);
             mockup.setUsergroup("user");
