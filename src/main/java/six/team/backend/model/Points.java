@@ -25,8 +25,8 @@ public class Points {
         return pointDAO.resetPoints();
     }
 
-    public static LinkedList<PointStore> getUserPoints(int userid) {
+    public static LinkedList<PointStore> getUserPoints(String username) {
         PointDAO pointDAO = new PointDAO();
-        return pointDAO.getUserPoints(userid);
+        return pointDAO.getUserPoints(username);
     }
 }

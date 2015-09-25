@@ -15,6 +15,7 @@ import six.team.backend.model.Points;
 import six.team.backend.store.EventStore;
 import six.team.backend.store.PageStore;
 import six.team.backend.store.ParticipantStore;
+import six.team.backend.store.UpcomingStore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,12 +35,11 @@ public class EventController {
         private final static Logger logger = Logger.getLogger(EventController.class);
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> allEvents() {
-        LinkedList<EventStore> events = Event.getAll();
-        JSONObject details = new JSONObject();
-        details.put("events",events);
-        return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
-
+    public @ResponseBody ResponseEntity<String> allEvents(HttpServletRequest request,HttpServletResponse res) {
+            LinkedList<EventStore> events = Event.getAll();
+            JSONObject details = new JSONObject();
+            details.put("events", events);
+            return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/insert",method = RequestMethod.POST)
     public @ResponseBody
@@ -61,44 +61,52 @@ public class EventController {
             System.out.println(e);
         }
         event.setPoints_category(request.getHeader("points_category"));
-        boolean isCreated = Event.createEvent(event);
-        JSONObject createObject = new JSONObject();
-        createObject.put("message", "Event: " + request.getHeader("name") + " was successfully created");
-        if(isCreated) {
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"eventsadd")) {
+            boolean isCreated = Event.createEvent(event);
+            JSONObject createObject = new JSONObject();
             createObject.put("message", "Event: " + request.getHeader("name") + " was successfully created");
-            return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
-        }else{
-            createObject.put("message", "Event: " + request.getHeader("name") + " was not successfully created");
-            return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+            if (isCreated) {
+                createObject.put("message", "Event: " + request.getHeader("name") + " was successfully created");
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
+            } else {
+                createObject.put("message", "Event: " + request.getHeader("name") + " was not successfully created");
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+            }
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("events", "You are unauthorized to add an event");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{eventid}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> getAttr(@PathVariable(value="eventid") String id ) {
-        EventStore event = Event.getEvent(Integer.parseInt(id));
-        if(event.getName()!=null) {
-            JSONObject details = new JSONObject();
-            details.put("id", id);
-            details.put("title" , event.getName());
-            details.put("location", event.getLocation());
-            details.put("venue", event.getVenue());
-            details.put("points" , event.getPoints());
-            details.put("startdate", event.getStartDate());
-            details.put("enddate", event.getEndDate());
-            details.put("description", event.getDescription());
-            details.put("points_category", event.getPoints_category());
-            JSONArray array = new JSONArray();
-            array.put(details);
-            JSONObject eventInfo = new JSONObject();
-            eventInfo.put("event", array);
-            return new ResponseEntity<String>(eventInfo.toString(), HttpStatus.OK);
-        }else{
-            JSONObject eventInfo = new JSONObject();
-            JSONObject notfound = new JSONObject();
-            notfound.put("Message", "Not Found");
-            eventInfo.put("Event: " , notfound );
-            return new ResponseEntity<String>(eventInfo.toString(), HttpStatus.NOT_FOUND);
-        }
+    public @ResponseBody ResponseEntity<String> getAttr(@PathVariable(value="eventid") String id, HttpServletRequest request,HttpServletResponse res) {
+            EventStore event = Event.getEvent(Integer.parseInt(id));
+            if (event.getName() != null) {
+                JSONObject details = new JSONObject();
+                details.put("id", id);
+                details.put("title", event.getName());
+                details.put("location", event.getLocation());
+                details.put("venue", event.getVenue());
+                details.put("points", event.getPoints());
+                details.put("startdate", event.getStartDate());
+                details.put("enddate", event.getEndDate());
+                details.put("description", event.getDescription());
+                details.put("points_category", event.getPoints_category());
+                JSONArray array = new JSONArray();
+                array.put(details);
+                JSONObject eventInfo = new JSONObject();
+                eventInfo.put("event", array);
+                return new ResponseEntity<String>(eventInfo.toString(), HttpStatus.OK);
+            } else {
+                JSONObject eventInfo = new JSONObject();
+                JSONObject notfound = new JSONObject();
+                notfound.put("Message", "Not Found");
+                eventInfo.put("Event: ", notfound);
+                return new ResponseEntity<String>(eventInfo.toString(), HttpStatus.NOT_FOUND);
+            }
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/update/{eventid}", method = RequestMethod.POST)
@@ -112,34 +120,51 @@ public class EventController {
         event.setDescription(request.getHeader("description"));
         event.setStartDate(request.getHeader("startdate"));
         event.setEndDate(request.getHeader("enddate"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss z",Locale.ENGLISH);
         try{
-            event.setOrderStartDate(formatter.parse(request.getHeader("startdate")));
+            Date date = sdf.parse(request.getHeader("startdate"));
+            event.setOrderStartDate(date);
         }catch(ParseException e){
             System.out.println(e);
         }
         event.setPoints_category(request.getHeader("points_category"));
-        boolean isUpdated = Event.updateEvent(event);
-        JSONObject createObject = new JSONObject();
-        if(isUpdated) {
-            createObject.put("message", "Event ID: " + id + " was successfully updated");
-            return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
-        }else{
-            createObject.put("message", "Event ID: " + id + " was not successfully updated");
-            return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"eventsedit")) {
+            boolean isUpdated = Event.updateEvent(event);
+            JSONObject createObject = new JSONObject();
+            if (isUpdated) {
+                createObject.put("message", "Event ID: " + id + " was successfully updated");
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
+            } else {
+                createObject.put("message", "Event ID: " + id + " was not successfully updated");
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+            }
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("events", "You are unauthorized to update this content");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/delete/{eventid}", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> deleteEvent(@PathVariable(value="eventid") String id){
-        boolean isDeleted = Event.deleteEvent(Integer.parseInt(id));
-        JSONObject createObject = new JSONObject();
-        if(isDeleted) {
-            createObject.put("message", "Event ID: " + id + " was successfully deleted");
-            return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
-        }else{
-            createObject.put("message", "Event ID: " + id + " was not successfully deleted");
-            return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+    public @ResponseBody ResponseEntity<String> deleteEvent(@PathVariable(value="eventid") String id, HttpServletRequest request,HttpServletResponse re) {
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"eventsdelete")) {
+            boolean isDeleted = Event.deleteEvent(Integer.parseInt(id));
+            JSONObject createObject = new JSONObject();
+            if (isDeleted) {
+                createObject.put("message", "Event ID: " + id + " was successfully deleted");
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
+            } else {
+                createObject.put("message", "Event ID: " + id + " was not successfully deleted");
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
+            }
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("events", "You are unauthorized to delete this content");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -216,17 +241,33 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
+         public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
         LinkedList<ParticipantStore> participant;
         LinkedList<EventStore> events = new LinkedList<EventStore>();
         participant = Event.getUserEvents(id);
         JSONObject details = new JSONObject();
         for(int i =0; i<participant.size(); i++){
-         EventStore  event =   Event.getEvent(participant.get(i).getEvent_id());
+            EventStore  event =   Event.getEvent(participant.get(i).getEvent_id());
             events.add(event);
         }
         details.put("events",events);
 
+        return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
+    }
+
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/upcoming", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> showUpcoming(HttpServletRequest request,HttpServletResponse res) {
+       int resultNumber;
+        if(request.getHeader("number")!=null){
+            resultNumber = Integer.parseInt(request.getHeader("number"));
+        }
+        else{
+            resultNumber =5;
+        }
+        LinkedList<UpcomingStore> upcoming;
+        upcoming = Event.getUpcomingEvents(resultNumber);
+        JSONObject details = new JSONObject();
+        details.put("upcoming", upcoming);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 }

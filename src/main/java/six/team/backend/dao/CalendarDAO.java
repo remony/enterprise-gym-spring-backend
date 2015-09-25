@@ -25,7 +25,7 @@ public class CalendarDAO {
 
         try {
             connection = Config.getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Events order by desc");
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Events order");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 if(rs != null) {

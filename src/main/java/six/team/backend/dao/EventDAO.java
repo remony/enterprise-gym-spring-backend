@@ -2,7 +2,9 @@ package six.team.backend.dao;
 
 import six.team.backend.store.EventStore;
 import six.team.backend.store.ParticipantStore;
+import six.team.backend.store.UpcomingStore;
 import six.team.backend.store.UserStore;
+import six.team.backend.utils.Config;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -369,7 +371,7 @@ public class EventDAO {
         Connection connection = null;
         int userid =0;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps1 = connection.prepareStatement("select* from Users where username = ?");
             ps1.setString(1,username);
             ResultSet rs1 = ps1.executeQuery();
@@ -402,6 +404,43 @@ public class EventDAO {
             }
         }
         return events;
+    }
+
+    public LinkedList<UpcomingStore> getUpcomingEvents(int resultNumber){
+        LinkedList<UpcomingStore> upcoming = new LinkedList<UpcomingStore>();
+        Connection connection = null;
+        try {
+            connection = Config.getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate DESC limit " + resultNumber);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                UpcomingStore event = new UpcomingStore();
+                event.setTitle(rs.getString("event_title"));
+                event.setDescription(rs.getString("event_description"));
+                event.setUrl("#/events/" + rs.getInt("event_id"));
+                event.setLocation(rs.getString("event_location"));
+                event.setPoints(rs.getInt("event_points"));
+                event.setStart(rs.getString("event_startdate"));
+                event.setEnd((rs.getString("event_enddate")));
+                event.setCategory((rs.getString("points_category")));
+                Date startDate = rs.getDate("order_startdate");
+                if(startDate.after(new java.util.Date())) {
+                    upcoming.add(event);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return upcoming;
     }
 
 }

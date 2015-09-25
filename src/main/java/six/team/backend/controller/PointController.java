@@ -33,24 +33,36 @@ public class PointController {
     ResponseEntity<String> updatePoints(HttpServletRequest request,HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         int points = Integer.parseInt(request.getHeader("points"));
-        int userid = Integer.parseInt(request.getHeader("userid"));
+        int userid = Integer.parseInt(request.getHeader("username"));
         String category = request.getHeader("category");
         String token = request.getHeader("token");
         boolean pointsAdded = false;
         if (UD.getUserGroupPermissions(UD.getUserGroup(token),"pointsadd")) {
-           pointsAdded =  Points.updatePoints(userid, points, category);
+            pointsAdded = Points.updatePoints(userid, points, category);
+            JSONObject object = new JSONObject();
+            object.put("points", pointsAdded);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("events", "You are unauthorized to update points");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
-        JSONObject object = new JSONObject();
-        object.put("points", pointsAdded);
-        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method= RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> allPoints() {
-        LinkedList<PointStore> points = Points.allPoints();
-        JSONObject details = new JSONObject();
-        details.put("points",points);
-        return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
+    public @ResponseBody ResponseEntity<String> allPoints(HttpServletRequest request,HttpServletResponse res) {
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token),"pointsadd")) {
+            LinkedList<PointStore> points = Points.allPoints();
+            JSONObject details = new JSONObject();
+            details.put("points", points);
+            return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("events", "You are unauthorized to view all points");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method= RequestMethod.POST, value={"/reset" +
@@ -64,16 +76,20 @@ public class PointController {
         String token = request.getHeader("token");
         boolean pointsReset= false;
         if (UD.getUserGroupPermissions(UD.getUserGroup(token),"pointsadd")) {
-            pointsReset=  Points.resetPoints();
+            pointsReset = Points.resetPoints();
+            JSONObject object = new JSONObject();
+            object.put("points", pointsReset);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("events", "You are unauthorized to reset points");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
-        JSONObject object = new JSONObject();
-        object.put("points", pointsReset);
-        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{userid}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="userid") String id) {
-        LinkedList<PointStore> point = Points.getUserPoints(Integer.parseInt(id));
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{username}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
+        LinkedList<PointStore> point = Points.getUserPoints(id);
         JSONObject details = new JSONObject();
         details.put("points: ",point);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
