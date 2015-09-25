@@ -195,7 +195,7 @@ public class UserController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request, @PathVariable(value="username") String username){
+    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request, @PathVariable(value="username") String username,@RequestBody String bio){
         JSONObject object = new JSONObject();
         if(username.equals(request.getHeader("username"))||User.getUser(request.getHeader("username"))==null) {
             boolean success = User.update(Integer.parseInt(request.getHeader("userid")), request.getHeader("username"),
@@ -203,7 +203,7 @@ public class UserController {
                     request.getHeader("gender"),request.getHeader("email"), request.getHeader("contactnumber"), request.getHeader("country"),
                     request.getHeader("university"), request.getHeader("status"), request.getHeader("subject"),
                     request.getHeader("matricnumber"), Integer.parseInt(request.getHeader("young_es")), request.getHeader("usergroup"),
-                    Integer.parseInt(request.getHeader("yearofstudy")), "bio");
+                    Integer.parseInt(request.getHeader("yearofstudy")), bio);
             object = new JSONObject();
             object.put("updateuser", success);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
