@@ -56,7 +56,7 @@ public class PagesController {
     public@ResponseBody ResponseEntity<String> deletePage(HttpServletRequest request, HttpServletResponse response, @PathVariable(value="slug") String slug) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"pagedelete")) {
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"pagesdelete")) {
             boolean success = Pages.deletePage(slug);
             JSONObject json = new JSONObject();
             json.put("sucess", success);
@@ -76,7 +76,7 @@ public class PagesController {
     public@ResponseBody ResponseEntity<String> editPage(HttpServletRequest request, HttpServletResponse response,@PathVariable(value="slug") String slug, @RequestBody String text) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"pagedelete")) {
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"pagesedit")) {
             boolean success = Pages.editPage(slug, request.getHeader("parentSlug"), request.getHeader("title"), request.getHeader("description"), text, request.getHeader("permission"), Integer.parseInt(request.getHeader("order")));
             JSONObject json = new JSONObject();
             json.put("sucess", success);
