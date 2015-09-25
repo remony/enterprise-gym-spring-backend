@@ -1,5 +1,7 @@
 package six.team.backend.store;
 
+import java.util.LinkedList;
+
 /**
  * Created by Gareth on 23/09/2015.
  */
@@ -11,7 +13,15 @@ public class PointStore {
     private int action;
     private int virtual;
     private int total;
+    private LinkedList<UserStore> user;
 
+    public LinkedList<UserStore> getUser() {
+        return user;
+    }
+
+    public void setUser(LinkedList<UserStore> user) {
+        this.user = user;
+    }
     public int getUserid() {
         return userid;
     }

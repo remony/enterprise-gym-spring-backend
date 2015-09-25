@@ -64,11 +64,12 @@ public class PointDAO {
                     PointStore pointStore = new PointStore();
                     pointStore.setUserid(rs.getInt("user_id"));
                     pointStore.setEnterprise_challenge(rs.getInt("enterprise_challenge"));
-                pointStore.setAction(rs.getInt("action"));
-                pointStore.setProject(rs.getInt("project"));
-                pointStore.setTheory(rs.getInt("theory"));
-                pointStore.setVirtual(rs.getInt("virtual"));
+                    pointStore.setAction(rs.getInt("action"));
+                    pointStore.setProject(rs.getInt("project"));
+                    pointStore.setTheory(rs.getInt("theory"));
+                    pointStore.setVirtual(rs.getInt("virtual"));
                     pointStore.setTotal(rs.getInt("total"));
+                    pointStore.setUser(getUserDetails(rs.getInt("user_id")));
                     points.add(pointStore);
             }
         } catch (SQLException e) {
@@ -84,6 +85,49 @@ public class PointDAO {
             }
         }
         return points;
+    }
+
+    private LinkedList<UserStore> getUserDetails(int user_id) {
+        Connection connection;
+        LinkedList<UserStore> user = new LinkedList<UserStore>();
+        connection = Config.getDBConnection();
+        //boolean success=false;
+        try {
+            PreparedStatement ps = connection.prepareStatement("select * from Users where userid =?");
+            ps.setInt(1, user_id);
+            ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                UserStore news = new UserStore();
+                news.setId(rs.getInt("userid"));
+                news.setUsername(rs.getString("username"));
+                news.setFirstname(rs.getString("firstname"));
+                news.setLastname(rs.getString("lastname"));
+                news.setContactnumber(rs.getString("contactnumber"));
+                news.setEmail(rs.getString("email"));
+                news.setCountry(rs.getString("country"));
+                news.setUniversity(rs.getString("university"));
+                news.setStatus(rs.getString("status"));
+                news.setYear(rs.getInt("yearofstudy"));
+                news.setUsergroup(rs.getString("usergroup"));
+                user.add(news);
+            }
+        }
+        catch(SQLException e){
+            System.out.print(e.getMessage());
+
+        }
+        finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return user;
     }
 
     public boolean resetPoints()
@@ -113,13 +157,20 @@ public class PointDAO {
         return success;
     }
 
-    public LinkedList<PointStore> getUserPoints(int userid)
+    public LinkedList<PointStore> getUserPoints(String username)
     {
         Connection connection;
         connection = Config.getDBConnection();
         PointStore userPoints = new PointStore();
         LinkedList<PointStore> points = new LinkedList<PointStore>();
         try {
+            PreparedStatement ps1 = connection.prepareStatement("Select * FROM Users WHERE username =? limit 1");
+            ps1.setString(1,username);
+            ResultSet rs1 = ps1.executeQuery();
+            int userid =0;
+            while(rs1.next()) {
+               userid = rs1.getInt("userid");
+            }
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM Points WHERE user_id =?");
             ps.setInt(1,userid);
             ResultSet rs = ps.executeQuery();
