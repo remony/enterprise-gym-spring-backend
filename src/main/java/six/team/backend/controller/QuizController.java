@@ -37,7 +37,7 @@ public class QuizController {
     public @ResponseBody ResponseEntity<String> getQuiz(@PathVariable(value="quizid") String id, HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"viewquiz")) {
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"quizview")) {
             LinkedList<QuestionStore> test = Quiz.getQuiz(id);
             JSONArray array = new JSONArray();
             for (int i = 0; i < test.size(); i++) {
@@ -101,7 +101,7 @@ public class QuizController {
         String quizTitle = request.getHeader("title");
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"quizcreate")) {
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"quizadd")) {
             Quiz.createQuiz(questions, quizTitle);
             return new ResponseEntity<String>(array.toString(), HttpStatus.OK);
         }else {

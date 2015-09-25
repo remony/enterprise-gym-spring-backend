@@ -29,7 +29,7 @@ public class PagesController {
     public@ResponseBody ResponseEntity<String> addPage(HttpServletRequest request, HttpServletResponse response, @RequestBody String text) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"pageadd")) {
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"pagesadd")) {
             boolean exists = Pages.checkValidity(request.getHeader("title"));
             JSONObject json = new JSONObject();
             json.put("exists", exists);

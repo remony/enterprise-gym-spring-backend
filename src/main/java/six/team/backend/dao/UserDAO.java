@@ -426,6 +426,7 @@ public class UserDAO {
         return userGroup;
     }
 
+
     public Boolean getUserGroupPermissions(String userGroup, String columnName){
         Connection connection = null;
         int permissionGranted = 0;
