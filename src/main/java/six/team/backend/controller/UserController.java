@@ -7,10 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import six.team.backend.PageJsonGen;
 import six.team.backend.dao.UserDAO;
 import six.team.backend.model.User;
@@ -18,6 +15,7 @@ import six.team.backend.store.PageStore;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserInfoStore;
 import six.team.backend.store.UserStore;
+import six.team.backend.utils.Email;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -109,6 +107,8 @@ public class UserController {
                 details.put("usergroup", user.getUserGroup());
                 details.put("regDate", user.getRegDate());
                 details.put("bio", user.getBio());
+                details.put("young_es", user.isYoung_e_s());
+
 
                 JSONArray array = new JSONArray();
                 array.put(details);
@@ -162,6 +162,29 @@ public class UserController {
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         }
     }
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/user/{username}/passwordreset", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> passwordReset(HttpServletRequest request,HttpServletResponse res, @PathVariable String username) {
+        String password= request.getHeader("password");
+        String newpassword= request.getHeader("newpassword");
+        String email= request.getHeader("email");
+        JSONObject object = new JSONObject();
+        UserLoginStore user = User.verifyLogin(username, password);
+        if(user.getMessage().equals("LoginFailed")) {
+            object.put("change", "wrongpassword");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        }
+        else {
+            boolean success = User.resetPassword(username, newpassword);
+            object.put("change", success);
+            if(success==true){
+                Email emailclass =new Email();
+           //     emailclass.sendEmail("notplastic@mail.ru","Password change","Your password was changed");
+            }
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        }
+
+    }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}/delete", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> deleteUser(HttpServletRequest request, @PathVariable(value="username") String userName ){
@@ -172,15 +195,15 @@ public class UserController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request, @PathVariable(value="username") String username ){
+    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request, @PathVariable(value="username") String username){
         JSONObject object = new JSONObject();
         if(username.equals(request.getHeader("username"))||User.getUser(request.getHeader("username"))==null) {
             boolean success = User.update(Integer.parseInt(request.getHeader("userid")), request.getHeader("username"),
-                    request.getHeader("password"), request.getHeader("firstname"), request.getHeader("lastname"),
+                    request.getHeader("firstname"), request.getHeader("lastname"),
                     request.getHeader("gender"),request.getHeader("email"), request.getHeader("contactnumber"), request.getHeader("country"),
                     request.getHeader("university"), request.getHeader("status"), request.getHeader("subject"),
                     request.getHeader("matricnumber"), Integer.parseInt(request.getHeader("young_es")), request.getHeader("usergroup"),
-                    Integer.parseInt(request.getHeader("yearofstudy")), request.getHeader("bio"));
+                    Integer.parseInt(request.getHeader("yearofstudy")), "bio");
             object = new JSONObject();
             object.put("updateuser", success);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
