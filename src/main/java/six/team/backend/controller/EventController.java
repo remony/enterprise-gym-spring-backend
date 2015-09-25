@@ -36,18 +36,10 @@ public class EventController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> allEvents(HttpServletRequest request,HttpServletResponse res) {
-        UserDAO UD = new UserDAO();
-        String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"eventsview")) {
             LinkedList<EventStore> events = Event.getAll();
             JSONObject details = new JSONObject();
             details.put("events", events);
             return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
-        }else {
-            JSONObject message = new JSONObject();
-            message.put("events", "You are unauthorized to view this content");
-            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
-        }
     }
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/insert",method = RequestMethod.POST)
     public @ResponseBody
@@ -91,9 +83,6 @@ public class EventController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{eventid}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getAttr(@PathVariable(value="eventid") String id, HttpServletRequest request,HttpServletResponse res) {
-        UserDAO UD = new UserDAO();
-        String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"eventsview")) {
             EventStore event = Event.getEvent(Integer.parseInt(id));
             if (event.getName() != null) {
                 JSONObject details = new JSONObject();
@@ -118,11 +107,6 @@ public class EventController {
                 eventInfo.put("Event: ", notfound);
                 return new ResponseEntity<String>(eventInfo.toString(), HttpStatus.NOT_FOUND);
             }
-        }else {
-            JSONObject message = new JSONObject();
-            message.put("events", "You are unauthorized to view this content");
-            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
-        }
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/update/{eventid}", method = RequestMethod.POST)
