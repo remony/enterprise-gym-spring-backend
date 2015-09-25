@@ -30,7 +30,7 @@ public class User {
         UserDAO userDAO = new UserDAO();
         return userDAO.deleteUser(userid);
     }
-    public static boolean update(int userid, String username, String password, String firstname,
+    public static boolean update(int userid, String username,  String firstname,
                                  String secondname, String gender, String email,String contactnumber, String country,
                                  String university, String status, String subject,
                                  String matricnumber, int young_es, String usergroup,
@@ -47,7 +47,6 @@ public class User {
         user.setId(userid);
         user.setMatricnumber(matricnumber);
         user.setGender(gender);
-        user.setPassword(password);
         user.setStatus(status);
         user.setSubject(subject);
         user.setUniversity(university);
@@ -63,4 +62,9 @@ public class User {
 
     }
 
+    public static boolean resetPassword(String username, String newpassword){
+        UserDAO userDAO = new UserDAO();
+        return userDAO.resetPassword(username,newpassword);
+
+    }
 }
