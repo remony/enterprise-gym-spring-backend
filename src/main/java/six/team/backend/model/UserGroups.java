@@ -19,7 +19,7 @@ public class UserGroups {
         UserGroupDAO user = new UserGroupDAO();
         return user.get(usergroup);
     }
-    public static boolean addUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv,int ua,int ud,int ue,int uv)
+    public static boolean addUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv,int ua,int ud,int ue,int uv, int poa, int por, int pov, int ce, int qv, int qa, int fu, int fe)
     {
         UserGroupDAO user = new UserGroupDAO();
         UserGroupsStore userstore=new UserGroupsStore();
@@ -40,6 +40,14 @@ public class UserGroups {
         userstore.setUsersdelete(ud);
         userstore.setUsersedit(ue);
         userstore.setUsersview(uv);
+        userstore.setPointsadd(poa);
+        userstore.setPointsreset(por);
+        userstore.setPointsview(pov);
+        userstore.setCommentsedit(ce);
+        userstore.setQuizview(qv);
+        userstore.setQuizadd(qa);
+        userstore.setFileupload(fu);
+        userstore.setFileedit(fe);
         return user.add(userstore);
     }
     public static boolean deleteUserGroup(String usergroup)
@@ -47,7 +55,7 @@ public class UserGroups {
         UserGroupDAO user = new UserGroupDAO();
         return user.delete(usergroup);
     }
-    public static boolean updateUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv,int ua,int ud,int ue,int uv)
+    public static boolean updateUserGroup(String usergroup,int ea,int ee,int ed,int ev,int na,int nd,int ne,int nv,int pa,int pd,int pe,int pv,int ua,int ud,int ue,int uv, int poa, int por, int pov, int ce, int qv, int qa, int fu, int fe)
     {
         UserGroupDAO user = new UserGroupDAO();
         UserGroupsStore userstore=new UserGroupsStore();
@@ -68,6 +76,14 @@ public class UserGroups {
         userstore.setUsersdelete(ud);
         userstore.setUsersedit(ue);
         userstore.setUsersview(uv);
+        userstore.setPointsadd(poa);
+        userstore.setPointsreset(por);
+        userstore.setPointsview(pov);
+        userstore.setCommentsedit(ce);
+        userstore.setQuizview(qv);
+        userstore.setQuizadd(qa);
+        userstore.setFileupload(fu);
+        userstore.setFileedit(fe);
         return user.update(userstore);
     }
 

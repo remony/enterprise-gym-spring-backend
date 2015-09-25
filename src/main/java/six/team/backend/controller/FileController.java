@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import six.team.backend.dao.UserDAO;
 import six.team.backend.model.FileModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +24,18 @@ public class FileController {
             value ="/files")
     public @ResponseBody
     ResponseEntity<String> getFiles(HttpServletRequest req) {
-        JSONObject json = fileModel.getAllFiles(req);
-        return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
+        UserDAO UD = new UserDAO();
+        String token = req.getHeader("token");
+
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"fileedit")){
+
+            JSONObject json = fileModel.getAllFiles(req);
+            return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
+        }else {
+        JSONObject message = new JSONObject();
+        message.put("user", "You are Unauthorized to view this content");
+        return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+    }
     }
 
     @RequestMapping(
@@ -42,9 +53,21 @@ public class FileController {
             value ="/files/{type}/{id}")
     public @ResponseBody
     ResponseEntity<String> filesImages(HttpServletRequest req, @PathVariable("type") String type, @PathVariable("id") String id) {
-        JSONObject json = new JSONObject();
-        json.put("files", fileModel.getAllFilesOfType(type, id, req));
-        return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
+
+        UserDAO UD = new UserDAO();
+        String token = req.getHeader("token");
+
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"fileedit")){
+
+
+            JSONObject json = new JSONObject();
+            json.put("files", fileModel.getAllFilesOfType(type, id, req));
+            return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
+    }else {
+        JSONObject message = new JSONObject();
+        message.put("user", "You are Unauthorized to view this content");
+        return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+    }
     }
 
     @RequestMapping(
@@ -63,9 +86,18 @@ public class FileController {
     public @ResponseBody
     ResponseEntity<String> getImage(HttpServletRequest req, @PathVariable("filename") String filename) {
 
-        JSONObject json = new JSONObject();
-        json.put("files", fileModel.getFile(filename, req));
-           return new ResponseEntity<String> (json.toString(), HttpStatus.OK);
+        UserDAO UD = new UserDAO();
+        String token = req.getHeader("token");
+
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"fileedit")){
+            JSONObject json = new JSONObject();
+            json.put("files", fileModel.getFile(filename, req));
+            return new ResponseEntity<String> (json.toString(), HttpStatus.OK);
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("user", "You are Unauthorized to view this content");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+    }
     }
     @RequestMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
@@ -88,7 +120,19 @@ public class FileController {
             value ="/file/{filename}/delete")
     public @ResponseBody
     ResponseEntity<String> deleteImage(HttpServletRequest request, @PathVariable("filename") String filename) {
-        fileModel.removeFile(filename);
-        return new ResponseEntity<String> ("deleted", HttpStatus.OK);
+
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"fileedit")){
+
+            fileModel.removeFile(filename);
+            return new ResponseEntity<String> ("deleted", HttpStatus.OK);
+
+    }else {
+        JSONObject message = new JSONObject();
+        message.put("user", "You are Unauthorized to view this content");
+        return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+    }
     }
 }

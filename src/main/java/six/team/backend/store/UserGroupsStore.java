@@ -21,7 +21,78 @@ public class UserGroupsStore {
     private int usersview;
     private int usersdelete;
     private int usersedit;
+    private int pointsadd;
+    private int pointsreset;
+    private int pointsview;
+    private int commentsedit;
+    private int quizview;
+    private int quizadd;
+    private int fileupload;
+    private int fileedit;
 
+    public int getFileupload() {
+        return fileupload;
+    }
+
+    public void setFileupload(int fileupload) {
+        this.fileupload = fileupload;
+    }
+
+    public int getFileedit() {
+        return fileedit;
+    }
+
+    public void setFileedit(int fileedit) {
+        this.fileedit = fileedit;
+    }
+
+    public int getCommentsedit() {
+        return commentsedit;
+    }
+
+    public void setCommentsedit(int commentsedit) {
+        this.commentsedit = commentsedit;
+    }
+
+    public int getQuizview() {
+        return quizview;
+    }
+
+    public void setQuizview(int quizview) {
+        this.quizview = quizview;
+    }
+
+    public int getQuizadd() {
+        return quizadd;
+    }
+
+    public void setQuizadd(int quizadd) {
+        this.quizadd = quizadd;
+    }
+
+    public int getPointsadd() {
+        return pointsadd;
+    }
+
+    public void setPointsadd(int pointsadd) {
+        this.pointsadd = pointsadd;
+    }
+
+    public int getPointsreset() {
+        return pointsreset;
+    }
+
+    public void setPointsreset(int poitreset) {
+        this.pointsreset = poitreset;
+    }
+
+    public int getPointsview() {
+        return pointsview;
+    }
+
+    public void setPointsview(int pointsview) {
+        this.pointsview = pointsview;
+    }
 
     public String getUsergroup() {return usergroup;}
 
