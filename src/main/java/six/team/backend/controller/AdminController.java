@@ -25,33 +25,53 @@ import java.util.LinkedList;
 public class AdminController {
 
     @RequestMapping(method=RequestMethod.GET, value={"/users"})
-        public @ResponseBody ResponseEntity<String> getUnauthorised() {
-        LinkedList<UserStore> users = User.getAllUnauthorised();
-        JSONObject object = new JSONObject();
-        object.put("unauthorisedusers", users);
-        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        public @ResponseBody ResponseEntity<String> getUnauthorised(HttpServletRequest request) {
 
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
 
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "userview")) {
+            LinkedList<UserStore> users = User.getAllUnauthorised();
+            JSONObject object = new JSONObject();
+            object.put("unauthorisedusers", users);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+
+        } else {
+            JSONObject message = new JSONObject();
+            message.put("user", "You are Unauthorized to view this content");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+        }
     }
+
     @RequestMapping(method=RequestMethod.POST, value={"/users"})
     public @ResponseBody ResponseEntity<String> approveUser(HttpServletRequest request,HttpServletResponse res) {
         String approved_id = request.getHeader("approvedId");
         String approved_group = request.getHeader("approvedGroup");
-        String approved_status= request.getHeader("approvedStatus"); // approved
+        String approved_status = request.getHeader("approvedStatus"); // approved
         User user = new User();
         boolean success;
-        if(approved_status.equals("approved")){
-            success=user.approve(Integer.parseInt(approved_id),approved_group);
-        }  else{
 
-            success=user.delete(Integer.parseInt(approved_id));
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "useredit")) {
+            if (approved_status.equals("approved")) {
+                success = user.approve(Integer.parseInt(approved_id), approved_group);
+            } else {
+
+                success = user.delete(Integer.parseInt(approved_id));
+            }
+            LinkedList<UserStore> users = User.getAllUnauthorised();
+            JSONObject object = new JSONObject();
+            object.put("unauthorisedusers", users);
+            if (success)
+                return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+            else
+                return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(500));
+        } else {
+            JSONObject message = new JSONObject();
+            message.put("user", "You are Unauthorized to view this content");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
-        LinkedList<UserStore> users = User.getAllUnauthorised();
-        JSONObject object = new JSONObject();
-        object.put("unauthorisedusers", users);
-        if(success)
-            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
-        else
-            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(500));
     }
 }
