@@ -188,30 +188,50 @@ public class UserController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}/delete", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> deleteUser(HttpServletRequest request, @PathVariable(value="username") String userName ){
-       boolean success= User.delete(Integer.parseInt(request.getHeader("userid")));
-        JSONObject object = new JSONObject();
-        object.put("deleteuser", success);
-        return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+
+        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"userdelete")) {
+            boolean success = User.delete(Integer.parseInt(request.getHeader("userid")));
+            JSONObject object = new JSONObject();
+            object.put("deleteuser", success);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        }else {
+            JSONObject message = new JSONObject();
+            message.put("user", "You are Unauthorized to delete a user");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request, @PathVariable(value="username") String username,@RequestBody String bio){
+    public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request, @PathVariable(value="username") String username,@RequestBody String bio) {
+
         JSONObject object = new JSONObject();
-        if(username.equals(request.getHeader("username"))||User.getUser(request.getHeader("username"))==null) {
-            boolean success = User.update(Integer.parseInt(request.getHeader("userid")), request.getHeader("username"),
-                    request.getHeader("firstname"), request.getHeader("lastname"),
-                    request.getHeader("gender"),request.getHeader("email"), request.getHeader("contactnumber"), request.getHeader("country"),
-                    request.getHeader("university"), request.getHeader("status"), request.getHeader("subject"),
-                    request.getHeader("matricnumber"), Integer.parseInt(request.getHeader("young_es")), request.getHeader("usergroup"),
-                    Integer.parseInt(request.getHeader("yearofstudy")), bio);
-            object = new JSONObject();
-            object.put("updateuser", success);
-            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
-        }
-        else {
-            object = new JSONObject();
-            object.put("updateuser","User exists");
-            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "useredit")) {
+            if (username.equals(request.getHeader("username")) || User.getUser(request.getHeader("username")) == null) {
+                boolean success = User.update(Integer.parseInt(request.getHeader("userid")), request.getHeader("username"),
+                        request.getHeader("firstname"), request.getHeader("lastname"),
+                        request.getHeader("gender"), request.getHeader("email"), request.getHeader("contactnumber"), request.getHeader("country"),
+                        request.getHeader("university"), request.getHeader("status"), request.getHeader("subject"),
+                        request.getHeader("matricnumber"), Integer.parseInt(request.getHeader("young_es")), request.getHeader("usergroup"),
+                        Integer.parseInt(request.getHeader("yearofstudy")), bio);
+                object = new JSONObject();
+                object.put("updateuser", success);
+                return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+            } else {
+                object = new JSONObject();
+                object.put("updateuser", "User exists");
+                return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+            }
+
+        } else {
+            JSONObject message = new JSONObject();
+            message.put("user", "You are Unauthorized to view this content");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
     }
 }

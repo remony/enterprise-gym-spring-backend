@@ -59,7 +59,11 @@ public class UserGroupsController {
                     Integer.parseInt(request.getHeader("pagesadd")), Integer.parseInt(request.getHeader("pagesdelete")),
                     Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")),
                     Integer.parseInt(request.getHeader("usersadd")), Integer.parseInt(request.getHeader("usersdelete")),
-                    Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")));
+                    Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")),
+                    Integer.parseInt(request.getHeader("pointsadd")), Integer.parseInt(request.getHeader("pointsreset")),
+                    Integer.parseInt(request.getHeader("pointsview")), Integer.parseInt(request.getHeader("commentsedit")),
+                    Integer.parseInt(request.getHeader("quizview")), Integer.parseInt(request.getHeader("quizadd")),
+                    Integer.parseInt(request.getHeader("fileupload")), Integer.parseInt(request.getHeader("fileedit")));
             JSONObject object = new JSONObject();
             object.put("addnews", success);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
@@ -80,7 +84,11 @@ public class UserGroupsController {
                         Integer.parseInt(request.getHeader("pagesadd")), Integer.parseInt(request.getHeader("pagesdelete")),
                         Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")),
                         Integer.parseInt(request.getHeader("usersadd")), Integer.parseInt(request.getHeader("usersdelete")),
-                        Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")));
+                        Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")),
+                        Integer.parseInt(request.getHeader("pointsadd")), Integer.parseInt(request.getHeader("pointsreset")),
+                        Integer.parseInt(request.getHeader("pointsview")), Integer.parseInt(request.getHeader("commentsedit")),
+                        Integer.parseInt(request.getHeader("quizview")), Integer.parseInt(request.getHeader("quizadd")),
+                        Integer.parseInt(request.getHeader("fileupload")), Integer.parseInt(request.getHeader("fileedit")));
                 object.put("updatenews", success);
                     return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
 
@@ -97,7 +105,11 @@ public class UserGroupsController {
                     Integer.parseInt(request.getHeader("pagesadd")), Integer.parseInt(request.getHeader("pagesdelete")),
                     Integer.parseInt(request.getHeader("pagesedit")), Integer.parseInt(request.getHeader("pagesview")),
                     Integer.parseInt(request.getHeader("usersadd")), Integer.parseInt(request.getHeader("usersdelete")),
-                    Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")));
+                    Integer.parseInt(request.getHeader("usersedit")), Integer.parseInt(request.getHeader("usersview")),
+                    Integer.parseInt(request.getHeader("pointsadd")), Integer.parseInt(request.getHeader("pointsreset")),
+                    Integer.parseInt(request.getHeader("pointsview")), Integer.parseInt(request.getHeader("commentsedit")),
+                    Integer.parseInt(request.getHeader("quizview")), Integer.parseInt(request.getHeader("quizadd")),
+                    Integer.parseInt(request.getHeader("fileupload")), Integer.parseInt(request.getHeader("fileedit")));
             object.put("updatenews", success);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         }
