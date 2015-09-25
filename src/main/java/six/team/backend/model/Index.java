@@ -10,6 +10,11 @@ public class Index {
     public static IndexStore getIndex(){
         IndexDAO indexDAO = new IndexDAO();
         return indexDAO.getIndex();
+    }
+
+    public static IndexStore updateIndex(IndexStore index){
+        IndexDAO indexDAO = new IndexDAO();
+        return indexDAO.updateIndex(index);
 
     }
 }
