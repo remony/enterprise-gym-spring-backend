@@ -80,7 +80,7 @@ public class UserDAO {
 
                 ps.setString(15, "testToken");
                 ps.setTimestamp(16, (new java.sql.Timestamp(cal.getTimeInMillis())));
-                ps.setInt(17, userStore.getYear());
+                ps.setInt(17, userStore.getYearofstudy());
                 ps.setString(18, userStore.getBio());
 
                 ps.executeUpdate();
@@ -171,7 +171,7 @@ public class UserDAO {
                 userInfoStore.setContactNo(rs.getString("contactnumber"));
                 userInfoStore.setYearOfStudy(rs.getInt("yearofstudy"));
                 userInfoStore.setMmtricNo(rs.getString("matricnumber"));
-                userInfoStore.setUserGroup(rs.getString("usergroup"));
+                userInfoStore.setUserGroup("Students");
                 userInfoStore.setGender(rs.getString("gender"));
                 userInfoStore.setRegDate(rs.getDate("registration_date"));
                 userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
@@ -249,7 +249,7 @@ public class UserDAO {
                 userInfoStore.setDegreeSubject(rs.getString("subject"));
                 userInfoStore.setYearOfStudy(rs.getInt("yearofstudy"));
                 userInfoStore.setMmtricNo(rs.getString("matricnumber"));
-                userInfoStore.setUserGroup(rs.getString("usergroup"));
+                userInfoStore.setUserGroup("Students");
                 userInfoStore.setGender(rs.getString("gender"));
                 userInfoStore.setRegDate(rs.getDate("registration_date"));
                 userInfoStore.setYoung_e_s(Integer.parseInt(rs.getString("young_es")));
@@ -496,7 +496,7 @@ public class UserDAO {
         try {
 
             PreparedStatement ps = connection.prepareStatement("update Users set usergroup=? where userid = ?");
-            ps.setString(1, user_group);
+            ps.setString(1, "Students");
             ps.setInt(2, user_id);
             ps.executeUpdate();
             return true;
@@ -568,8 +568,8 @@ public class UserDAO {
             ps.setString(11, user.getSubject());
             ps.setString(12, user.getMatricnumber());
             ps.setInt(13, user.getYoung_es());
-            ps.setString(14, user.getUsergroup());
-            ps.setInt(15, user.getYear());
+            ps.setString(14, "Students");
+            ps.setInt(15, user.getYearofstudy());
             ps.setString(16, user.getBio());
             ps.setInt(17, user.getId());
             ps.executeUpdate();

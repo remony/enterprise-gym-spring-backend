@@ -18,7 +18,7 @@ public class UserStore {
     private String university;
     private String status;
     private String subject;
-    private int year;
+    private int yearofstudy;
     private String matricnumber;
     private int young_es;
     private String usergroup;
@@ -139,12 +139,12 @@ public class UserStore {
         this.subject = subject;
     }
 
-    public int getYear() {
-        return year;
+    public int getYearofstudy() {
+        return yearofstudy;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setYearofstudy(int yearofstudy) {
+        this.yearofstudy = yearofstudy;
     }
 
     public String getMatricnumber() {
