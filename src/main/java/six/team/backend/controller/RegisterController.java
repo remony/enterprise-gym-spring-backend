@@ -28,8 +28,10 @@ import java.util.Date;
 @RequestMapping("/registration")
 public class RegisterController {
 
+    // NOTE: to look at line 88 when things get merged: "You should be returning conflict when a user of the same username already exists, your sending a conflict when the user does not have a email and username"
+
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
+    public @ResponseBody ResponseEntity<String> registerUser(HttpServletRequest request,HttpServletResponse res) {
 
         // convert the true/false value for Enterpr. Society to the bit value used in the SQL db
         int young_es_int = 0;
@@ -49,7 +51,7 @@ public class RegisterController {
         String number = request.getHeader("number");
         String status = request.getHeader("status");
         String subject = request.getHeader("subject");
-        int yearofstudy = Integer.parseInt(request.getHeader("yearofstudy")); //"1"); //
+        int yearofstudy = Integer.parseInt(request.getHeader("yearofstudy"));
         String matricnumber = request.getHeader("matricnumber");
         int young_es = young_es_int;
         String mobile = request.getHeader("mobile");
@@ -83,7 +85,7 @@ public class RegisterController {
         JSONObject object = new JSONObject();
         object.put("success", username);
 
-        if(userStore.getEmail() != "" && userStore.getUsergroup() != "")
+        if(!userStore.getEmail().isEmpty() && !userStore.getUsergroup().isEmpty())
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         else
             return new ResponseEntity<String>(object.toString(), HttpStatus.CONFLICT);
