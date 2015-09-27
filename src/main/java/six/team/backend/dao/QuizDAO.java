@@ -5,6 +5,7 @@ import six.team.backend.store.AnswerStore;
 import six.team.backend.store.IndexStore;
 import six.team.backend.store.QuestionStore;
 import six.team.backend.store.QuizStore;
+import six.team.backend.utils.Config;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -22,7 +23,7 @@ public class QuizDAO {
 
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps1 = connection.prepareStatement("SELECT * FROM Question where quiz_id =?");
             ps1.setString(1, quizid);
             ResultSet rs1 = ps1.executeQuery();
@@ -71,7 +72,7 @@ public class QuizDAO {
     public  LinkedList<QuestionStore> createQuiz(LinkedList<QuestionStore> questions, String quizTitle){
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("INSERT INTO Quiz (quiz_id,quiz_title) values (?,?)");
             String randomQuizId = UUID.randomUUID().toString();
             randomQuizId = randomQuizId.replaceAll("-", "");
@@ -114,7 +115,7 @@ public class QuizDAO {
     public  LinkedList<QuizStore> getAllQuizzes(){
         Connection connection = null;
         LinkedList<QuizStore>  quizzes= new LinkedList<QuizStore>();
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
           try{
               PreparedStatement ps1 = connection.prepareStatement("SELECT * FROM Quiz");
               ResultSet rs1 = ps1.executeQuery();
@@ -140,20 +141,5 @@ public class QuizDAO {
             }
         }
         return quizzes;
-    }
-
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db, "admin", "admin");
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return connection;
     }
 }

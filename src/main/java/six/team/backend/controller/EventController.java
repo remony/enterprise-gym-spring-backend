@@ -210,19 +210,9 @@ public class EventController {
 
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        int attended = Integer.parseInt(request.getHeader("attendance"));
-        String category = request.getHeader("category");
-        int points  = Integer.parseInt(request.getHeader("points"));
-
         if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
 
             if (Event.updateAttendance(Integer.parseInt(id), Integer.parseInt(request.getHeader("attendeeid")), Integer.parseInt(request.getHeader("attendance")))) {
-                if(attended ==1) {
-                    Points.updatePoints(Integer.parseInt(request.getHeader("attendeeid")),points,category);
-                }
-                else{
-                    Points.updatePoints(Integer.parseInt(request.getHeader("attendeeid")),-points,category);
-                }
                 LinkedList<ParticipantStore> participant;
                 participant = Event.getParticipants(true, Integer.parseInt(id));
                 JSONObject details = new JSONObject();

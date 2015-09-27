@@ -1,5 +1,6 @@
 package six.team.backend.dao;
 
+import six.team.backend.model.Points;
 import six.team.backend.store.EventStore;
 import six.team.backend.store.ParticipantStore;
 import six.team.backend.store.UpcomingStore;
@@ -279,6 +280,8 @@ public class EventDAO {
 
         Connection connection = null;
         boolean attended = false;
+        int points =0;
+        String category = null;
 
         try {
             connection = getDBConnection();
@@ -287,8 +290,23 @@ public class EventDAO {
             ps.setInt(1, newAttended);
             ps.setInt(2, eventid);
             ps.setInt(3, userid);
-            int rs = ps.executeUpdate();
-            if(rs ==1){
+            int result = ps.executeUpdate();
+
+            PreparedStatement ps1 = connection.prepareStatement("Select * from Events where event_id =?");
+            ps1.setInt(1, eventid);
+            ResultSet rs = ps1.executeQuery();
+            while (rs.next()) {
+                points = rs.getInt("event_points");
+                category = rs.getString("points_category");
+
+            }
+            if(newAttended ==1) {
+                Points.updatePoints(userid, points, category);
+            }
+            else{
+                Points.updatePoints(userid,-points,category);
+            }
+            if(result ==1){
                 attended = true;
             }
         } catch (SQLException e) {
