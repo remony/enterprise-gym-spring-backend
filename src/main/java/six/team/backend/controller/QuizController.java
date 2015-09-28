@@ -41,7 +41,12 @@ public class QuizController {
         String token = request.getHeader("token");
         if (UD.getUserGroupPermissions(UD.getUserGroup(token), "quizview")) {
             LinkedList<QuestionStore> test = Quiz.getQuiz(id);
+            QuizStore quizInfo = Quiz.getQuizInfo(id);
             JSONArray array = new JSONArray();
+            JSONObject quiz = new JSONObject();
+            quiz.put("title", quizInfo.getQuiz_title());
+            quiz.put("passmark", quizInfo.getPassmark());
+            quiz.put("points", quizInfo.getPoints());
             for (int i = 0; i < test.size(); i++) {
                 JSONObject object = new JSONObject();
                 JSONArray options = new JSONArray();
@@ -53,7 +58,8 @@ public class QuizController {
                 object.put("question", test.get(i).getQuestion_text());
                 array.put(object);
             }
-            return new ResponseEntity<String>(array.toString(), HttpStatus.OK);
+            quiz.put("questions", array);
+            return new ResponseEntity<String>(quiz.toString(), HttpStatus.OK);
         } else {
             JSONObject message = new JSONObject();
             message.put("pages", "You are unauthorized to view this quiz");
@@ -89,7 +95,8 @@ public class QuizController {
                         String randomAnswerId = UUID.randomUUID().toString();
                         randomAnswerId = randomAnswerId.replaceAll("-", "");
                         answerStore.setAnswer_id(randomAnswerId);
-                        answerStore.setAnswer_text(options.get(r).toString());
+                        answerStore.setAnswer_text(options.getJSONObject(r).getString("title"));
+                        System.out.println(answerStore.getAnswer_text());
                         if (r == answer) {
                             questionStore.setCorrectAnswer(randomAnswerId);
                         }
@@ -127,17 +134,16 @@ public class QuizController {
         return new ResponseEntity<String>(quizzes.toString(), HttpStatus.OK);
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/complete", method = RequestMethod.POST)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "{quizid}/complete", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResponseEntity<String> completeQuiz(HttpServletRequest request, HttpServletResponse res) {
+    ResponseEntity<String> completeQuiz(@PathVariable(value = "quizid") String id,HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        int userid = request.getIntHeader("userid");
-        String quizid = request.getHeader("quizid");
+        int userid = UD.getUserID(token);
         float score = Float.parseFloat(request.getHeader("score"));
         if (UD.getUserGroupPermissions(UD.getUserGroup(token), "quizScore")) {
-            boolean sucess = Quiz.completeQuiz(userid,quizid,score);
+            boolean sucess = Quiz.completeQuiz(userid,id,score);
             JSONObject object  = new JSONObject();
             object.put("completed", sucess);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
@@ -162,6 +168,28 @@ public class QuizController {
                 object.put("id", quiz.getQuiz_id());
                 object.put("passmark", quiz.getPassmark());
                 object.put("points", quiz.getPoints());
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        } else {
+            JSONObject message = new JSONObject();
+            message.put("pages", "You are unauthorized to view this quiz");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/users/{userid]", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    ResponseEntity<String> getUserQuizzes(@PathVariable(value = "userid") String id, HttpServletRequest request, HttpServletResponse res) {
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "quizview")) {
+            QuizStore quiz  = new QuizStore();
+            quiz = Quiz.getQuizInfo(id);
+            JSONObject object = new JSONObject();
+            object.put("title", quiz.getQuiz_title());
+            object.put("id", quiz.getQuiz_id());
+            object.put("passmark", quiz.getPassmark());
+            object.put("points", quiz.getPoints());
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         } else {
             JSONObject message = new JSONObject();
