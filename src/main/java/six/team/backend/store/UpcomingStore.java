@@ -4,14 +4,14 @@ package six.team.backend.store;
  * Created by Gareth on 24/09/2015.
  */
 public class UpcomingStore {
-    String title;
-    String start;
-    String end;
-    String category;
-    int points;
-    String url;
-    String location;
-    String description;
+    private String title;
+    private String start;
+    private String end;
+    private String category;
+    private int points;
+    private String url;
+    private String location;
+    private String description;
 
     public String getTitle() {
         return title;

@@ -13,6 +13,7 @@ import six.team.backend.dao.UserDAO;
 import six.team.backend.model.Auth;
 import six.team.backend.model.Quiz;
 import six.team.backend.store.AnswerStore;
+import six.team.backend.store.AttemptStore;
 import six.team.backend.store.QuestionStore;
 import six.team.backend.store.QuizStore;
 
@@ -176,24 +177,21 @@ public class QuizController {
         }
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/users/{userid]", method = RequestMethod.GET)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/users/{userid}", method = RequestMethod.GET)
     public
     @ResponseBody
     ResponseEntity<String> getUserQuizzes(@PathVariable(value = "userid") String id, HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
         if (UD.getUserGroupPermissions(UD.getUserGroup(token), "quizview")) {
-            QuizStore quiz  = new QuizStore();
-            quiz = Quiz.getQuizInfo(id);
+            LinkedList<AttemptStore> attempts = new LinkedList<AttemptStore>();
+            attempts = Quiz.getAttemptInfo(Integer.parseInt(id));
             JSONObject object = new JSONObject();
-            object.put("title", quiz.getQuiz_title());
-            object.put("id", quiz.getQuiz_id());
-            object.put("passmark", quiz.getPassmark());
-            object.put("points", quiz.getPoints());
+            object.put("attempts", attempts);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         } else {
             JSONObject message = new JSONObject();
-            message.put("pages", "You are unauthorized to view this quiz");
+            message.put("attempts", "You are unauthorized to view this quiz");
             return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
     }

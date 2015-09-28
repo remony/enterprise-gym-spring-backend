@@ -1,10 +1,7 @@
 package six.team.backend.dao;
 
 import jdk.internal.util.xml.impl.Pair;
-import six.team.backend.store.AnswerStore;
-import six.team.backend.store.IndexStore;
-import six.team.backend.store.QuestionStore;
-import six.team.backend.store.QuizStore;
+import six.team.backend.store.*;
 import six.team.backend.utils.Config;
 
 import java.sql.*;
@@ -79,7 +76,7 @@ public class QuizDAO {
             ps.setString(1,randomQuizId);
             ps.setString(2, quizTitle);
             ps.setInt(3, quizPoints);
-            ps.setFloat(4,passmark);
+            ps.setFloat(4, passmark);
             int result2 =ps.executeUpdate();
            for(int i=0; i<questions.size(); i++) {
                PreparedStatement ps1 = connection.prepareStatement("INSERT INTO Question (question_id,quiz_id,question_text,correct_answer_id) values(?,?,?,?)");
@@ -216,7 +213,7 @@ public class QuizDAO {
         connection = Config.getDBConnection();
         try{
             PreparedStatement ps1 = connection.prepareStatement("SELECT * FROM Quiz where quiz_id =?");
-            ps1.setString(1,quizid);
+            ps1.setString(1, quizid);
             ResultSet rs1 = ps1.executeQuery();
             while (rs1.next()) {
                 if (rs1 != null) {
@@ -240,5 +237,46 @@ public class QuizDAO {
             }
         }
         return quiz;
+    }
+
+    public  LinkedList<AttemptStore> getAttemptInfo(int userid){
+        Connection connection = null;
+        LinkedList<AttemptStore>  attempts= new LinkedList<AttemptStore>();
+        connection = Config.getDBConnection();
+        try{
+            PreparedStatement ps1 = connection.prepareStatement("SELECT * FROM Attempts where user_id= ?");
+            ps1.setInt(1,userid);
+            ResultSet rs1 = ps1.executeQuery();
+            String title = "";
+            while (rs1.next()) {
+                if (rs1 != null) {
+                    PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM Quiz where quiz_id= ?");
+                    ps2.setString(1,rs1.getString("quiz_id"));
+                    ResultSet rs2 = ps2.executeQuery();
+                    while (rs2.next()) {
+                        title = rs2.getString("quiz_title");
+                    }
+                    AttemptStore attempt = new AttemptStore();
+                    attempt.setQuiz_title(title);
+                    attempt.setNo_of_attempts(rs1.getInt("no_of_attempts"));
+                    attempt.setScore(rs1.getInt("score"));
+                    attempt.setCompleted(rs1.getInt("completed"));
+                    attempts.add(attempt);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return attempts;
     }
 }

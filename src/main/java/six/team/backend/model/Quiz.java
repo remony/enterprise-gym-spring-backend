@@ -3,6 +3,7 @@ package six.team.backend.model;
 
 import six.team.backend.dao.QuizDAO;
 import six.team.backend.store.AnswerStore;
+import six.team.backend.store.AttemptStore;
 import six.team.backend.store.QuestionStore;
 import six.team.backend.store.QuizStore;
 
@@ -35,6 +36,11 @@ public class Quiz {
     public static QuizStore getQuizInfo(String quizid){
         QuizDAO quizDAO = new QuizDAO();
         return quizDAO.getQuizInfo(quizid);
+    }
+
+    public static LinkedList<AttemptStore> getAttemptInfo(int userid){
+        QuizDAO quizDAO = new QuizDAO();
+        return quizDAO.getAttemptInfo(userid);
     }
 
 
