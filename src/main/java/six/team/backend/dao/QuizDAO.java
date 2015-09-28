@@ -163,7 +163,7 @@ public class QuizDAO {
                 ps2.setString(1, quizid);
                 ResultSet rs1= ps2.executeQuery();
                 while(rs1.next()){
-                    if(score> rs1.getInt("pass_mark")){
+                    if(score> rs1.getInt("passmark")){
                         completed = 1;
                         PointDAO pointDAO = new PointDAO();
                         pointDAO.updatePoints(userid, rs1.getInt("points"), "theory");
