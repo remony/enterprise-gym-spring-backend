@@ -15,31 +15,12 @@ import java.util.LinkedList;
  */
 public class EventDAO {
 
-
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db,"admin","admin");
-
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
-    }
-
-
     public boolean addEvent(EventStore event){
         Connection connection = null;
         boolean added = false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("INSERT INTO Events (event_id,event_title,event_location,event_description,event_points,event_venue,event_startdate,event_enddate, order_startdate, points_category) VALUES(?,?,?,?,?,?,?,?,?,?)");
             ps.setInt(1,event.getId());
             ps.setString(2, event.getName());
@@ -74,7 +55,7 @@ public class EventDAO {
         LinkedList<EventStore> events = new LinkedList<EventStore>();
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate DESC");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -111,8 +92,7 @@ public class EventDAO {
         EventStore event= new EventStore();
 
         try {
-            connection = getDBConnection();
-
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select* from Events where event_id=?");
             ps.setInt(1, eventid);
             ResultSet rs = ps.executeQuery();
@@ -151,7 +131,7 @@ public class EventDAO {
         boolean updated =false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("UPDATE Events set event_title=?,event_location=?,event_description=?,event_points=?,event_venue=?,event_startdate=?,event_enddate=?, order_startdate=? , points_category =? where event_id = ?");
             ps.setString(1, event.getName());
             ps.setString(2, event.getLocation());
@@ -188,7 +168,7 @@ public class EventDAO {
         boolean deleted = false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("delete from Events where event_id=?");
             ps.setInt(1, eventid);
@@ -219,7 +199,7 @@ public class EventDAO {
         boolean signedUp = false;
         if(hasSignedUp(participant) != true){
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("insert into Participants (event_id, userid, attended) values (?,?,?);");
             ps.setInt(1, participant.getEvent_id());
@@ -250,7 +230,7 @@ public class EventDAO {
         boolean signedUp = false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("SELECT userid FROM Participants WHERE event_id = ? AND userid = ?");
             ps.setInt(1, participant.getEvent_id());
@@ -284,7 +264,7 @@ public class EventDAO {
         String category = null;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("UPDATE Participants SET attended = ? WHERE event_id = ? AND userid = ?");
             ps.setInt(1, newAttended);
@@ -328,7 +308,7 @@ public class EventDAO {
         LinkedList<ParticipantStore> participants = new LinkedList<ParticipantStore>();
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select* from Participants where event_id = ? order by attended");
             ps.setInt(1,eventid);
             ResultSet rs = ps.executeQuery();
@@ -360,7 +340,7 @@ public class EventDAO {
     public ParticipantStore collectDetails(ParticipantStore participant, int userid){
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select username, firstname, lastname from Users where userid = ?");
             ps.setInt(1,userid);
             ResultSet rs = ps.executeQuery();

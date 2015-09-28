@@ -40,4 +40,32 @@ public class IndexDAO {
         }
         return index;
     }
+
+    public boolean updateIndex(IndexStore index){
+        Connection connection = null;
+        boolean success = false;
+        try {
+            connection = Config.getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("Update HOME set title =? , description=? where id = ?");
+            ps.setString(1,index.getTitle());
+            ps.setString(2,index.getDescription());
+            ps.setInt(3,index.getId());
+            int result = ps.executeUpdate();
+            if(result ==1){
+                success = true;
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return success;
+    }
 }

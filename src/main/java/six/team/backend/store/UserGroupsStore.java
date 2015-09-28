@@ -27,6 +27,7 @@ public class UserGroupsStore {
     private int commentsedit;
     private int quizview;
     private int quizadd;
+    private int quizScore;
     private int fileupload;
     private int fileedit;
 
@@ -161,4 +162,12 @@ public class UserGroupsStore {
     public int getUsersedit() {return usersedit;}
 
     public void setUsersedit(int usersedit) {this.usersedit = usersedit;}
+
+    public int getQuizScore() {
+        return quizScore;
+    }
+
+    public void setQuizScore(int quizScore) {
+        this.quizScore = quizScore;
+    }
 }

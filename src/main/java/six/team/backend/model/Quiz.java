@@ -17,13 +17,20 @@ public class Quiz {
         return quizDAO.getQuiz(quizId);
     }
 
-    public static   LinkedList<QuestionStore> createQuiz(LinkedList<QuestionStore> quiz, String quizTitle){
+    public static   LinkedList<QuestionStore> createQuiz(LinkedList<QuestionStore> quiz, String quizTitle, int points){
         QuizDAO quizDAO = new QuizDAO();
-        return quizDAO.createQuiz(quiz, quizTitle);
+        return quizDAO.createQuiz(quiz, quizTitle, points);
     }
 
     public static LinkedList<QuizStore> getAllQuizzes(){
         QuizDAO quizDAO = new QuizDAO();
         return quizDAO.getAllQuizzes();
     }
+
+    public static boolean completeQuiz(int userid, int quizid){
+        QuizDAO quizDAO = new QuizDAO();
+        return quizDAO.completeQuiz(userid,quizid);
+    }
+
+
 }

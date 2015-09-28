@@ -7,6 +7,7 @@ import six.team.backend.model.User;
 import six.team.backend.store.UserLoginStore;
 import six.team.backend.store.UserStore;
 import six.team.backend.store.*;
+import six.team.backend.utils.Config;
 
 
 import java.security.SecureRandom;
@@ -25,7 +26,7 @@ public class UserDAO {
         Connection connection = null;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             // get a resuls set with all usernames
             PreparedStatement psUsernameChecker = connection.prepareStatement("select * from Users where username = ?");
@@ -150,7 +151,7 @@ public class UserDAO {
         Connection connection = null;
 
         try {
-            connection = getDBConnection();
+            connection = connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("SELECT userid, bio, username, firstname, lastname, gender, email, contactnumber, country, " +
                     "university, status, subject, yearofstudy, matricnumber, usergroup, young_es, registration_date FROM Users WHERE username = ?");
@@ -198,7 +199,7 @@ public class UserDAO {
         Connection connection = null;
         boolean found = false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("select userid from Users where username = ?");
             ps.setString(1, username);
@@ -229,8 +230,7 @@ public class UserDAO {
         Connection connection = null;
 
         try {
-            connection = getDBConnection();
-
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select userid, username, firstname, lastname, gender, email, contactnumber, country, university," +
                     " status, subject, yearofstudy, matricnumber, usergroup, young_es, registration_date from Users");
 
@@ -278,7 +278,7 @@ public class UserDAO {
         Connection connection = null;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select userid, username, usergroup from Users where usergroup = ?");
             ps.setString(1, "unauthorised");
             ResultSet rs = ps.executeQuery();
@@ -311,7 +311,7 @@ public class UserDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("update Users set password=? where username=?");
             ps.setString(1, newpassword);
             ps.setString(2, username);
@@ -334,30 +334,12 @@ public class UserDAO {
         return success;
     }
 
-
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db,"admin", "admin");
-
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
-    }
-
     public UserLoginStore verifyUser(String username, String password){
         Connection connection = null;
         UserLoginStore user = new UserLoginStore();
         user.setMessage("LoginFailed");
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT* FROM Users WHERE username=?");
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
@@ -400,7 +382,7 @@ public class UserDAO {
         Connection connection = null;
         String userGroup = "";
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT usergroup FROM Users WHERE token=?");
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
@@ -431,7 +413,7 @@ public class UserDAO {
         Connection connection = null;
         int permissionGranted = 0;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT " + columnName + " FROM RolePermissions WHERE usergroup = ?");
             ps.setString(1, userGroup);
             ResultSet rs = ps.executeQuery();
@@ -464,7 +446,7 @@ public class UserDAO {
         Connection connection = null;
         String userName = "";
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT username FROM Users WHERE token=?");
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
@@ -493,7 +475,7 @@ public class UserDAO {
         Connection connection = null;
         int userID = 0;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT userid FROM Users WHERE token=?");
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
@@ -520,7 +502,7 @@ public class UserDAO {
 
     public boolean approveUser(int user_id,String user_group){
         Connection connection;
-        connection = getDBConnection();
+        connection = Config.getDBConnection();
 
         try {
 
@@ -550,7 +532,7 @@ public class UserDAO {
     public boolean deleteUser(int user_id)
     {
         Connection connection;
-        connection = getDBConnection();
+        connection = Config.getDBConnection();
         try {
 
 
@@ -583,7 +565,7 @@ public class UserDAO {
     public boolean updateUser(UserStore user)
     {
         Connection connection;
-        connection = getDBConnection();
+        connection = Config.getDBConnection();
         boolean success=false;
         try {
 

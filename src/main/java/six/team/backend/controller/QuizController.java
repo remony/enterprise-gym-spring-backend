@@ -33,11 +33,13 @@ import java.util.stream.Collectors;
 public class QuizController {
     private final static Logger logger = Logger.getLogger(AuthenticationController.class);
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{quizid}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> getQuiz(@PathVariable(value="quizid") String id, HttpServletRequest request, HttpServletResponse res) {
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{quizid}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    ResponseEntity<String> getQuiz(@PathVariable(value = "quizid") String id, HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"quizview")) {
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "quizview")) {
             LinkedList<QuestionStore> test = Quiz.getQuiz(id);
             JSONArray array = new JSONArray();
             for (int i = 0; i < test.size(); i++) {
@@ -52,15 +54,17 @@ public class QuizController {
                 array.put(object);
             }
             return new ResponseEntity<String>(array.toString(), HttpStatus.OK);
-        }else {
+        } else {
             JSONObject message = new JSONObject();
             message.put("pages", "You are unauthorized to view this quiz");
             return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
     }
 
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/create", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> createQuiz(HttpServletRequest request, HttpServletResponse res) {
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/create", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResponseEntity<String> createQuiz(HttpServletRequest request, HttpServletResponse res) {
         request.getParameter("body");
         JSONArray array = null;
         LinkedList<QuestionStore> questions = new LinkedList<QuestionStore>();
@@ -99,12 +103,13 @@ public class QuizController {
             System.out.println(e);
         }
         String quizTitle = request.getHeader("title");
+        int quizPoints = request.getIntHeader("points");
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        if(UD.getUserGroupPermissions(UD.getUserGroup(token),"quizadd")) {
-            Quiz.createQuiz(questions, quizTitle);
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "quizadd")) {
+            Quiz.createQuiz(questions, quizTitle, quizPoints);
             return new ResponseEntity<String>(array.toString(), HttpStatus.OK);
-        }else {
+        } else {
             JSONObject message = new JSONObject();
             message.put("pages", "You are unauthorized to create a quiz");
             return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
@@ -112,12 +117,32 @@ public class QuizController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> getAttr() {
+    public
+    @ResponseBody
+    ResponseEntity<String> getAttr() {
         LinkedList<QuizStore> allQuiz = Quiz.getAllQuizzes();
         JSONObject quizzes = new JSONObject();
-        quizzes.put("quiz",allQuiz);
+        quizzes.put("quiz", allQuiz);
         return new ResponseEntity<String>(quizzes.toString(), HttpStatus.OK);
     }
 
-
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/complete", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResponseEntity<String> completeQuiz(HttpServletRequest request, HttpServletResponse res) {
+        UserDAO UD = new UserDAO();
+        String token = request.getHeader("token");
+        int userid = request.getIntHeader("userid");
+        int quizid = request.getIntHeader("quizid");
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "quizScore")) {
+            boolean sucess = Quiz.completeQuiz(userid,quizid);
+            JSONObject object  = new JSONObject();
+            object.put("completed", sucess);
+            return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
+        } else {
+            JSONObject message = new JSONObject();
+            message.put("pages", "You are unauthorized to view this quiz");
+            return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
+        }
+    }
 }

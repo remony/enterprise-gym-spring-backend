@@ -2,6 +2,7 @@ package six.team.backend.dao;
 
 import six.team.backend.store.CommentStore;
 import six.team.backend.store.UserGroupsStore;
+import six.team.backend.utils.Config;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -15,8 +16,8 @@ public class UserGroupDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("insert into RolePermissions (usergroup,eventsadd,eventsdelete,eventsedit,eventsview,newsadd,newsdelete,newsedit,newsview,pagesadd,pagesdelete,pagesedit,pagesview,usersadd,usersdelete,usersedit,usersview ,pointsadd, pointsreset, pointsview, commentsedit, quizview, quizadd, fileupload, fileedit) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
+            connection = Config.getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("insert into RolePermissions (usergroup,eventsadd,eventsdelete,eventsedit,eventsview,newsadd,newsdelete,newsedit,newsview,pagesadd,pagesdelete,pagesedit,pagesview,usersadd,usersdelete,usersedit,usersview ,pointsadd, pointsreset, pointsview, commentsedit, quizview, quizadd, quizScore, fileupload, fileedit) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
             ps.setString(1, groups.getUsergroup());
             ps.setInt(2, groups.getEventsadd());
             ps.setInt(3, groups.getEventsdelete());
@@ -40,8 +41,9 @@ public class UserGroupDAO {
             ps.setInt(21, groups.getCommentsedit());
             ps.setInt(22, groups.getQuizview());
             ps.setInt(23, groups.getQuizadd());
-            ps.setInt(24, groups.getFileupload());
-            ps.setInt(25, groups.getFileedit());
+            ps.setInt(24,groups.getQuizScore());
+            ps.setInt(25, groups.getFileupload());
+            ps.setInt(26, groups.getFileedit());
             ps.executeUpdate();
             success=true;
 
@@ -65,8 +67,8 @@ public class UserGroupDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("update  RolePermissions set usergroup=?,eventsadd=?,eventsdelete=?,eventsedit=?,eventsview=?,newsadd=?,newsdelete=?,newsedit=?,newsview=?,pagesadd=?,pagesdelete=?,pagesedit=?,pagesview=?,usersadd=?,usersdelete=?,usersedit=?,usersview=?, pointsadd=?, pointsreset=?, pointsview=?, commentsedit=?, quizview=?, quizadd=?, fileupload=?, fileedit=?");
+            connection = Config.getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("update  RolePermissions set usergroup=?,eventsadd=?,eventsdelete=?,eventsedit=?,eventsview=?,newsadd=?,newsdelete=?,newsedit=?,newsview=?,pagesadd=?,pagesdelete=?,pagesedit=?,pagesview=?,usersadd=?,usersdelete=?,usersedit=?,usersview=?, pointsadd=?, pointsreset=?, pointsview=?, commentsedit=?, quizview=?, quizadd=?, quizScore =?, fileupload=?, fileedit=?");
             ps.setString(1, groups.getUsergroup());
             ps.setInt(2, groups.getEventsadd());
             ps.setInt(3, groups.getEventsdelete());
@@ -90,8 +92,9 @@ public class UserGroupDAO {
             ps.setInt(21, groups.getCommentsedit());
             ps.setInt(22, groups.getQuizview());
             ps.setInt(23, groups.getQuizadd());
-            ps.setInt(24, groups.getFileupload());
-            ps.setInt(25, groups.getFileedit());
+            ps.setInt(24,groups.getQuizScore());
+            ps.setInt(25, groups.getFileupload());
+            ps.setInt(26, groups.getFileedit());
             ps.executeUpdate();
             success=true;
 
@@ -115,7 +118,7 @@ public class UserGroupDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("delete from RolePermissions where usergroup=? ");
             ps.setString(1, usergroup);
             ps.executeUpdate();
@@ -141,7 +144,7 @@ public class UserGroupDAO {
         Connection connection = null;
         LinkedList<UserGroupsStore> groups =new LinkedList<UserGroupsStore>();
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from RolePermissions where usergroup=? ");
             ps.setString(1, usergroup);
              ResultSet rs=ps.executeQuery();
@@ -169,6 +172,7 @@ public class UserGroupDAO {
                 group.setCommentsedit(rs.getInt("commentsedit"));
                 group.setQuizview(rs.getInt("quizview"));
                 group.setQuizadd(rs.getInt("quizadd"));
+                group.setQuizScore(rs.getInt("quizScore"));
                 group.setFileupload(rs.getInt("fileupload"));
                 group.setFileedit(rs.getInt("fileedit"));
                 group.setUsergroup(rs.getString("usergroup"));
@@ -194,7 +198,7 @@ public class UserGroupDAO {
         Connection connection = null;
         LinkedList<UserGroupsStore> groups =new LinkedList<UserGroupsStore>();
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from RolePermissions");
             ResultSet rs=ps.executeQuery();
             while(rs.next()) {
@@ -221,9 +225,11 @@ public class UserGroupDAO {
                 group.setCommentsedit(rs.getInt("commentsedit"));
                 group.setQuizview(rs.getInt("quizview"));
                 group.setQuizadd(rs.getInt("quizadd"));
+                group.setQuizScore(rs.getInt("quizScore"));
                 group.setFileupload(rs.getInt("fileupload"));
                 group.setFileedit(rs.getInt("fileedit"));
                 group.setUsergroup(rs.getString("usergroup"));
+
                 groups.add(group);
             }
 
@@ -246,7 +252,7 @@ public class UserGroupDAO {
         Connection connection = null;
         boolean exists=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("select usergroup from RolePermissions where usergroup=?");
             ps.setString(1, usergroup);
@@ -269,22 +275,5 @@ public class UserGroupDAO {
 
         }
         return exists;
-    }
-
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db, "admin", "admin");
-
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
     }
 }

@@ -108,7 +108,7 @@ public class PointDAO {
                 news.setCountry(rs.getString("country"));
                 news.setUniversity(rs.getString("university"));
                 news.setStatus(rs.getString("status"));
-                news.setYear(rs.getInt("yearofstudy"));
+                news.setYearofstudy(rs.getInt("yearofstudy"));
                 news.setUsergroup(rs.getString("usergroup"));
                 user.add(news);
             }
