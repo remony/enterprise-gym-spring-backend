@@ -409,7 +409,7 @@ public class EventDAO {
         Connection connection = null;
         try {
             connection = Config.getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate DESC limit " + resultNumber);
+            PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate ASC limit " + resultNumber);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UpcomingStore event = new UpcomingStore();
