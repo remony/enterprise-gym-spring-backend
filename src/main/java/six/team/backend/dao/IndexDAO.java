@@ -46,7 +46,7 @@ public class IndexDAO {
         boolean success = false;
         try {
             connection = Config.getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("Update HOME set title =? , description=? where id = ?");
+            PreparedStatement ps = connection.prepareStatement("Update Home set title =? , description=? where id = ?");
             ps.setString(1,index.getTitle());
             ps.setString(2,index.getDescription());
             ps.setInt(3,index.getId());

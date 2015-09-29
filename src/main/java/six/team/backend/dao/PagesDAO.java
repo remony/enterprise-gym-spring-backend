@@ -15,7 +15,7 @@ public class PagesDAO {
         boolean success=false;
         Connection connection = null;
         try {
-            Config.getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("insert into Pages (title, description, text,permission,slug,parentslug, pageorder) values (?,?,?,?,?,?,?)");
             ps.setString(1, page.getTitle());
             ps.setString(2, page.getDescription());
