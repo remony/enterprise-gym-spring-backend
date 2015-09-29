@@ -103,7 +103,7 @@ public class NewsController {
             boolean success,exists;
             JSONObject message = new JSONObject();
             if(News.checkValidity(request.getHeader("title"))){
-                if (News.generateSlug(request.getHeader("title")).equals(slug)) {
+             //   if (News.generateSlug(request.getHeader("title")).equals(slug)) {
                     success=News.update(slug, request.getHeader("title"), text, request.getHeader("permission"));
                     if(success) {
                         message.put("status", "success");
@@ -114,8 +114,8 @@ public class NewsController {
                         return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
                     }
 
-                } else
-                    return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
+             //   } else
+               //     return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
             }else
             {
                 success = News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
@@ -128,7 +128,6 @@ public class NewsController {
                     return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
                 }
             }
-
         }else {
             JSONObject message = new JSONObject();
             message.put("user", "You are Unauthorized to view this content");

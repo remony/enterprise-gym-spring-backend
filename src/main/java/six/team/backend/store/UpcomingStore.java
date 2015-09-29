@@ -12,6 +12,7 @@ public class UpcomingStore {
     private String url;
     private String location;
     private String description;
+    private int eventid;
 
     public String getTitle() {
         return title;
@@ -75,5 +76,13 @@ public class UpcomingStore {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getEventid() {
+        return eventid;
+    }
+
+    public void setEventid(int eventid) {
+        this.eventid = eventid;
     }
 }

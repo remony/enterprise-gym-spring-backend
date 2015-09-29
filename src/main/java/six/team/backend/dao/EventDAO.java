@@ -421,6 +421,7 @@ public class EventDAO {
                 event.setStart(rs.getString("event_startdate"));
                 event.setEnd((rs.getString("event_enddate")));
                 event.setCategory((rs.getString("points_category")));
+                event.setEventid(rs.getInt("event_id"));
                 Date startDate = rs.getDate("order_startdate");
                 if(startDate.after(new java.util.Date())) {
                     upcoming.add(event);
