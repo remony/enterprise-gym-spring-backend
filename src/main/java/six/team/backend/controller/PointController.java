@@ -91,7 +91,7 @@ public class PointController {
     public @ResponseBody ResponseEntity<String> showAllUserPoints(@PathVariable(value="username") String id) {
         LinkedList<PointStore> point = Points.getUserPoints(id);
         JSONObject details = new JSONObject();
-        details.put("points: ",point);
+        details.put("points",point);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 }
