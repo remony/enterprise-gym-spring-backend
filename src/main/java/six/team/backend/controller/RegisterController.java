@@ -35,10 +35,10 @@ public class RegisterController {
 
         // convert the true/false value for Enterpr. Society to the bit value used in the SQL db
         int young_es_int = 0;
-        if (request.getHeader("young_es").equals("true"))
-            young_es_int = 1;
-        else
-            young_es_int = 0;
+      //  if (request.getHeader("young_es").equals("true"))
+           // young_es_int = 1;
+        //else
+          //  young_es_int = 0;
 
         String username = request.getHeader("username");
         String password = request.getHeader("password");
@@ -78,17 +78,23 @@ public class RegisterController {
 
         // for testing:
         UserDAO userDAO = new UserDAO();
-        System.out.println("u: " + username + ",p: " + password);
-        userDAO.Save(userStore);
+        int result = userDAO.Save(userStore);
 
         // return a JSON object
         JSONObject object = new JSONObject();
-        object.put("success", username);
-
-        if(!userStore.getEmail().isEmpty() && !userStore.getUsergroup().isEmpty())
+        if(result == 0) {
+            object.put("message", "User registered");
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
-        else
-            return new ResponseEntity<String>(object.toString(), HttpStatus.CONFLICT);
+        }else if(result==1) {
+            object.put("message", "Username has already been registered ");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(401));
+        } else if(result ==2){
+            object.put("message", "Email has already been registered ");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(401));
+        } else{
+            object.put("message", "Unknown Error ");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(401));
+        }
 
     }
 

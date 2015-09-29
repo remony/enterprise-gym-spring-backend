@@ -21,9 +21,10 @@ import java.util.*;
 
 public class UserDAO {
 
-    public Boolean Save(UserStore userStore) {
+    public int Save(UserStore userStore) {
         UserStore userStoreSave = new UserStore();
         Connection connection = null;
+        int result = 3;
 
         try {
             connection = Config.getDBConnection();
@@ -58,7 +59,6 @@ public class UserDAO {
 
                 // not in the DB yet - , activated, token, registration_date
                 PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password, firstname, lastname, gender, email, contactnumber, country, university, status, subject, matricnumber, young_es, usergroup, token, registration_date, yearofstudy, bio ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
-
                 // for the timestamp
                 Calendar cal = Calendar.getInstance();
 
@@ -77,25 +77,24 @@ public class UserDAO {
                 ps.setString(11, userStore.getSubject());
                 ps.setString(12, userStore.getMatricnumber());
                 ps.setInt(13, userStore.getYoung_es());
-                ps.setString(14, "Students");
-
+                ps.setString(14, "unauthorised");
                 ps.setString(15, "testToken");
                 ps.setTimestamp(16, (new java.sql.Timestamp(cal.getTimeInMillis())));
                 ps.setInt(17, userStore.getYearofstudy());
                 ps.setString(18, userStore.getBio());
-
                 ps.executeUpdate();
-
                 RegisterController registerController = new RegisterController();
-
-                return true;
-
+                result = 0;
             } else
-                return false;
+                if(usernameExists){
+                    result=  1;
+                }else if (emailExists) {
+                    result = 2;
+            }
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-            return false;
+
         } finally {
             try {
                 if (connection != null) {
@@ -106,6 +105,7 @@ public class UserDAO {
                 System.err.println(e.getMessage());
             }
         }
+        return result;
     }
 
 
@@ -151,7 +151,7 @@ public class UserDAO {
         Connection connection = null;
 
         try {
-            connection = connection = Config.getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("SELECT userid, bio, username, firstname, lastname, gender, email, contactnumber, country, " +
                     "university, status, subject, yearofstudy, matricnumber, usergroup, young_es, registration_date FROM Users WHERE username = ?");
