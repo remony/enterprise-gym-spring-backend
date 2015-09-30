@@ -24,9 +24,9 @@ import javax.servlet.http.HttpServletResponse;
     @Controller
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value= "/auth")
     public class AuthenticationController {
-    private final static Logger logger = Logger.getLogger(AuthenticationController.class);
 
     @RequestMapping(method = RequestMethod.POST)
+    //this endpoint checks if the token and username in the header match the database and creates a json object to return
     public @ResponseBody ResponseEntity<String> authenticate(HttpServletRequest request,HttpServletResponse res) {
         String token = request.getHeader("token");
         String username =request.getHeader("username");

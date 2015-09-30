@@ -15,12 +15,11 @@ public class AuthDAO {
         boolean isAuthorised = false;
 
         try {
-            connection = Config.getDBConnection();
+            connection = Config.getDBConnection(); // creates connection to the database
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM Users WHERE username = ? limit 1");
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                System.out.println(rs.getString("username"));
+            while (rs.next()) { //checks if the token for the username matches the token given
                 if(rs != null) {
                     String token1 = rs.getString("token");
                     if (token.equals(token1)) {

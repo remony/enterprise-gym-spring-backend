@@ -31,6 +31,7 @@ public class CalendarDAO {
                 if(rs != null) {
                     CalendarStore event = new CalendarStore();
                     event.setUrl("#/events/" + rs.getInt("event_id"));
+                    //formats date for the calendar
                     event.setStart(DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date(rs.getString("event_startdate"))).toString());
                     event.setEnd(DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date(rs.getString("event_enddate"))));
                     event.setTitle(rs.getString("event_title"));

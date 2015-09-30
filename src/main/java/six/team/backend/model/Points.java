@@ -29,4 +29,9 @@ public class Points {
         PointDAO pointDAO = new PointDAO();
         return pointDAO.getUserPoints(username);
     }
+
+    public static boolean addToTable(String username){
+        PointDAO pointDAO = new PointDAO();
+        return pointDAO.addToTable(username);
+    }
 }

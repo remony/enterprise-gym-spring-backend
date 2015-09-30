@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import six.team.backend.dao.UserDAO;
+import six.team.backend.model.Points;
 import six.team.backend.model.User;
 import six.team.backend.store.UserStore;
 
@@ -28,9 +29,9 @@ import java.util.Date;
 @RequestMapping("/registration")
 public class RegisterController {
 
-    // NOTE: to look at line 88 when things get merged: "You should be returning conflict when a user of the same username already exists, your sending a conflict when the user does not have a email and username"
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    //this endpoint registers a user - returns error messages if can not register correctly (ie username already exists)
     public @ResponseBody ResponseEntity<String> registerUser(HttpServletRequest request,HttpServletResponse res) {
 
         // convert the true/false value for Enterpr. Society to the bit value used in the SQL db
@@ -79,11 +80,11 @@ public class RegisterController {
         // for testing:
         UserDAO userDAO = new UserDAO();
         int result = userDAO.Save(userStore);
-
         // return a JSON object
         JSONObject object = new JSONObject();
         if(result == 0) {
             object.put("message", "User registered");
+            Points.addToTable(userStore.getUsername());
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
         }else if(result==1) {
             object.put("message", "Username has already been registered ");

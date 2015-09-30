@@ -139,10 +139,10 @@ public class EventDAO {
             ps.setInt(4, event.getPoints());
             ps.setString(5, event.getVenue());
             ps.setString(6, event.getStartDate());
-            ps.setString(7,event.getEndDate());
+            ps.setString(7, event.getEndDate());
             ps.setDate(8, new java.sql.Date(event.getOrderStartDate().getTime()));
-            ps.setInt(9,event.getId());
-            ps.setString(10,event.getPoints_category());
+            ps.setString(9,event.getPoints_category());
+            ps.setInt(10,event.getId());
             int result = ps.executeUpdate();
             if(result ==1){
                 updated = true;
@@ -280,10 +280,10 @@ public class EventDAO {
                 category = rs.getString("points_category");
 
             }
-            if(newAttended ==1) {
+            if(newAttended ==1) { //if the user has attended the event then this automatically adds the points to the user in the correct category
                 Points.updatePoints(userid, points, category);
             }
-            else{
+            else{ //if the user is set to not attend then the points are taken away from the corect category
                 Points.updatePoints(userid,-points,category);
             }
             if(result ==1){
@@ -409,6 +409,7 @@ public class EventDAO {
         Connection connection = null;
         try {
             connection = Config.getDBConnection();
+            //returns in order of the start date and limits to the number given
             PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate ASC limit " + resultNumber);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -424,7 +425,7 @@ public class EventDAO {
                 event.setEventid(rs.getInt("event_id"));
                 Date startDate = rs.getDate("order_startdate");
                 if(startDate.after(new java.util.Date())) {
-                    upcoming.add(event);
+                    upcoming.add(event); //if the event is before todays date then it doesnt return this
                 }
             }
         } catch (SQLException e) {

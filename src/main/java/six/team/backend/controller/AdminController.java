@@ -23,20 +23,20 @@ import java.util.LinkedList;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-
+    //this endpoint returns a list of all unauthorised users
     @RequestMapping(method=RequestMethod.GET, value={"/users"})
         public @ResponseBody ResponseEntity<String> getUnauthorised(HttpServletRequest request) {
 
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
 
-        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "userview")) {
+        if (UD.getUserGroupPermissions(UD.getUserGroup(token), "userview")) { //checks the user has permission
             LinkedList<UserStore> users = User.getAllUnauthorised();
             JSONObject object = new JSONObject();
             object.put("unauthorisedusers", users);
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
 
-        } else {
+        } else { //returns an unauthorised json and http status if not authorised
             JSONObject message = new JSONObject();
             message.put("user", "You are Unauthorized to view this content");
             return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
@@ -44,6 +44,7 @@ public class AdminController {
     }
 
     @RequestMapping(method=RequestMethod.POST, value={"/users"})
+    //post request method to approve the users and set the correct user group
     public @ResponseBody ResponseEntity<String> approveUser(HttpServletRequest request,HttpServletResponse res) {
         String approved_id = request.getHeader("approvedId");
         String approved_group = request.getHeader("approvedGroup");

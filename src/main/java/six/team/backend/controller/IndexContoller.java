@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequestMapping("/")
 public class IndexContoller {
+	//this endpoint returns details for the homepage
 	@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	public
 	@ResponseBody
@@ -31,6 +32,7 @@ public class IndexContoller {
 		}
 
 	@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
+	//this endpoint allows for the homepage to be editted
 	public
 	@ResponseBody ResponseEntity<String> editIndex(HttpServletRequest request,HttpServletResponse res) {
 		IndexStore index = new IndexStore();

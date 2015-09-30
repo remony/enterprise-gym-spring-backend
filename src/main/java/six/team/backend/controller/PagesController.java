@@ -26,6 +26,7 @@ import java.util.LinkedList;
 public class PagesController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    //this endpoint creates a new page from the title in the header and the text given in the body
     public@ResponseBody ResponseEntity<String> addPage(HttpServletRequest request, HttpServletResponse response, @RequestBody String text) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -53,6 +54,7 @@ public class PagesController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{slug}/delete", method = RequestMethod.POST)
+    //this endpoint deletes pages with the slug given in the url
     public@ResponseBody ResponseEntity<String> deletePage(HttpServletRequest request, HttpServletResponse response, @PathVariable(value="slug") String slug) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -73,6 +75,7 @@ public class PagesController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{slug}/edit", method = RequestMethod.POST)
+    //this endpoint edits the url with the slug given in the url
     public@ResponseBody ResponseEntity<String> editPage(HttpServletRequest request, HttpServletResponse response,@PathVariable(value="slug") String slug, @RequestBody String text) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -93,6 +96,7 @@ public class PagesController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    //this endpoint returns a list of all the pages and the details of the pages
     public@ResponseBody ResponseEntity<String> getAll() {
         LinkedList<PageStore> pages = Pages.getAll();
         JSONObject object = new JSONObject();
@@ -101,6 +105,7 @@ public class PagesController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{slug}", method = RequestMethod.GET)
+    //this endpoint returns details of the page with the slug given in the url
     public@ResponseBody ResponseEntity<String> get(@PathVariable(value="slug") String slug) {
         LinkedList<PageStore> page = Pages.get(slug);
         JSONObject object = new JSONObject();

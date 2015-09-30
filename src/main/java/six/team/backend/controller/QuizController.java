@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/quiz")
 public class QuizController {
-    private final static Logger logger = Logger.getLogger(AuthenticationController.class);
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{quizid}/take", method = RequestMethod.GET)
     public
     @ResponseBody
+    //this endpoint returns json in the correct format for the quiz given in the url, it returns details of the passmark and the points given for the quiz completed
     ResponseEntity<String> getQuiz(@PathVariable(value = "quizid") String id, HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -70,6 +70,7 @@ public class QuizController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/create", method = RequestMethod.POST)
     public
+    //this endpoint creates the quiz , reads in the json passed in the body of the post request and formats into a json to create the quiz
     @ResponseBody
     ResponseEntity<String> createQuiz(HttpServletRequest request, HttpServletResponse res) {
         request.getParameter("body");
@@ -128,7 +129,8 @@ public class QuizController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public
     @ResponseBody
-    ResponseEntity<String> getAttr() {
+    //this endpoint returns a list of all available quizes
+    ResponseEntity<String> getAllQuizzes() {
         LinkedList<QuizStore> allQuiz = Quiz.getAllQuizzes();
         JSONObject quizzes = new JSONObject();
         quizzes.put("quiz", allQuiz);
@@ -138,6 +140,7 @@ public class QuizController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "{quizid}/complete", method = RequestMethod.POST)
     public
     @ResponseBody
+    //this endpoint compeltes a quiz and save the score and whether they have passed
     ResponseEntity<String> completeQuiz(@PathVariable(value = "quizid") String id,HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -158,6 +161,7 @@ public class QuizController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{quizid}", method = RequestMethod.GET)
     public
     @ResponseBody
+    //this endpoint returns the info for the id given in the url
     ResponseEntity<String> getQuizInfo(@PathVariable(value = "quizid") String id, HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -179,6 +183,7 @@ public class QuizController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/users/{userid}", method = RequestMethod.GET)
     public
+    //this endpoint returns the quizzes that the users have taken
     @ResponseBody
     ResponseEntity<String> getUserQuizzes(@PathVariable(value = "userid") String id, HttpServletRequest request, HttpServletResponse res) {
         UserDAO UD = new UserDAO();

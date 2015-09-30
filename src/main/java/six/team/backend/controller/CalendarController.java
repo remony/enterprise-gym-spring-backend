@@ -21,6 +21,7 @@ import java.util.LinkedList;
 @Controller
 @RequestMapping("/calendar")
 public class CalendarController {
+    //this endpoint returns a list of events for the calendar
         @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method= RequestMethod.GET)
         public @ResponseBody
         ResponseEntity<String> getCalendar() {
