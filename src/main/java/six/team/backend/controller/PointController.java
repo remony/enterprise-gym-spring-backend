@@ -30,6 +30,7 @@ import java.util.LinkedList;
 public class PointController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method= RequestMethod.POST, value={"/update"})
     public @ResponseBody
+    //this endpoints updates the points using data given in the header of the post request
     ResponseEntity<String> updatePoints(HttpServletRequest request,HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         int points = Integer.parseInt(request.getHeader("points"));
@@ -50,6 +51,7 @@ public class PointController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method= RequestMethod.GET)
+    //this endpoint returns a list of all the userpoints
     public @ResponseBody ResponseEntity<String> allPoints(HttpServletRequest request,HttpServletResponse res) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -68,11 +70,9 @@ public class PointController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method= RequestMethod.POST, value={"/reset" +
             ""})
     public @ResponseBody
+    //this end point resets all the user back to zero for the start of the academic year
     ResponseEntity<String> resetPoints(HttpServletRequest request,HttpServletResponse res) {
         UserDAO UD = new UserDAO();
-        int points = Integer.parseInt(request.getHeader("points"));
-        int userid = Integer.parseInt(request.getHeader("userid"));
-        String category = request.getHeader("category");
         String token = request.getHeader("token");
         boolean pointsReset= false;
         if (UD.getUserGroupPermissions(UD.getUserGroup(token),"pointsadd")) {
@@ -88,10 +88,11 @@ public class PointController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{username}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
+    //this endpoint shows the user points for the username given in the url
+    public @ResponseBody ResponseEntity<String> showAllUserPoints(@PathVariable(value="username") String id) {
         LinkedList<PointStore> point = Points.getUserPoints(id);
         JSONObject details = new JSONObject();
-        details.put("points: ",point);
+        details.put("points",point);
         return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
 }

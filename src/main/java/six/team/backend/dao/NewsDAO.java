@@ -2,6 +2,8 @@ package six.team.backend.dao;
 
 import six.team.backend.store.CommentStore;
 import six.team.backend.store.NewsStore;
+import six.team.backend.utils.Config;
+
 import java.sql.*;
 import java.util.LinkedList;
 
@@ -13,7 +15,7 @@ public class NewsDAO {
         public boolean save(NewsStore newsStore) {
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("insert into News (title,slug, text, datecreated,lastupdated,permission) values (?,?,?,?,?,?)");
             java.sql.Date sqlDate = new java.sql.Date(newsStore.getDateCreated().getTime());
             ps.setString(1, newsStore.getTitle());
@@ -44,7 +46,7 @@ public class NewsDAO {
     public boolean update(NewsStore newsStore, String slug) {
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("update News set title=?,slug=?, text=?, lastupdated=?,permission=? where slug=?");
             ps.setString(1, newsStore.getTitle());
             ps.setString(2, newsStore.getSlug());
@@ -79,7 +81,7 @@ public class NewsDAO {
         Connection connection = null;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("delete from News where slug=?");
             ps.setString(1, slug);
             ps.executeUpdate();
@@ -109,7 +111,7 @@ public class NewsDAO {
         Connection connection = null;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select newsid, title,text,permission,slug,lastupdated,datecreated from News where slug=?");
             ps.setString(1, slug);
             ResultSet rs = ps.executeQuery();
@@ -146,7 +148,7 @@ public class NewsDAO {
         LinkedList<NewsStore> allnews = new LinkedList<NewsStore>();
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             String query = String.format(
                     "select newsid, title,text,permission,slug,lastupdated,datecreated from News ORDER BY datecreated DESC LIMIT %d OFFSET %d",
                     pageSize,
@@ -188,7 +190,7 @@ public class NewsDAO {
         LinkedList<NewsStore> allnews = new LinkedList<NewsStore>();
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             String query = String.format(
                     "select newsid, title,text,permission,slug,lastupdated,datecreated from News ORDER BY datecreated DESC ");
             PreparedStatement ps = connection.prepareStatement(query);
@@ -222,27 +224,11 @@ public class NewsDAO {
         return allnews;
     }
 
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db,"admin", "admin");
-
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
-    }
    public boolean titleExists(String title){
        Connection connection = null;
        boolean exists=false;
        try {
-           connection = getDBConnection();
+           connection = Config.getDBConnection();
 
            PreparedStatement ps = connection.prepareStatement("select newsid from News where title=?");
            ps.setString(1, title);
@@ -276,7 +262,7 @@ public class NewsDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("insert into NewsComments (text, slug, author, date) values (?,?,?,?) ");
             ps.setString(1, comment.getText());
             ps.setString(2, comment.getSlug());
@@ -306,7 +292,7 @@ public class NewsDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("delete from NewsComments where commentid=?");
             ps.setInt(1, commentid);
             ps.executeUpdate();
@@ -331,7 +317,7 @@ public class NewsDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("delete from NewsComments where slug=?");
             ps.setString(1, slug);
             ps.executeUpdate();
@@ -356,7 +342,7 @@ public class NewsDAO {
         Connection connection = null;
         boolean success=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("update NewsComments set text=? where commentid=?");
             ps.setString(1, text);
             ps.setInt(2, commentid);
@@ -384,7 +370,7 @@ public class NewsDAO {
         boolean success=false;
         int count=0;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) AS rowcount FROM News");
             ResultSet rs= ps.executeQuery();
             rs.next();
@@ -411,7 +397,7 @@ public class NewsDAO {
         boolean success=false;
         LinkedList<CommentStore> comments= new LinkedList<CommentStore>() ;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from NewsComments where slug=? ORDER BY date DESC");
             ps.setString(1, slug);
             ResultSet rs= ps.executeQuery();

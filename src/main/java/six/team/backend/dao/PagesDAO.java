@@ -4,6 +4,7 @@ import org.json.JSONObject;
 import six.team.backend.store.CommentStore;
 import six.team.backend.store.NewsStore;
 import six.team.backend.store.PageStore;
+import six.team.backend.utils.Config;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -14,7 +15,7 @@ public class PagesDAO {
         boolean success=false;
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("insert into Pages (title, description, text,permission,slug,parentslug, pageorder) values (?,?,?,?,?,?,?)");
             ps.setString(1, page.getTitle());
             ps.setString(2, page.getDescription());
@@ -47,7 +48,7 @@ public class PagesDAO {
         Connection connection = null;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("delete from Pages where slug=?");
             ps.setString(1, slug);
             ps.executeUpdate();
@@ -72,7 +73,7 @@ public class PagesDAO {
         boolean success=false;
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("update Pages set title=?, description=?, text=?,permission=?,slug=?,parentslug=?,pageorder=? where slug=?");
             ps.setString(1, page.getTitle());
             ps.setString(2, page.getDescription());
@@ -106,7 +107,7 @@ public class PagesDAO {
         boolean success=false;
         LinkedList<PageStore> pages= new LinkedList<PageStore>() ;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from Pages where parentslug=?");
             ps.setString(1,"main");
             ResultSet rs= ps.executeQuery();
@@ -146,7 +147,7 @@ public class PagesDAO {
         boolean success=false;
         LinkedList<PageStore> pages= new LinkedList<PageStore>() ;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from Pages where slug=?");
             ps.setString(1, slug);
             ResultSet rs= ps.executeQuery();
@@ -186,7 +187,7 @@ public class PagesDAO {
         boolean success=false;
         LinkedList<PageStore> pages= new LinkedList<PageStore>() ;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from Pages where parentslug=?");
             ps.setString(1, slug);
             ResultSet rs= ps.executeQuery();
@@ -223,7 +224,7 @@ public class PagesDAO {
         Connection connection = null;
         JSONObject  hierarchy = new JSONObject();
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from Pages where parentslug=?");
             ps.setString(1,"main");
             ResultSet rs= ps.executeQuery();
@@ -255,7 +256,7 @@ public class PagesDAO {
         Connection connection = null;
         JSONObject hierarchy = new JSONObject();
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select * from Pages where parentslug=?");
             ps.setString(1,slug);
             ResultSet rs= ps.executeQuery();
@@ -289,7 +290,7 @@ public class PagesDAO {
         Connection connection = null;
         boolean exists=false;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("select pageid from Pages where title=?");
             ps.setString(1, title);
@@ -314,23 +315,4 @@ public class PagesDAO {
         }
         return exists;
     }
-
-
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db, "admin", "admin");
-
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
-    }
-
 }

@@ -17,6 +17,7 @@ import java.util.LinkedList;
 @Controller
 @RequestMapping("/navigation")
 public class PagesNavigationController {
+    //this endpoint returns the hierchy for the naviagation
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public@ResponseBody
     ResponseEntity<String> getHierarchy() {

@@ -1,5 +1,6 @@
 package six.team.backend.dao;
 
+import six.team.backend.model.Points;
 import six.team.backend.store.EventStore;
 import six.team.backend.store.ParticipantStore;
 import six.team.backend.store.UpcomingStore;
@@ -14,31 +15,12 @@ import java.util.LinkedList;
  */
 public class EventDAO {
 
-
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db,"admin","admin");
-
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
-    }
-
-
     public boolean addEvent(EventStore event){
         Connection connection = null;
         boolean added = false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("INSERT INTO Events (event_id,event_title,event_location,event_description,event_points,event_venue,event_startdate,event_enddate, order_startdate, points_category) VALUES(?,?,?,?,?,?,?,?,?,?)");
             ps.setInt(1,event.getId());
             ps.setString(2, event.getName());
@@ -73,7 +55,7 @@ public class EventDAO {
         LinkedList<EventStore> events = new LinkedList<EventStore>();
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate DESC");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -110,8 +92,7 @@ public class EventDAO {
         EventStore event= new EventStore();
 
         try {
-            connection = getDBConnection();
-
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select* from Events where event_id=?");
             ps.setInt(1, eventid);
             ResultSet rs = ps.executeQuery();
@@ -150,7 +131,7 @@ public class EventDAO {
         boolean updated =false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("UPDATE Events set event_title=?,event_location=?,event_description=?,event_points=?,event_venue=?,event_startdate=?,event_enddate=?, order_startdate=? , points_category =? where event_id = ?");
             ps.setString(1, event.getName());
             ps.setString(2, event.getLocation());
@@ -158,10 +139,10 @@ public class EventDAO {
             ps.setInt(4, event.getPoints());
             ps.setString(5, event.getVenue());
             ps.setString(6, event.getStartDate());
-            ps.setString(7,event.getEndDate());
+            ps.setString(7, event.getEndDate());
             ps.setDate(8, new java.sql.Date(event.getOrderStartDate().getTime()));
-            ps.setInt(9,event.getId());
-            ps.setString(10,event.getPoints_category());
+            ps.setString(9,event.getPoints_category());
+            ps.setInt(10,event.getId());
             int result = ps.executeUpdate();
             if(result ==1){
                 updated = true;
@@ -187,7 +168,7 @@ public class EventDAO {
         boolean deleted = false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("delete from Events where event_id=?");
             ps.setInt(1, eventid);
@@ -218,7 +199,7 @@ public class EventDAO {
         boolean signedUp = false;
         if(hasSignedUp(participant) != true){
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("insert into Participants (event_id, userid, attended) values (?,?,?);");
             ps.setInt(1, participant.getEvent_id());
@@ -249,7 +230,7 @@ public class EventDAO {
         boolean signedUp = false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("SELECT userid FROM Participants WHERE event_id = ? AND userid = ?");
             ps.setInt(1, participant.getEvent_id());
@@ -279,16 +260,33 @@ public class EventDAO {
 
         Connection connection = null;
         boolean attended = false;
+        int points =0;
+        String category = null;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
 
             PreparedStatement ps = connection.prepareStatement("UPDATE Participants SET attended = ? WHERE event_id = ? AND userid = ?");
             ps.setInt(1, newAttended);
             ps.setInt(2, eventid);
             ps.setInt(3, userid);
-            int rs = ps.executeUpdate();
-            if(rs ==1){
+            int result = ps.executeUpdate();
+
+            PreparedStatement ps1 = connection.prepareStatement("Select * from Events where event_id =?");
+            ps1.setInt(1, eventid);
+            ResultSet rs = ps1.executeQuery();
+            while (rs.next()) {
+                points = rs.getInt("event_points");
+                category = rs.getString("points_category");
+
+            }
+            if(newAttended ==1) { //if the user has attended the event then this automatically adds the points to the user in the correct category
+                Points.updatePoints(userid, points, category);
+            }
+            else{ //if the user is set to not attend then the points are taken away from the corect category
+                Points.updatePoints(userid,-points,category);
+            }
+            if(result ==1){
                 attended = true;
             }
         } catch (SQLException e) {
@@ -310,7 +308,7 @@ public class EventDAO {
         LinkedList<ParticipantStore> participants = new LinkedList<ParticipantStore>();
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select* from Participants where event_id = ? order by attended");
             ps.setInt(1,eventid);
             ResultSet rs = ps.executeQuery();
@@ -342,7 +340,7 @@ public class EventDAO {
     public ParticipantStore collectDetails(ParticipantStore participant, int userid){
         Connection connection = null;
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("select username, firstname, lastname from Users where userid = ?");
             ps.setInt(1,userid);
             ResultSet rs = ps.executeQuery();
@@ -411,7 +409,8 @@ public class EventDAO {
         Connection connection = null;
         try {
             connection = Config.getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate DESC limit " + resultNumber);
+            //returns in order of the start date and limits to the number given
+            PreparedStatement ps = connection.prepareStatement("select* from Events order by order_startdate ASC limit " + resultNumber);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UpcomingStore event = new UpcomingStore();
@@ -423,9 +422,10 @@ public class EventDAO {
                 event.setStart(rs.getString("event_startdate"));
                 event.setEnd((rs.getString("event_enddate")));
                 event.setCategory((rs.getString("points_category")));
+                event.setEventid(rs.getInt("event_id"));
                 Date startDate = rs.getDate("order_startdate");
                 if(startDate.after(new java.util.Date())) {
-                    upcoming.add(event);
+                    upcoming.add(event); //if the event is before todays date then it doesnt return this
                 }
             }
         } catch (SQLException e) {

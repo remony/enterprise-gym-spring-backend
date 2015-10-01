@@ -108,7 +108,7 @@ public class PointDAO {
                 news.setCountry(rs.getString("country"));
                 news.setUniversity(rs.getString("university"));
                 news.setStatus(rs.getString("status"));
-                news.setYear(rs.getInt("yearofstudy"));
+                news.setYearofstudy(rs.getInt("yearofstudy"));
                 news.setUsergroup(rs.getString("usergroup"));
                 user.add(news);
             }
@@ -165,7 +165,7 @@ public class PointDAO {
         LinkedList<PointStore> points = new LinkedList<PointStore>();
         try {
             PreparedStatement ps1 = connection.prepareStatement("Select * FROM Users WHERE username =? limit 1");
-            ps1.setString(1,username);
+            ps1.setString(1, username);
             ResultSet rs1 = ps1.executeQuery();
             int userid =0;
             while(rs1.next()) {
@@ -199,5 +199,40 @@ public class PointDAO {
             }
         }
         return points;
+    }
+
+    public boolean addToTable(String username)
+    {
+        Connection connection;
+        connection = Config.getDBConnection();
+        boolean success=false;
+        int userid =0;
+        try {
+                PreparedStatement ps1 = connection.prepareStatement("Select * from Users where username =?");
+                ps1.setString(1,username);
+            ResultSet result =ps1.executeQuery();
+            while(result.next()){
+                userid = result.getInt("userid");
+            }
+                PreparedStatement ps = connection.prepareStatement("Insert Into Points (user_id) values(?)");
+                ps.setInt(1, userid);
+                ps.executeUpdate();
+                success=true;
+        }
+        catch(SQLException e){
+            System.out.print(e.getMessage());
+            success= false;
+        }
+        finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                //failed to close connection
+                System.err.println(e.getMessage());
+            }
+        }
+        return success;
     }
 }

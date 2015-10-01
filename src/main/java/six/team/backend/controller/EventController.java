@@ -32,8 +32,7 @@ import java.util.Locale;
 @Controller
 @RequestMapping("/events")
 public class EventController {
-        private final static Logger logger = Logger.getLogger(EventController.class);
-
+    //this endpoint returns a list of all events with appropriate details
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> allEvents(HttpServletRequest request,HttpServletResponse res) {
             LinkedList<EventStore> events = Event.getAll();
@@ -42,6 +41,7 @@ public class EventController {
             return new ResponseEntity<String>(details.toString(), HttpStatus.OK);
     }
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/insert",method = RequestMethod.POST)
+    //this endpoint adds a new event
     public @ResponseBody
     ResponseEntity<String> addEvent(HttpServletRequest request,HttpServletResponse res) {
         EventStore event = new EventStore();
@@ -52,11 +52,12 @@ public class EventController {
         event.setDescription(request.getHeader("description"));
         event.setStartDate(request.getHeader("startdate"));
         event.setEndDate(request.getHeader("enddate"));
+        //the SimpleDateFormat is used to parse the date into the correct format for the database -
         SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss z",
                 Locale.ENGLISH);
         try{
             Date date = sdf.parse(request.getHeader("startdate"));
-            event.setOrderStartDate(date);
+            event.setOrderStartDate(date); // order start date is used to order the events in correct date order
         }catch(ParseException e){
             System.out.println(e);
         }
@@ -69,7 +70,7 @@ public class EventController {
             createObject.put("message", "Event: " + request.getHeader("name") + " was successfully created");
             if (isCreated) {
                 createObject.put("message", "Event: " + request.getHeader("name") + " was successfully created");
-                return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.OK);
             } else {
                 createObject.put("message", "Event: " + request.getHeader("name") + " was not successfully created");
                 return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
@@ -82,6 +83,7 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{eventid}", method = RequestMethod.GET)
+    //this endpoint returns a json with details of the event id given
     public @ResponseBody ResponseEntity<String> getAttr(@PathVariable(value="eventid") String id, HttpServletRequest request,HttpServletResponse res) {
             EventStore event = Event.getEvent(Integer.parseInt(id));
             if (event.getName() != null) {
@@ -110,6 +112,7 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/update/{eventid}", method = RequestMethod.POST)
+    //this endpoint updates the event given in the url with the results in the header
     public @ResponseBody ResponseEntity<String> updateEvent(@PathVariable(value="eventid") String id ,HttpServletRequest request,HttpServletResponse res) {
         EventStore event = new EventStore();
         event.setId(Integer.parseInt(id));
@@ -135,7 +138,7 @@ public class EventController {
             JSONObject createObject = new JSONObject();
             if (isUpdated) {
                 createObject.put("message", "Event ID: " + id + " was successfully updated");
-                return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
+                return new ResponseEntity<String>(createObject.toString(), HttpStatus.OK);
             } else {
                 createObject.put("message", "Event ID: " + id + " was not successfully updated");
                 return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
@@ -148,6 +151,7 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/delete/{eventid}", method = RequestMethod.POST)
+    //this endpoint deletes the event with the eventid given in the header
     public @ResponseBody ResponseEntity<String> deleteEvent(@PathVariable(value="eventid") String id, HttpServletRequest request,HttpServletResponse re) {
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
@@ -169,20 +173,20 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{eventid}/signup", method = RequestMethod.POST)
+    //this endpoint signs a participant up for the event with event id given in the url
     public @ResponseBody ResponseEntity<String> signupForEvent(@PathVariable(value="eventid") String id ,HttpServletRequest request,HttpServletResponse res) {
             ParticipantStore participant = new ParticipantStore();
-            participant.setAttended(0);
+            participant.setAttended(0); //sets attended to 0 as the user has not attended yet
             participant.setEvent_id(Integer.parseInt(id));
 
             UserDAO UD = new UserDAO();
-            String token = request.getHeader("token");
+            String token = request.getHeader("token"); // uses the token to determine the users id to sign up for the event
             participant.setUserid(UD.getUserID(token));
-            //participant.setUserid(Integer.parseInt(request.getHeader("userid")));
             boolean signedUp = Event.signupEvent(participant);
         JSONObject createObject = new JSONObject();
         if(signedUp) {
             createObject.put("message", "Signed Up successfully for Event id:" + id);
-            return new ResponseEntity<String>(createObject.toString(), HttpStatus.ACCEPTED);
+            return new ResponseEntity<String>(createObject.toString(), HttpStatus.OK);
         }else{
             createObject.put("message", "You are already signed up for this event:" + id);
             return new ResponseEntity<String>(createObject.toString(), HttpStatus.FORBIDDEN);
@@ -190,6 +194,7 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{eventid}/participants", method = RequestMethod.GET)
+    //this endpoint returns a list of all particpants for events - checks if the user has permission to view this
     public @ResponseBody ResponseEntity<String> showParticpants(@PathVariable(value="eventid") String id, HttpServletRequest request) {
         LinkedList<ParticipantStore> participant;
         UserDAO UD = new UserDAO();
@@ -206,23 +211,14 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{eventid}/participants", method = RequestMethod.POST)
+    //the post request endpoint updates the attendance depending on what is passed in the header
     public @ResponseBody ResponseEntity<String> updateAttendance(@PathVariable(value="eventid") String id, HttpServletRequest request,HttpServletResponse res) {
 
         UserDAO UD = new UserDAO();
         String token = request.getHeader("token");
-        int attended = Integer.parseInt(request.getHeader("attendance"));
-        String category = request.getHeader("category");
-        int points  = Integer.parseInt(request.getHeader("points"));
-
         if (UD.getUserGroupPermissions(UD.getUserGroup(token),"attendanceedit")) {
 
             if (Event.updateAttendance(Integer.parseInt(id), Integer.parseInt(request.getHeader("attendeeid")), Integer.parseInt(request.getHeader("attendance")))) {
-                if(attended ==1) {
-                    Points.updatePoints(Integer.parseInt(request.getHeader("attendeeid")),points,category);
-                }
-                else{
-                    Points.updatePoints(Integer.parseInt(request.getHeader("attendeeid")),-points,category);
-                }
                 LinkedList<ParticipantStore> participant;
                 participant = Event.getParticipants(true, Integer.parseInt(id));
                 JSONObject details = new JSONObject();
@@ -241,6 +237,7 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.GET)
+    //this endpoint returns all the events that a user has signed up for
          public @ResponseBody ResponseEntity<String> showAllUserEvents(@PathVariable(value="username") String id) {
         LinkedList<ParticipantStore> participant;
         LinkedList<EventStore> events = new LinkedList<EventStore>();
@@ -256,13 +253,14 @@ public class EventController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/upcoming", method = RequestMethod.GET)
+            //this endpoint returns a list of upcoming events for the homepage
     public @ResponseBody ResponseEntity<String> showUpcoming(HttpServletRequest request,HttpServletResponse res) {
        int resultNumber;
-        if(request.getHeader("number")!=null){
+        if(request.getHeader("number")!=null){ //if a number of events required is given in the header then return that amount of events
             resultNumber = Integer.parseInt(request.getHeader("number"));
         }
         else{
-            resultNumber =5;
+            resultNumber =5; //otherwise default to 5
         }
         LinkedList<UpcomingStore> upcoming;
         upcoming = Event.getUpcomingEvents(resultNumber);

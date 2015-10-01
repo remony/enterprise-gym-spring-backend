@@ -1,6 +1,7 @@
 package six.team.backend.dao;
 
 import six.team.backend.store.IndexStore;
+import six.team.backend.utils.Config;
 
 import java.sql.*;
 
@@ -13,7 +14,7 @@ public class IndexDAO {
         Connection connection = null;
         IndexStore index = new IndexStore();
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection();
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM Home");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -40,23 +41,18 @@ public class IndexDAO {
         return index;
     }
 
-    public IndexStore updateIndex(IndexStore indexStore){
+    public boolean updateIndex(IndexStore index){
         Connection connection = null;
-        IndexStore index = new IndexStore();
+        boolean success = false;
         try {
-            connection = getDBConnection();
-            PreparedStatement ps = connection.prepareStatement("UPDATE Home set title= ?, description =? ");
-            ps.setString(1,indexStore.getTitle());
-            ps.setString(2,indexStore.getDescription());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                if(rs != null) {
-                    index.setId(rs.getInt("id"));
-                    index.setTitle(rs.getString("title"));
-                    index.setSlug(rs.getString("slug"));
-                    index.setDescription(rs.getString("description"));
-                    index.setNavigation(rs.getString("navigation"));
-                }
+            connection = Config.getDBConnection();
+            PreparedStatement ps = connection.prepareStatement("Update Home set title =? , description=? where id = ?");
+            ps.setString(1,index.getTitle());
+            ps.setString(2,index.getDescription());
+            ps.setInt(3,index.getId());
+            int result = ps.executeUpdate();
+            if(result ==1){
+                success = true;
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -70,20 +66,6 @@ public class IndexDAO {
                 System.err.println(e.getMessage());
             }
         }
-        return index;
-    }
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db, "admin", "admin");
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return connection;
+        return success;
     }
 }

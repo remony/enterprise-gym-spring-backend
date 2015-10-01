@@ -25,8 +25,7 @@ import java.util.LinkedList;
 @Controller
 //@RequestMapping("/users")
 public class UserController {
-    private final static Logger logger = Logger.getLogger(UserController.class);
-
+    //this endpoint returns a list of all the users
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/users", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> printUsers(HttpServletRequest request) {
         LinkedList<UserInfoStore> users = User.getAll();
@@ -66,18 +65,13 @@ public class UserController {
             message.put("user", "You are Unauthorized to view this content");
             return new ResponseEntity<String>(message.toString(), HttpStatus.UNAUTHORIZED);
         }
-
-//        PageJsonGen pageJsonGen = new PageJsonGen();
-        //Send values to the page json generator, this will return the full json which is sent to the client
-
-        //Information about the page may be needed to be collected from the db, this is for discussion
-//        return pageJsonGen.createPageJson("Users", "A list of all registered users", users);
     }
 
 
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.GET)
+    //this endpoint returns the user profile for the username given in the username
     public @ResponseBody ResponseEntity<String> getAttr(HttpServletRequest request, @PathVariable(value="username") String userName ){
 
         UserDAO UD = new UserDAO();
@@ -128,6 +122,7 @@ public class UserController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/user/login", method = RequestMethod.POST)
+    //this endpoint is used for the user to login into the website
     public @ResponseBody
     ResponseEntity<String> loginUsers(HttpServletRequest request,HttpServletResponse res) {
         String username= request.getHeader("username");
@@ -164,6 +159,7 @@ public class UserController {
     }
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/user/{username}/passwordreset", method = RequestMethod.POST)
     public @ResponseBody
+    //this endpoint is used for a user to reset there password
     ResponseEntity<String> passwordReset(HttpServletRequest request,HttpServletResponse res, @PathVariable String username) {
         String password= request.getHeader("password");
         String newpassword= request.getHeader("newpassword");
@@ -187,6 +183,7 @@ public class UserController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}/delete", method = RequestMethod.POST)
+    //this endpoint is used to delete the user
     public @ResponseBody ResponseEntity<String> deleteUser(HttpServletRequest request, @PathVariable(value="username") String userName ){
 
         UserDAO UD = new UserDAO();
@@ -205,6 +202,7 @@ public class UserController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{username}", method = RequestMethod.POST)
+    //this endpoint is used to update the user details from the data passed in the request headers
     public @ResponseBody ResponseEntity<String> updateUser(HttpServletRequest request, @PathVariable(value="username") String username,@RequestBody String bio) {
 
         JSONObject object = new JSONObject();

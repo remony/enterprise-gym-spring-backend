@@ -6,6 +6,8 @@ package six.team.backend.store;
 public class QuizStore {
     private String quiz_id;
     private String quiz_title;
+    private int points;
+    private float passmark;
 
     public String getQuiz_id() {
         return quiz_id;
@@ -21,5 +23,21 @@ public class QuizStore {
 
     public void setQuiz_title(String quiz_title) {
         this.quiz_title = quiz_title;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public float getPassmark() {
+        return passmark;
+    }
+
+    public void setPassmark(float passmark) {
+        this.passmark = passmark;
     }
 }

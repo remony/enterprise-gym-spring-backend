@@ -1,5 +1,7 @@
 package six.team.backend.dao;
 
+import six.team.backend.utils.Config;
+
 import java.sql.*;
 import java.util.UUID;
 
@@ -13,12 +15,11 @@ public class AuthDAO {
         boolean isAuthorised = false;
 
         try {
-            connection = getDBConnection();
+            connection = Config.getDBConnection(); // creates connection to the database
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM Users WHERE username = ? limit 1");
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                System.out.println(rs.getString("username"));
+            while (rs.next()) { //checks if the token for the username matches the token given
                 if(rs != null) {
                     String token1 = rs.getString("token");
                     if (token.equals(token1)) {
@@ -39,20 +40,5 @@ public class AuthDAO {
             }
         }
         return isAuthorised;
-    }
-    private static Connection getDBConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String db = "jdbc:mysql://46.101.32.73:3306/enterprisegym";
-            connection = DriverManager.getConnection(db, "admin", "admin");
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return connection;
     }
 }

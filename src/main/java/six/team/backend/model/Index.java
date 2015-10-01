@@ -12,7 +12,7 @@ public class Index {
         return indexDAO.getIndex();
     }
 
-    public static IndexStore updateIndex(IndexStore index){
+    public static boolean updateIndex(IndexStore index){
         IndexDAO indexDAO = new IndexDAO();
         return indexDAO.updateIndex(index);
 

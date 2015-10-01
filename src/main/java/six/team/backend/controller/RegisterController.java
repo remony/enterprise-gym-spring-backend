@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import six.team.backend.dao.UserDAO;
+import six.team.backend.model.Points;
 import six.team.backend.model.User;
 import six.team.backend.store.UserStore;
 
@@ -28,17 +29,17 @@ import java.util.Date;
 @RequestMapping("/registration")
 public class RegisterController {
 
-    // NOTE: to look at line 88 when things get merged: "You should be returning conflict when a user of the same username already exists, your sending a conflict when the user does not have a email and username"
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    //this endpoint registers a user - returns error messages if can not register correctly (ie username already exists)
     public @ResponseBody ResponseEntity<String> registerUser(HttpServletRequest request,HttpServletResponse res) {
 
         // convert the true/false value for Enterpr. Society to the bit value used in the SQL db
         int young_es_int = 0;
-        if (request.getHeader("young_es").equals("true"))
-            young_es_int = 1;
-        else
-            young_es_int = 0;
+      //  if (request.getHeader("young_es").equals("true"))
+           // young_es_int = 1;
+        //else
+          //  young_es_int = 0;
 
         String username = request.getHeader("username");
         String password = request.getHeader("password");
@@ -78,17 +79,23 @@ public class RegisterController {
 
         // for testing:
         UserDAO userDAO = new UserDAO();
-        System.out.println("u: " + username + ",p: " + password);
-        userDAO.Save(userStore);
-
+        int result = userDAO.Save(userStore);
         // return a JSON object
         JSONObject object = new JSONObject();
-        object.put("success", username);
-
-        if(!userStore.getEmail().isEmpty() && !userStore.getUsergroup().isEmpty())
+        if(result == 0) {
+            object.put("message", "User registered");
+            Points.addToTable(userStore.getUsername());
             return new ResponseEntity<String>(object.toString(), HttpStatus.OK);
-        else
-            return new ResponseEntity<String>(object.toString(), HttpStatus.CONFLICT);
+        }else if(result==1) {
+            object.put("message", "Username has already been registered ");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(401));
+        } else if(result ==2){
+            object.put("message", "Email has already been registered ");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(401));
+        } else{
+            object.put("message", "Unknown Error ");
+            return new ResponseEntity<String>(object.toString(), HttpStatus.valueOf(401));
+        }
 
     }
 

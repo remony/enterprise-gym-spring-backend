@@ -29,6 +29,7 @@ public class NewsController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public
     @ResponseBody
+    //this endpoint returns a list of all the news
     ResponseEntity<String> printNews(HttpServletRequest request, HttpServletResponse response) {
 
         LinkedList<NewsStore> news = News.getAll(Integer.parseInt(request.getHeader("page")), Integer.parseInt(request.getHeader("pagesize")));
@@ -41,6 +42,7 @@ public class NewsController {
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
+    //this endpoint creates news from the headers given, the text used is passed in as raw data in the request body
     public @ResponseBody ResponseEntity<String> addNews(HttpServletRequest request,HttpServletResponse response, @RequestBody String text) {
         boolean success,exists;
         JSONObject object = new JSONObject();
@@ -78,6 +80,7 @@ public class NewsController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{slug}", method = RequestMethod.GET)
+    //this endpoint returns the details of the slug given in the url
     public @ResponseBody ResponseEntity<String> getNews(@PathVariable(value="slug") String slug) {
         LinkedList<NewsStore> news = News.get(slug);
         if(news==null){
@@ -93,6 +96,7 @@ public class NewsController {
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}",method = RequestMethod.POST)
+    //this endpoint is used to update the news with the slug given in the url
     public @ResponseBody ResponseEntity<String> updateNews(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "slug") String slug , @RequestBody String text){
 
         UserDAO UD = new UserDAO();
@@ -103,7 +107,7 @@ public class NewsController {
             boolean success,exists;
             JSONObject message = new JSONObject();
             if(News.checkValidity(request.getHeader("title"))){
-                if (News.generateSlug(request.getHeader("title")).equals(slug)) {
+             //   if (News.generateSlug(request.getHeader("title")).equals(slug)) {
                     success=News.update(slug, request.getHeader("title"), text, request.getHeader("permission"));
                     if(success) {
                         message.put("status", "success");
@@ -114,8 +118,8 @@ public class NewsController {
                         return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
                     }
 
-                } else
-                    return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
+             //   } else
+               //     return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
             }else
             {
                 success = News.update(slug, request.getHeader("title"), request.getHeader("text"), request.getHeader("permission"));
@@ -128,7 +132,6 @@ public class NewsController {
                     return new ResponseEntity<String>(message.toString(), HttpStatus.valueOf(501));
                 }
             }
-
         }else {
             JSONObject message = new JSONObject();
             message.put("user", "You are Unauthorized to view this content");
@@ -140,6 +143,7 @@ public class NewsController {
 
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE,value ="/{slug}/delete",method = RequestMethod.POST)
+    //this endpoint deletes the news with the slug given in the url
     public @ResponseBody ResponseEntity deleteNews(HttpServletRequest request, @PathVariable(value = "slug") String slug ){
 
         UserDAO UD = new UserDAO();
@@ -163,6 +167,7 @@ public class NewsController {
     }
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "{slug}/comments", method = RequestMethod.GET)
+    //this endpoint gets all the comments for the slug given in the url
     public
     @ResponseBody
     ResponseEntity viewComments(@PathVariable(value = "slug") String slug) {
@@ -176,6 +181,7 @@ public class NewsController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comments", method = RequestMethod.POST)
     public
+    //this endpoint adds comments to the slug given in the url
     @ResponseBody
     ResponseEntity addComments(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "slug") String slug) {
 
@@ -198,6 +204,7 @@ public class NewsController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comment/{commentid}/delete", method = RequestMethod.DELETE)
     public
+    //this endpoint deletes the comments with comment id given in the url for the slug given in the url
     @ResponseBody
     ResponseEntity deleteComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
 
@@ -220,6 +227,7 @@ public class NewsController {
 
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{slug}/comment/{commentid}", method = RequestMethod.POST)
     public
+    //this endpoint edits the comment with comment id given in the url for the slug given in the url
     @ResponseBody ResponseEntity editComment(HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "commentid") String commentid, @PathVariable(value = "slug") String slug) {
 
         UserDAO UD = new UserDAO();
