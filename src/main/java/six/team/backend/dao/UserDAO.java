@@ -569,25 +569,25 @@ public class UserDAO {
         boolean success=false;
         try {
 
-            PreparedStatement ps = connection.prepareStatement("update Users set username=?, passsword =?, firstname=?, lastname=?, gender=?, email=?,contactnumber=?, country=?, university=?, status=?, subject=?, matricnumber=?,young_es=?, usergroup=?,yearofstudy=?, bio=? where userid = ?");
+            PreparedStatement ps = connection.prepareStatement("update Users set username=?, firstname=?, lastname=?, gender=?, email=?,contactnumber=?, country=?, university=?, status=?, subject=?, matricnumber=?,young_es=?,yearofstudy=?, bio=? where userid = ?");
             ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getFirstname());
-            ps.setString(4, user.getLastname());
-            ps.setString(5, user.getGender());
-            ps.setString(6, user.getEmail());
-            ps.setString(7, user.getContactnumber());
-            ps.setString(8, user.getCountry());
-            ps.setString(9, user.getUniversity());
-            ps.setString(10, user.getStatus());
-            ps.setString(11, user.getSubject());
-            ps.setString(12, user.getMatricnumber());
-            ps.setInt(13, user.getYoung_es());
-            ps.setString(14, "unauthorised");
-            ps.setInt(15, user.getYearofstudy());
-            ps.setString(16, user.getBio());
-            ps.setInt(17, user.getId());
-            ps.executeUpdate();
+//            ps.setString(2, user.getPassword());
+            ps.setString(2, user.getFirstname());
+            ps.setString(3, user.getLastname());
+            ps.setString(4, user.getGender());
+            ps.setString(5, user.getEmail());
+            ps.setString(6, user.getContactnumber());
+            ps.setString(7, user.getCountry());
+            ps.setString(8, user.getUniversity());
+            ps.setString(9, user.getStatus());
+            ps.setString(10, user.getSubject());
+            ps.setString(11, user.getMatricnumber());
+            ps.setInt(12, user.getYoung_es());
+//            ps.setString(13, "unauthorised");
+            ps.setInt(13, user.getYearofstudy());
+            ps.setString(14, user.getBio());
+            ps.setInt(15, user.getId());
+            System.out.println(ps.executeUpdate());
             success=true;
         }
         catch(SQLException e){
