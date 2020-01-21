@@ -8,7 +8,7 @@
     <name>EnterpriseGymSpringBackend</name>
 
     <properties>
-        <spring.version>5.1.8.RELEASE</spring.version>
+        <spring.version>5.2.3.RELEASE</spring.version>
     </properties>
 
     <dependencies>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>5.1.8.RELEASE</version>
+            <version>5.2.3.RELEASE</version>
         </dependency>
 
 
